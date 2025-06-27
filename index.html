@@ -2,100 +2,103 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Charlie's Hidden Park Guide</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#257eff">
+  <title>Charlie's Family Park Adventure</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#ffd8ef">
   <style>
-    html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: linear-gradient(120deg,#f0f8ff 60%,#f8e0f8 100%); min-height: 100vh; color: #243343;}
-    .container { max-width: 680px; margin: auto; padding: 2em 1em 3em 1em; }
-    .page { display: none; }
-    .page.active { display: block; animation: fadeIn .26s; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    h1 { color: #257eff; text-align: center; margin-bottom: .3em; font-size:2.2em;}
-    .subtitle { text-align: center; color: #fdea00; margin-bottom: 2.1em; font-size: 1.15em; font-weight: 600; }
-    .author { text-align:center; color: #444; margin-bottom: 2.1em; font-size: 1.02em; }
-    .main-menu-btns { display: flex; flex-wrap: wrap; gap: 1em 1em; justify-content: center; margin-top: 2.4em; }
+    html, body { margin: 0; padding: 0; font-family: 'Avenir Next', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #ffe6f6; color: #31213a; }
+    body { min-height: 100vh; }
+    .container { max-width: 430px; margin: 0 auto; background: #fff5fa; border-radius: 32px 32px 0 0; min-height: 100vh; box-shadow: 0 6px 30px #bb2ee311; padding: 0 0 70px 0;}
+    .sparkle { text-align: center; margin-top: 24px; font-size: 2.1em; color: #ff95ec; letter-spacing: 2px;}
+    .title { text-align: center; font-size: 2.13em; font-weight: 900; color: #ff40c0; margin: 10px 0 0 0; letter-spacing: 0.5px; }
+    .subtitle { text-align: center; color: #ff9b34; font-size: 1.17em; font-weight: 700; margin-bottom: 17px; }
+    .author { text-align:center; color: #835A98; margin-bottom: 23px; font-size: 1.02em; }
+    .main-menu-btns { display: flex; flex-direction: column; gap: 1.2em; align-items: center; margin-top: 16px; margin-bottom: 17px;}
     .menu-btn {
-      min-width: 180px; min-height: 62px; flex:1 0 40%; max-width: 220px;
-      border-radius: 16px; font-size: 1.25em; font-weight: 700; color: #fff; background: #257eff;
-      border: none; box-shadow: 0 2px 12px #4ca8ff11; margin-bottom: 1em;
-      display: flex; align-items: center; justify-content: center; gap: .72em; cursor: pointer; transition: background 0.14s, transform .12s;
-      letter-spacing: .7px; padding: 0.93em 1.1em;
+      width: 97%; min-width: 0; min-height: 65px;
+      border-radius: 21px; font-size: 1.33em; font-weight: 700;
+      color: #fff; background: linear-gradient(91deg, #ff97ef 70%, #76cefa 100%);
+      border: none; box-shadow: 0 4px 12px #ffb3ea23;
+      display: flex; align-items: center; justify-content: center; gap: .9em; cursor: pointer;
+      transition: background 0.14s, transform .12s; padding: 1.03em 1.1em;
+      letter-spacing: .6px; margin: 0 0 3px 0;
     }
-    .menu-btn:hover, .menu-btn:active { background: #ffe14c; color: #243343; transform: scale(1.03);}
+    .menu-btn:hover, .menu-btn:active { background: #ffe14c; color: #e04d93; transform: scale(1.03);}
     .reset-btn {
-      margin: 1.7em 0 0 0; background: #257eff; color: #fff; border: none; border-radius: 14px;
-      font-size: 1.07em; padding: .73em 2em; font-weight: bold; box-shadow: 0 2px 13px #79a8fa32;
+      margin: 2.3em auto 0 auto; background: #e93b81; color: #fff; border: none; border-radius: 17px;
+      font-size: 1.13em; padding: 1.1em 2em; font-weight: bold; box-shadow: 0 2px 13px #fc8dc432;
       cursor: pointer; transition: background 0.13s, color 0.13s;
-      display: block; margin-left: auto; margin-right: auto;
-      letter-spacing: 0.03em;
+      display: block; letter-spacing: 0.02em; font-family: inherit;
     }
-    .reset-btn:hover { background: #ffe14c; color: #2d2d2d; }
-    .park-title { font-size: 1.7em; color: #257eff; font-weight: bold; margin: .7em 0 1.2em 0; text-align:center;}
+    .reset-btn:hover { background: #ffe14c; color: #e93b81;}
+    .park-title { font-size: 1.65em; color: #ff40c0; font-weight: bold; margin: .7em 0 1.2em 0; text-align:center;}
     .back-btn {
-      display: inline-block; margin: 0 0 1em 0; font-size: 1em; color: #257eff; background: #f4f4fa; border-radius: 14px;
-      border: none; font-weight: bold; padding: .6em 1.25em; cursor: pointer; box-shadow: 0 2px 7px #c2d5ff11;
-      position: relative; left: 0; top: 0; transition: background .12s, color .12s;
+      display: block; margin: 0.85em auto 0.6em auto; font-size: 1.22em; color: #fff;
+      background: linear-gradient(91deg,#9daaff 70%,#fd95e3 100%);
+      border-radius: 18px; border: none; font-weight: 700; padding: .73em 2.2em; cursor: pointer; box-shadow: 0 2px 8px #fc8dc422; width: 85%; transition: background .13s, color .13s;
+      text-shadow: 0 1px 6px #fff7;
     }
-    .back-btn:hover { background: #ffe14c; color: #24282f; }
-    .section-header { font-size: 1.22em; color: #2d5fff; font-weight: 700; margin: 2.1em 0 1em 0; border-left: 4px solid #ffe14c; padding-left: 10px;}
-    .land-header { font-size: 1.1em; color: #fe7c2a; margin: 1.1em 0 .7em 0; font-weight:600; border-left: 3px solid #b4e26d; padding-left:7px;}
+    .back-btn:hover { background: #ffe14c; color: #9250b5; }
+    .section-header { font-size: 1.17em; color: #d94ba9; font-weight: 700; margin: 2.0em 0 1em 0; border-left: 4px solid #ffd8ef; padding-left: 10px;}
+    .land-header { font-size: 1em; color: #7f3bb8; margin: 1.15em 0 .6em 0; font-weight:700; border-left: 3px solid #fc8dc4; padding-left:7px;}
     ul { list-style: none; padding: 0; margin: 0; }
     .secret-card, .ride-card {
-      margin-bottom: 1.08em;
-      background: #fafdff;
-      border-radius: 12px;
-      box-shadow: 0 2px 9px 0 rgba(80,140,220,.07);
-      padding: .93em .97em .65em .97em;
+      margin-bottom: 1.03em;
+      background: #fff; border-radius: 17px;
+      box-shadow: 0 2px 9px 0 #ffabf022;
+      padding: 1.05em 1.1em .8em 1.1em;
       display: flex; align-items: flex-start; gap: 1em;
       cursor: pointer; transition: background 0.13s, opacity 0.15s;
       position: relative;
       min-height: 2.7em;
       font-size: 1.09em;
-      border-left: 5px solid #ffe14c;
+      border-left: 6px solid #ffe2f2;
     }
     .secret-card.done, .ride-card.done {
-      background: #eaf4fa;
-      opacity: 0.48;
+      background: #fff4fa;
+      opacity: 0.49;
       text-decoration: line-through;
-      border-left: 5px solid #71eb97;
+      border-left: 6px solid #a6ffd0;
     }
-    .secret-emoji, .ride-emoji { font-size: 1.57em; margin-top: 2px; flex-shrink:0;}
+    .secret-emoji, .ride-emoji { font-size: 1.7em; margin-top: 2px; flex-shrink:0;}
     .secret-info, .ride-info { flex: 1; }
-    .secret-desc, .ride-desc { color: #444; font-size: .97em; margin-top: .13em;}
+    .secret-desc, .ride-desc { color: #ba6dab; font-size: .98em; margin-top: .18em;}
     .tick {
-      font-size: 1.4em; color: #39c550;
+      font-size: 1.35em; color: #56db90;
       user-select: none; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
       display: none;
     }
     .secret-card.done .tick, .ride-card.done .tick { display: inline; }
     @media (max-width: 700px) {
-      .container { padding: 1em .1em; }
-      .park-title { font-size: 1.17em; }
-      .menu-btn { min-width: 120px; font-size:1.04em;}
-      .secret-card, .ride-card { padding: .7em .5em .57em .57em; }
+      .container { border-radius: 0; }
+      .park-title { font-size: 1.15em; }
+      .menu-btn { font-size:1.05em; }
+      .secret-card, .ride-card { padding: .8em .65em .7em .65em; font-size:1em;}
+      .land-header { font-size: .98em;}
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Main Menu -->
+    <div class="sparkle">✨🦄💜</div>
     <div id="main-menu" class="page active">
-      <h1>Hidden Park Guide</h1>
-      <div class="subtitle">Disney & Universal Cool Stuff – by Charlie</div>
-      <div class="author">Tap a park below to start. Tick rides & secrets off as you go. Reset for a new adventure!</div>
+      <div class="title">Charlie's Family Park Adventure</div>
+      <div class="subtitle">Your Magical Disney & Universal Checklist</div>
+      <div class="author">Tick rides & secrets as you go. Enjoy together!<br>Made with 💖 by Charlie</div>
       <div class="main-menu-btns">
         <button class="menu-btn" onclick="openPark('MK')">🏰 Magic Kingdom</button>
         <button class="menu-btn" onclick="openPark('EPCOT')">🌐 EPCOT</button>
         <button class="menu-btn" onclick="openPark('HS')">🎬 Hollywood Studios</button>
         <button class="menu-btn" onclick="openPark('AK')">🦁 Animal Kingdom</button>
-        <button class="menu-btn" onclick="openPark('USF')">🧙‍♂️ Universal Studios Florida</button>
+        <button class="menu-btn" onclick="openPark('USF')">🧙‍♂️ Universal Studios</button>
         <button class="menu-btn" onclick="openPark('IOA')">🦖 Islands of Adventure</button>
         <button class="menu-btn" onclick="openPark('EU')">🌌 Epic Universe</button>
       </div>
       <button class="reset-btn" onclick="resetProgress()">🔄 Reset All Progress</button>
     </div>
-    <!-- Parks -->
+
+    <!-- PARK PAGES -->
+    <!-- Magic Kingdom -->
     <div id="park-MK" class="page">
       <button class="back-btn" onclick="goHome()">← Back</button>
       <div class="park-title">🏰 Magic Kingdom</div>
@@ -113,6 +116,19 @@
       <div class="section-header">Cool Hidden Stuff</div>
       <ul id="MK-secrets"></ul>
     </div>
+    <!-- EPCOT -->
+    <div id="park-EPCOT" class="page">
+      <button class="back-btn" onclick="goHome()">← Back</button>
+      <div class="park-title">🌐 EPCOT</div>
+      <div class="section-header">Must-Do Rides</div>
+        <div class="land-header">World Discovery</div>
+        <ul id="EPCOT-rides-discovery"></ul>
+        <div class="land-header">World Celebration/Test Track</div>
+        <ul id="EPCOT-rides-test"></ul>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <ul id="EPCOT-secrets"></ul>
+    </div>
+    <!-- Hollywood Studios -->
     <div id="park-HS" class="page">
       <button class="back-btn" onclick="goHome()">← Back</button>
       <div class="park-title">🎬 Hollywood Studios</div>
@@ -126,6 +142,7 @@
       <div class="section-header">Cool Hidden Stuff</div>
       <ul id="HS-secrets"></ul>
     </div>
+    <!-- Animal Kingdom -->
     <div id="park-AK" class="page">
       <button class="back-btn" onclick="goHome()">← Back</button>
       <div class="park-title">🦁 Animal Kingdom</div>
@@ -141,17 +158,7 @@
       <div class="section-header">Cool Hidden Stuff</div>
       <ul id="AK-secrets"></ul>
     </div>
-    <div id="park-EPCOT" class="page">
-      <button class="back-btn" onclick="goHome()">← Back</button>
-      <div class="park-title">🌐 EPCOT</div>
-      <div class="section-header">Must-Do Rides</div>
-        <div class="land-header">World Discovery</div>
-        <ul id="EPCOT-rides-discovery"></ul>
-        <div class="land-header">World Celebration/Test Track</div>
-        <ul id="EPCOT-rides-test"></ul>
-      <div class="section-header">Cool Hidden Stuff</div>
-      <ul id="EPCOT-secrets"></ul>
-    </div>
+    <!-- Universal Studios Florida -->
     <div id="park-USF" class="page">
       <button class="back-btn" onclick="goHome()">← Back</button>
       <div class="park-title">🧙‍♂️ Universal Studios Florida</div>
@@ -163,6 +170,7 @@
       <div class="section-header">Cool Hidden Stuff</div>
       <ul id="USF-secrets"></ul>
     </div>
+    <!-- Islands of Adventure -->
     <div id="park-IOA" class="page">
       <button class="back-btn" onclick="goHome()">← Back</button>
       <div class="park-title">🦖 Islands of Adventure</div>
@@ -174,6 +182,7 @@
       <div class="section-header">Cool Hidden Stuff</div>
       <ul id="IOA-secrets"></ul>
     </div>
+    <!-- Epic Universe -->
     <div id="park-EU" class="page">
       <button class="back-btn" onclick="goHome()">← Back</button>
       <div class="park-title">🌌 Epic Universe</div>
@@ -201,96 +210,17 @@
       document.getElementById('main-menu').classList.add('active');
       window.scrollTo(0, 0);
     }
-    // ---- Secrets (Hidden Stuff)
+    // --- Secrets (Hidden Stuff) ---
     const secrets = {
-      MK: [ /* ... as before ... */ 
-        {emoji:"💍", name:"Find the Haunted Mansion ring in the pavement", desc:"Liberty Square"},
-        {emoji:"✨", name:"Get 'pixie dusted' at Sir Mickey’s", desc:"Behind the castle"},
-        {emoji:"🐫", name:"Get sprayed by the camel at Aladdin's Magic Carpets", desc:"Adventureland"},
-        {emoji:"🕯️", name:"Pose for lantern photos at Tangled bathrooms & look for hidden Pascals", desc:"Near Rapunzel tower"},
-        {emoji:"💦", name:"Notice the brown 'sewage line' in Liberty Square", desc:"A historical detail!"},
-        {emoji:"🔔", name:"Listen in Tomorrowland Power & Light phone booths", desc:"Hear a secret call"},
-        {emoji:"🏰", name:"Make a wish at Cinderella's Wishing Well", desc:"Right of the castle"},
-        {emoji:"📞", name:"Pick up the phone at City Hall for a surprise", desc:"Main Street"},
-        {emoji:"📸", name:"Ask for a Photopass 'magic shot'", desc:"Try waving or asking!"},
-        {emoji:"🌈", name:"Watch the 'Kiss Goodnight' at closing", desc:"Castle lights farewell"},
-        {emoji:"🎹", name:"Listen to live piano at Casey’s Corner", desc:"Ragtime on Main Street"},
-        {emoji:"🗝️", name:"Ask about the 'Keys to the Kingdom' tour", desc:"Only for superfans"},
-        {emoji:"🦴", name:"Look for the talking trash can (Push!)", desc:"Tomorrowland (sometimes appears)"},
-        {emoji:"🐶", name:"Spot the 'Smiling Dog' in Pirates of the Caribbean", desc:"The one with keys in his mouth!"}
-      ],
-      EPCOT: [ /* ... snipped, see previous full list ... */ 
-        {emoji:"🥤", name:"Try every soda at Club Cool (even Beverly)", desc:"Near Creations Shop"},
-        {emoji:"🚇", name:"Snap a photo at the Bubblegum Wall", desc:"Exit of Spaceship Earth"},
-        {emoji:"🚃", name:"Find a hidden Mickey in Germany's train garden", desc:"World Showcase"},
-        {emoji:"⛲", name:"Notice the 'burning Rome' scent in Spaceship Earth", desc:"During the fire scene"},
-        {emoji:"🌸", name:"Explore Morocco’s quiet back alleys", desc:"So many details!"},
-        {emoji:"🎤", name:"Enjoy Voices of Liberty a cappella", desc:"American Adventure rotunda"},
-        {emoji:"🎡", name:"See night lights on Spaceship Earth", desc:"'Beacons of Magic' show"},
-        {emoji:"🍧", name:"Eat School Bread in Norway", desc:"Bakery in Norway pavilion"},
-        {emoji:"🍦", name:"Try a macaron ice cream sandwich", desc:"France pavilion"},
-        {emoji:"🔎", name:"Spot a hidden Mickey in Living with the Land", desc:"Greenhouse scenes"},
-        {emoji:"🥚", name:"Try a festival scavenger hunt", desc:"Like Remy’s or Figment’s!"},
-        {emoji:"🗼", name:"Notice the bird-free Eiffel Tower", desc:"Painted with special paint"},
-        {emoji:"🎩", name:"Find Dreamfinder references at Imagination Pavilion", desc:"Classic EPCOT fans only!"}
-      ],
-      HS: [ /* ... */ 
-        {emoji:"☂️", name:"Stand under the Singing in the Rain umbrella", desc:"Pull the handle near Echo Lake"},
-        {emoji:"🎸", name:"See the Tower of Terror neon at night", desc:"Perfect spooky photo"},
-        {emoji:"🐦", name:"See dino Gertie by Echo Lake", desc:"Classic Disney dinosaur!"},
-        {emoji:"🎥", name:"See droids in Galaxy’s Edge", desc:"Check near shops and doors"},
-        {emoji:"🌟", name:"Watch Fantasmic! or Indiana Jones", desc:"Epic live shows"},
-        {emoji:"🚂", name:"See Walt’s model train car in One Man’s Dream", desc:"History lovers only"},
-        {emoji:"🍿", name:"Try all flavors at Kat Saka’s Kettle", desc:"Colorful Star Wars popcorn"},
-        {emoji:"💼", name:"Find Walt’s office window", desc:"Look for his name in the windows"},
-        {emoji:"🥓", name:"Eat Totchos at Woody’s Lunch Box", desc:"Potato barrel + chili cheese"},
-        {emoji:"🍪", name:"Get a Jack-Jack’s Num Num Cookie", desc:"Super gooey, Pixar Place"}
-      ],
-      AK: [
-        {emoji:"🦖", name:"Take a selfie with Dino Sue", desc:"Near DINOSAUR entrance"},
-        {emoji:"🌱", name:"See DiVine, the living plant", desc:"Path from Africa to Asia"},
-        {emoji:"🎭", name:"Enjoy Festival of the Lion King", desc:"Fantastic live show"},
-        {emoji:"🦍", name:"Walk the Gorilla Falls or Maharajah Jungle Trek", desc:"See gorillas and tigers"},
-        {emoji:"🔍", name:"Try the Wilderness Explorer game", desc:"Collect badges all over"},
-        {emoji:"💦", name:"Drink a Night Blossom slush in Pandora", desc:"Tastes as wild as it looks!"},
-        {emoji:"🔥", name:"See Tree of Life Awakenings at night", desc:"Projections on the tree"},
-        {emoji:"🍟", name:"Eat Mr. Kamal’s seasoned fries", desc:"Asia, legendary snack"},
-        {emoji:"🦘", name:"Watch kangaroos by Tree of Life", desc:"Morning is best"},
-        {emoji:"⛰️", name:"Spot the Yeti Shrine at Everest", desc:"Near the ride entrance"},
-        {emoji:"🦕", name:"Listen for dinosaur sounds outside DINOSAUR", desc:"Hidden speakers!"}
-      ],
-      USF: [
-        {emoji:"🐍", name:"See Kreacher peek from 12 Grimmauld Place", desc:"Knock, watch the window"},
-        {emoji:"📞", name:"Dial 'MAGIC' at the red phone booth", desc:"Dial 62442 for a secret!"},
-        {emoji:"🐉", name:"Watch the dragon breathe fire over Gringotts", desc:"Every 10-15 minutes"},
-        {emoji:"🧙", name:"Chat with the Knight Bus shrunken head", desc:"It talks!"},
-        {emoji:"🦑", name:"Spot the Jaws shark & movie tributes", desc:"San Francisco & Diagon Alley"},
-        {emoji:"🚀", name:"Use single rider for Escape from Gringotts", desc:"Beat the lines!"},
-        {emoji:"🎟️", name:"See E.T.'s passport Easter egg in the queue", desc:"A tribute to the movie"},
-        {emoji:"🥤", name:"Try Butterbeer as frozen, hot, or ice cream", desc:"Diagon Alley"},
-        {emoji:"🎮", name:"Try a secret wand spell", desc:"Ask for a hint!"},
-        {emoji:"👾", name:"Spot hidden Minions in the park", desc:"Look up in the gift shops!"}
-      ],
-      IOA: [
-        {emoji:"🦖", name:"Watch Blue the Raptor at Jurassic Park", desc:"Photo ops through the day"},
-        {emoji:"🐍", name:"Request the Men in Black Immigration Room tour", desc:"If you catch staff in a good mood!"},
-        {emoji:"🐲", name:"Try Butterbeer or pumpkin juice at Three Broomsticks", desc:"Or sticky toffee pudding!"},
-        {emoji:"👻", name:"Listen for Moaning Myrtle in Hogsmeade bathrooms", desc:"Harry Potter fans only!"},
-        {emoji:"🎢", name:"Ride front row on Hulk or VelociCoaster", desc:"Top thrill!"},
-        {emoji:"🦄", name:"See a house elf in a Hogsmeade shop window", desc:"Look up for moving elves!"},
-        {emoji:"🚪", name:"Try the secret knock in Knockturn Alley", desc:"Watch what happens!"},
-        {emoji:"🍈", name:"Ask about the Olive at Popeye ride", desc:"A quirky prop fact!"}
-      ],
-      EU: [
-        {emoji:"🌌", name:"Walk the gardens of Celestial Park", desc:"Relax and people-watch"},
-        {emoji:"🍄", name:"Ride Mario Kart: Bowser's Challenge", desc:"Super Nintendo World"},
-        {emoji:"🐉", name:"See Toothless in Isle of Berk", desc:"How to Train Your Dragon area"},
-        {emoji:"🎩", name:"Tour the Ministry of Magic", desc:"Brand new for Harry Potter fans"},
-        {emoji:"👻", name:"Check out Frankenstein’s Dark Universe", desc:"Classic monsters meet the future!"}
-      ]
+      MK: [ {emoji:"💍", name:"Find the Haunted Mansion ring in the pavement", desc:"Liberty Square"}, {emoji:"✨", name:"Get 'pixie dusted' at Sir Mickey’s", desc:"Behind the castle"}, {emoji:"🐫", name:"Get sprayed by the camel at Aladdin's Magic Carpets", desc:"Adventureland"}, {emoji:"🕯️", name:"Pose for lantern photos at Tangled bathrooms & look for hidden Pascals", desc:"Near Rapunzel tower"}, {emoji:"💦", name:"Notice the brown 'sewage line' in Liberty Square", desc:"A historical detail!"}, {emoji:"🔔", name:"Listen in Tomorrowland Power & Light phone booths", desc:"Hear a secret call"}, {emoji:"🏰", name:"Make a wish at Cinderella's Wishing Well", desc:"Right of the castle"}, {emoji:"📞", name:"Pick up the phone at City Hall for a surprise", desc:"Main Street"}, {emoji:"📸", name:"Ask for a Photopass 'magic shot'", desc:"Try waving or asking!"}, {emoji:"🌈", name:"Watch the 'Kiss Goodnight' at closing", desc:"Castle lights farewell"}, {emoji:"🎹", name:"Listen to live piano at Casey’s Corner", desc:"Ragtime on Main Street"}, {emoji:"🗝️", name:"Ask about the 'Keys to the Kingdom' tour", desc:"Only for superfans"}, {emoji:"🦴", name:"Look for the talking trash can (Push!)", desc:"Tomorrowland (sometimes appears)"}, {emoji:"🐶", name:"Spot the 'Smiling Dog' in Pirates of the Caribbean", desc:"The one with keys in his mouth!"}],
+      EPCOT: [ {emoji:"🥤", name:"Try every soda at Club Cool (even Beverly)", desc:"Near Creations Shop"}, {emoji:"🚇", name:"Snap a photo at the Bubblegum Wall", desc:"Exit of Spaceship Earth"}, {emoji:"🚃", name:"Find a hidden Mickey in Germany's train garden", desc:"World Showcase"}, {emoji:"⛲", name:"Notice the 'burning Rome' scent in Spaceship Earth", desc:"During the fire scene"}, {emoji:"🌸", name:"Explore Morocco’s quiet back alleys", desc:"So many details!"}, {emoji:"🎤", name:"Enjoy Voices of Liberty a cappella", desc:"American Adventure rotunda"}, {emoji:"🎡", name:"See night lights on Spaceship Earth", desc:"'Beacons of Magic' show"}, {emoji:"🍧", name:"Eat School Bread in Norway", desc:"Bakery in Norway pavilion"}, {emoji:"🍦", name:"Try a macaron ice cream sandwich", desc:"France pavilion"}, {emoji:"🔎", name:"Spot a hidden Mickey in Living with the Land", desc:"Greenhouse scenes"}, {emoji:"🥚", name:"Try a festival scavenger hunt", desc:"Like Remy’s or Figment’s!"}, {emoji:"🗼", name:"Notice the bird-free Eiffel Tower", desc:"Painted with special paint"}, {emoji:"🎩", name:"Find Dreamfinder references at Imagination Pavilion", desc:"Classic EPCOT fans only!"}],
+      HS: [ {emoji:"☂️", name:"Stand under the Singing in the Rain umbrella", desc:"Pull the handle near Echo Lake"}, {emoji:"🎸", name:"See the Tower of Terror neon at night", desc:"Perfect spooky photo"}, {emoji:"🐦", name:"See dino Gertie by Echo Lake", desc:"Classic Disney dinosaur!"}, {emoji:"🎥", name:"See droids in Galaxy’s Edge", desc:"Check near shops and doors"}, {emoji:"🌟", name:"Watch Fantasmic! or Indiana Jones", desc:"Epic live shows"}, {emoji:"🚂", name:"See Walt’s model train car in One Man’s Dream", desc:"History lovers only"}, {emoji:"🍿", name:"Try all flavors at Kat Saka’s Kettle", desc:"Colorful Star Wars popcorn"}, {emoji:"💼", name:"Find Walt’s office window", desc:"Look for his name in the windows"}, {emoji:"🥓", name:"Eat Totchos at Woody’s Lunch Box", desc:"Potato barrel + chili cheese"}, {emoji:"🍪", name:"Get a Jack-Jack’s Num Num Cookie", desc:"Super gooey, Pixar Place"}],
+      AK: [ {emoji:"🦖", name:"Take a selfie with Dino Sue", desc:"Near DINOSAUR entrance"}, {emoji:"🌱", name:"See DiVine, the living plant", desc:"Path from Africa to Asia"}, {emoji:"🎭", name:"Enjoy Festival of the Lion King", desc:"Fantastic live show"}, {emoji:"🦍", name:"Walk the Gorilla Falls or Maharajah Jungle Trek", desc:"See gorillas and tigers"}, {emoji:"🔍", name:"Try the Wilderness Explorer game", desc:"Collect badges all over"}, {emoji:"💦", name:"Drink a Night Blossom slush in Pandora", desc:"Tastes as wild as it looks!"}, {emoji:"🔥", name:"See Tree of Life Awakenings at night", desc:"Projections on the tree"}, {emoji:"🍟", name:"Eat Mr. Kamal’s seasoned fries", desc:"Asia, legendary snack"}, {emoji:"🦘", name:"Watch kangaroos by Tree of Life", desc:"Morning is best"}, {emoji:"⛰️", name:"Spot the Yeti Shrine at Everest", desc:"Near the ride entrance"}, {emoji:"🦕", name:"Listen for dinosaur sounds outside DINOSAUR", desc:"Hidden speakers!"}],
+      USF: [ {emoji:"🐍", name:"See Kreacher peek from 12 Grimmauld Place", desc:"Knock, watch the window"}, {emoji:"📞", name:"Dial 'MAGIC' at the red phone booth", desc:"Dial 62442 for a secret!"}, {emoji:"🐉", name:"Watch the dragon breathe fire over Gringotts", desc:"Every 10-15 minutes"}, {emoji:"🧙", name:"Chat with the Knight Bus shrunken head", desc:"It talks!"}, {emoji:"🦑", name:"Spot the Jaws shark & movie tributes", desc:"San Francisco & Diagon Alley"}, {emoji:"🚀", name:"Use single rider for Escape from Gringotts", desc:"Beat the lines!"}, {emoji:"🎟️", name:"See E.T.'s passport Easter egg in the queue", desc:"A tribute to the movie"}, {emoji:"🥤", name:"Try Butterbeer as frozen, hot, or ice cream", desc:"Diagon Alley"}, {emoji:"🎮", name:"Try a secret wand spell", desc:"Ask for a hint!"}, {emoji:"👾", name:"Spot hidden Minions in the park", desc:"Look up in the gift shops!"}],
+      IOA: [ {emoji:"🦖", name:"Watch Blue the Raptor at Jurassic Park", desc:"Photo ops through the day"}, {emoji:"🐍", name:"Request the Men in Black Immigration Room tour", desc:"If you catch staff in a good mood!"}, {emoji:"🐲", name:"Try Butterbeer or pumpkin juice at Three Broomsticks", desc:"Or sticky toffee pudding!"}, {emoji:"👻", name:"Listen for Moaning Myrtle in Hogsmeade bathrooms", desc:"Harry Potter fans only!"}, {emoji:"🎢", name:"Ride front row on Hulk or VelociCoaster", desc:"Top thrill!"}, {emoji:"🦄", name:"See a house elf in a Hogsmeade shop window", desc:"Look up for moving elves!"}, {emoji:"🚪", name:"Try the secret knock in Knockturn Alley", desc:"Watch what happens!"}, {emoji:"🍈", name:"Ask about the Olive at Popeye ride", desc:"A quirky prop fact!"}],
+      EU: [ {emoji:"🌌", name:"Walk the gardens of Celestial Park", desc:"Relax and people-watch"}, {emoji:"🍄", name:"Ride Mario Kart: Bowser's Challenge", desc:"Super Nintendo World"}, {emoji:"🐉", name:"See Toothless in Isle of Berk", desc:"How to Train Your Dragon area"}, {emoji:"🎩", name:"Tour the Ministry of Magic", desc:"Brand new for Harry Potter fans"}, {emoji:"👻", name:"Check out Frankenstein’s Dark Universe", desc:"Classic monsters meet the future!"}]
     };
 
-    // ---- Rides grouped by land
     const rides = {
       MK: {
         fantasy: [
@@ -384,7 +314,6 @@
       }
     };
 
-    // Storage and Rendering
     const parkList = ["MK","EPCOT","HS","AK","USF","IOA","EU"];
     const saved = JSON.parse(localStorage.getItem("hiddenParkFullScreenCharlieRides") || "{}");
 
@@ -463,5 +392,3 @@
   </script>
 </body>
 </html>
-
-

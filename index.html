@@ -11,15 +11,10 @@
       --blue: #257eff;
       --yellow: #ffe14c;
       --light-bg: linear-gradient(120deg,#f0f8ff 60%,#f8e0f8 100%);
-      --dark-bg: linear-gradient(120deg,#1b2735 60%,#222034 100%);
       --card-bg: #fafdff;
       --card-txt: #243343;
-      --card-bg-dark: #fff;
-      --card-txt-dark: #000;
       --card-done: #eaf4fa;
-      --card-done-dark: #eee;
       --txt-main: #243343;
-      --txt-main-dark: #fff;
     }
     html, body {
       margin: 0; padding: 0;
@@ -29,16 +24,6 @@
       min-height: 100vh;
       transition: background .3s, color .3s;
       -webkit-tap-highlight-color: transparent;
-    }
-    @media (prefers-color-scheme: dark) {
-      html, body { background: var(--dark-bg); color: var(--txt-main-dark);}
-      .container { background: #222034;}
-      .main-menu-btns, .secret-card, .ride-card {
-        background: var(--card-bg-dark)!important;
-        color: var(--card-txt-dark)!important;
-      }
-      .secret-card.done, .ride-card.done { background: var(--card-done-dark)!important; color: #555!important;}
-      .section-header, .land-header, .park-title, .menu-btn, .reset-btn, .back-btn { color: var(--blue)!important;}
     }
     .bg-stars {
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
@@ -584,6 +569,7 @@ function resetProgress() {
   </script>
 </body>
 </html>
+
 
 
 

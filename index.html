@@ -4,302 +4,395 @@
   <meta charset="UTF-8">
   <title>Charlie's Hidden Park Guide</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <meta name="theme-color" content="#257eff">
+  <meta name="theme-color" content="#1a1a2e">
   <link rel="apple-touch-icon" href="icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --blue: #257eff;
-      --yellow: #ffe14c;
-      --light-bg: linear-gradient(120deg,#f0f8ff 60%,#f8e0f8 100%);
-      --card-bg: #fafdff;
-      --card-txt: #243343;
-      --card-done: #eaf4fa;
-      --txt-main: #243343;
+      --primary: #667eea;
+      --secondary: #764ba2;
+      --accent: #f093fb;
+      --success: #4ecdc4;
+      --warning: #ffe66d;
+      --bg-dark: #0f0f23;
+      --bg-card: rgba(255, 255, 255, 0.1);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.8);
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --shadow-glow: 0 8px 32px rgba(102, 126, 234, 0.3);
+      --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
-      margin: 0; padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      background: var(--light-bg);
-      color: var(--txt-main);
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: var(--text-primary);
       min-height: 100vh;
-      transition: background .3s, color .3s;
+      overflow-x: hidden;
       -webkit-tap-highlight-color: transparent;
     }
-    .bg-stars {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><g fill="%23ffe14c" fill-opacity="0.19"><circle cx="10" cy="40" r="2.5"/><circle cx="80" cy="120" r="1.5"/><circle cx="160" cy="80" r="2"/><circle cx="60" cy="200" r="2.1"/><circle cx="200" cy="150" r="2.3"/><circle cx="300" cy="70" r="1.2"/><circle cx="320" cy="250" r="2.2"/><circle cx="520" cy="100" r="2"/><circle cx="480" cy="180" r="1.8"/></g></svg>');
-      background-repeat: repeat;
-      opacity: 0.8;
+    .bg-animated {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      background-size: 400% 400%; animation: gradientShift 15s ease infinite;
     }
-    .container {
-      max-width: 540px;
-      margin: auto;
-      padding: 2.2em 0.3em 3em 0.3em;
-      position:relative;
-      z-index:1;
-      border-radius: 30px;
-      min-height: 90vh;
-      box-shadow: 0 6px 36px 0 rgba(30,70,160,0.10);
-      background: rgba(250,250,250,0.88);
+    .bg-animated::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+      animation: floatingOrbs 20s ease-in-out infinite;
     }
-    .page { display: none; }
-    .page.active { display: block; animation: fadeIn .26s;}
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    h1 { color: var(--blue); text-align: center; margin-bottom: .3em; font-size:2.2em; letter-spacing: .05em; font-weight:900;}
-    .subtitle { text-align: center; color: var(--yellow); margin-bottom: 2.1em; font-size: 1.2em; font-weight: 700; }
-    .author { text-align:center; color: #444; margin-bottom: 2.1em; font-size: 1.13em; font-weight: 600; }
-    .main-menu-btns {
-      display: flex; flex-wrap: wrap; gap: 1.3em 1em; justify-content: center; margin-top: 2.2em;
-      background: none;
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    @keyframes floatingOrbs {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(30px, -30px) rotate(120deg); }
+      66% { transform: translate(-20px, 20px) rotate(240deg); }
+    }
+    .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    .particle {
+      position: absolute; width: 4px; height: 4px; background: rgba(255, 255, 255, 0.6); border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+      50% { transform: translateY(-20px) rotate(180deg); opacity: 0.5; }
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; position: relative; z-index: 2; }
+    .glass-card {
+      background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+      border-radius: 20px; box-shadow: var(--shadow-glow); transition: all 0.3s ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-5px); box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+    }
+    .page { display: none; animation: fadeInUp 0.6s ease-out; }
+    .page.active { display: block; }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; text-align: center; margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fff 0%, #f093fb 100%);
+      background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(240, 147, 251, 0.5);
+    }
+    .subtitle { text-align: center; font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-secondary);}
+    .author { text-align: center; font-size: 1rem; font-weight: 400; margin-bottom: 3rem; color: var(--text-secondary); line-height: 1.6;}
+    .main-menu-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;
     }
     .menu-btn {
-      min-width: 200px; min-height: 72px; flex:1 0 45%; max-width: 260px;
-      border-radius: 22px; font-size: 1.43em; font-weight: 900; color: #fff; background: var(--blue);
-      border: none; box-shadow: 0 4px 20px #4ca8ff17; margin-bottom: 1em;
-      display: flex; align-items: center; justify-content: center; gap: .72em; cursor: pointer;
-      letter-spacing: 1px; padding: 1.09em 1.3em; transition: background 0.14s, transform .12s;
-      position:relative; overflow:hidden;
-      touch-action: manipulation;
+      background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+      border-radius: 20px; padding: 2rem; font-size: 1.3rem; font-weight: 700; color: var(--text-primary);
+      cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
+      gap: 1rem; min-height: 120px; position: relative; overflow: hidden; touch-action: manipulation;
     }
-    .menu-btn:active { background: var(--yellow); color: var(--txt-main); transform: scale(0.98);}
-    .menu-btn .ripple {
-      position:absolute; border-radius:50%; transform:scale(0); animation:ripple .4s linear;
-      background:rgba(255,255,255,0.5); pointer-events:none; z-index: 2;
+    .menu-btn::before {
+      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent); transition: left 0.5s;
     }
-    @keyframes ripple {
-      to {transform:scale(2.5); opacity:0;}
+    .menu-btn:hover::before { left: 100%; }
+    .menu-btn:hover {
+      transform: translateY(-8px); box-shadow: 0 15px 45px rgba(102, 126, 234, 0.4); border-color: rgba(255, 255, 255, 0.3);
     }
+    .menu-btn:active { transform: translateY(-5px) scale(0.98); }
+    .menu-btn .emoji { font-size: 2.5rem; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3)); }
     .reset-btn {
-      margin: 2.7em 0 0 0; background: var(--blue); color: #fff; border: none; border-radius: 17px;
-      font-size: 1.15em; padding: 1em 2.2em; font-weight: bold; box-shadow: 0 2px 13px #79a8fa32;
-      cursor: pointer; transition: background 0.13s, color 0.13s;
-      display: block; margin-left: auto; margin-right: auto;
-      letter-spacing: 0.03em;
-      touch-action: manipulation;
+      margin: 4rem auto 0; background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+      color: white; border: none; border-radius: 15px; font-size: 1.1rem; padding: 1rem 2.5rem; font-weight: 600;
+      cursor: pointer; transition: all 0.3s ease; display: block; box-shadow: var(--shadow-glow); touch-action: manipulation;
     }
-    .reset-btn:active { background: var(--yellow); color: var(--txt-main); }
-    .park-title { font-size: 2em; color: var(--blue); font-weight: 900; margin: .7em 0 1.2em 0; text-align:center; letter-spacing: .02em;}
+    .reset-btn:hover {
+      transform: translateY(-3px); box-shadow: 0 10px 35px rgba(240, 147, 251, 0.4);
+    }
+    .park-title {
+      font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; text-align: center; margin: 2rem 0;
+      background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+      background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
     .back-btn {
-      display: inline-block; margin: 0 0 1em 0; font-size: 1.18em; color: var(--blue); background: #f4f4fa; border-radius: 18px;
-      border: none; font-weight: bold; padding: .78em 1.4em; cursor: pointer; box-shadow: 0 2px 7px #c2d5ff11;
-      position: relative; left: 0; top: 0; transition: background .12s, color .12s;
-      touch-action: manipulation;
+      background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+      border-radius: 12px; color: var(--text-primary); font-size: 1rem; font-weight: 600; padding: 0.8rem 1.5rem;
+      cursor: pointer; transition: all 0.3s ease; margin-bottom: 2rem; touch-action: manipulation;
     }
-    .back-btn:active { background: var(--yellow); color: #24282f; }
-    .section-header { font-size: 1.34em; color: #2d5fff; font-weight: 800; margin: 2.3em 0 1em 0; border-left: 4px solid var(--yellow); padding-left: 14px;}
-    .land-header { font-size: 1.19em; color: #fe7c2a; margin: 1.15em 0 .7em 0; font-weight:700; border-left: 3px solid #b4e26d; padding-left:12px;}
-    ul { list-style: none; padding: 0; margin: 0; }
+    .back-btn:hover { transform: translateX(-5px); box-shadow: var(--shadow-soft);}
+    .section-header {
+      font-size: 1.8rem; font-weight: 800; margin: 3rem 0 2rem 0; color: var(--text-primary); text-align: center; position: relative;
+    }
+    .section-header::after {
+      content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--primary)); border-radius: 2px;
+    }
+    .land-header {
+      font-size: 1.3rem; font-weight: 700; margin: 2rem 0 1rem 0; color: var(--warning); padding-left: 1rem;
+      border-left: 4px solid var(--success); border-radius: 2px;
+    }
+    .rides-grid, .secrets-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;
+    }
     .secret-card, .ride-card {
-      margin-bottom: 1.13em;
-      background: var(--card-bg);
-      border-radius: 15px;
-      box-shadow: 0 2px 13px 0 rgba(80,140,220,.12);
-      padding: 1.1em 1.19em .75em 1.19em;
-      display: flex; align-items: flex-start; gap: 1.2em;
-      cursor: pointer; transition: background 0.13s, opacity 0.15s, color .15s;
-      position: relative;
-      min-height: 3em;
-      font-size: 1.21em;
-      border-left: 6px solid var(--yellow);
-      will-change: background;
-      color: var(--card-txt);
-      touch-action: manipulation;
+      background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+      border-radius: 16px; padding: 1.5rem; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; touch-action: manipulation;
+    }
+    .secret-card::before, .ride-card::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+      background: linear-gradient(180deg, var(--accent), var(--primary)); transition: width 0.3s ease;
+    }
+    .secret-card:hover::before, .ride-card:hover::before { width: 8px; }
+    .secret-card:hover, .ride-card:hover {
+      transform: translateY(-5px); box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3); border-color: rgba(255, 255, 255, 0.3);
     }
     .secret-card.done, .ride-card.done {
-      background: var(--card-done);
-      opacity: 0.45;
-      text-decoration: line-through;
-      border-left: 6px solid #71eb97;
-      color: #999;
+      background: rgba(78, 205, 196, 0.1); border-color: var(--success); opacity: 0.7;
     }
-    .secret-emoji, .ride-emoji { font-size: 1.7em; margin-top: 2px; flex-shrink:0;}
-    .secret-info, .ride-info { flex: 1; }
-    .secret-desc, .ride-desc { color: #444; font-size: 1em; margin-top: .13em;}
+    .secret-card.done::before, .ride-card.done::before { background: var(--success);}
+    .card-content { display: flex; align-items: flex-start; gap: 1rem; }
+    .card-emoji { font-size: 2rem; flex-shrink: 0; filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3)); }
+    .card-info { flex: 1; }
+    .card-name { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); line-height: 1.4;}
+    .card-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.4;}
+    .done .card-name { text-decoration: line-through; color: var(--success);}
     .tick {
-      font-size: 1.5em; color: #39c550;
-      user-select: none; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-      display: none;
+      position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--success); display: none;
+      filter: drop-shadow(0 0 8px rgba(78, 205, 196, 0.5));
     }
-    .secret-card.done .tick, .ride-card.done .tick { display: inline; }
+    .done .tick { display: block; animation: tickAppear 0.5s ease-out;}
+    @keyframes tickAppear {
+      from { transform: scale(0) rotate(-180deg); opacity: 0;}
+      to { transform: scale(1) rotate(0deg); opacity: 1;}
+    }
     .modal {
-      background: rgba(36,51,67,0.88); color: #fff;
-      position: fixed; inset: 0; z-index: 99;
-      display: flex; align-items: center; justify-content: center;
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center; z-index: 1000; animation: modalFadeIn 0.3s ease-out;
     }
+    @keyframes modalFadeIn { from { opacity: 0;} to { opacity: 1;} }
     .modal-content {
-      background: #fff; color: #243343; border-radius: 18px; padding: 2em 1.4em 1.2em 1.4em; max-width: 340px; text-align: center;
-      box-shadow: 0 8px 32px #0005; font-size:1.16em; font-weight: 500;
+      background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+      border-radius: 20px; padding: 2.5rem; max-width: 400px; text-align: center; box-shadow: var(--shadow-glow); animation: modalSlideUp 0.4s ease-out;
     }
-    .modal-content button {
-      margin-top: 2em; font-size: 1.14em; font-weight: bold; color: #fff; background: var(--blue); border-radius: 13px; border: none; padding: .65em 2em; cursor: pointer; transition: background .14s, color .14s;
+    @keyframes modalSlideUp {
+      from { transform: translateY(50px); opacity: 0;}
+      to { transform: translateY(0); opacity: 1;}
     }
-    .modal-content button:active { background: var(--yellow); color: #243343;}
-    @media (max-width: 700px) {
-      .container { padding: 1.1em .07em;}
-      .park-title { font-size: 1.23em; }
-      .menu-btn { min-width: 120px; font-size:1.15em;}
-      .secret-card, .ride-card { padding: .8em .5em .7em .6em; font-size:1.09em;}
+    .modal-emoji { font-size: 3rem; margin-bottom: 1rem; display: block;}
+    .modal-content p { font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; color: var(--text-secondary);}
+    .modal-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; border: none; border-radius: 12px;
+      font-size: 1.1rem; font-weight: 600; padding: 1rem 2rem; cursor: pointer; transition: all 0.3s ease; box-shadow: var(--shadow-soft);
+    }
+    .modal-btn:hover {
+      transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+    @media (max-width: 768px) {
+      .container { padding: 1rem;}
+      .main-menu-grid { grid-template-columns: 1fr; gap: 1rem;}
+      .rides-grid, .secrets-grid { grid-template-columns: 1fr; gap: 1rem;}
+      .menu-btn { min-height: 100px; padding: 1.5rem; font-size: 1.1rem;}
+      .menu-btn .emoji { font-size: 2rem;}
+    }
+    @keyframes pulse { 0%, 100% { transform: scale(1);} 50% { transform: scale(1.05);} }
+    .pulse-animation { animation: pulse 2s ease-in-out infinite;}
+    html { scroll-behavior: smooth;}
+    .shimmer {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 75%);
+      background-size: 200% 100%; animation: shimmer 2s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0;}
+      100% { background-position: 200% 0;}
     }
   </style>
 </head>
 <body>
-  <div class="bg-stars"></div>
+  <div class="bg-animated"></div>
+  <div class="particles" id="particles"></div>
+  
   <div class="container">
     <!-- Main Menu -->
     <div id="main-menu" class="page active">
       <h1>Hidden Park Guide</h1>
       <div class="subtitle">Disney & Universal Cool Stuff – by Charlie</div>
-      <div class="author">Tap a park below to start. Tick rides & secrets off as you go. Reset for a new adventure!</div>
-      <div class="main-menu-btns">
-        <button class="menu-btn" onclick="openPark('MK')">🏰 Magic Kingdom</button>
-        <button class="menu-btn" onclick="openPark('EPCOT')">🌐 EPCOT</button>
-        <button class="menu-btn" onclick="openPark('HS')">🎬 Hollywood Studios</button>
-        <button class="menu-btn" onclick="openPark('AK')">🦁 Animal Kingdom</button>
-        <button class="menu-btn" onclick="openPark('USF')">🧙‍♂️ Universal Studios Florida</button>
-        <button class="menu-btn" onclick="openPark('IOA')">🦖 Islands of Adventure</button>
-        <button class="menu-btn" onclick="openPark('EU')">🌌 Epic Universe</button>
+      <div class="author">Tap a park below to start your magical journey. Check off rides & secrets as you discover them. Reset anytime for a fresh adventure!</div>
+      
+      <div class="main-menu-grid">
+        <button class="menu-btn" onclick="openPark('MK')">
+          <span class="emoji">🏰</span>
+          <span>Magic Kingdom</span>
+        </button>
+        <button class="menu-btn" onclick="openPark('EPCOT')">
+          <span class="emoji">🌐</span>
+          <span>EPCOT</span>
+        </button>
+        <button class="menu-btn" onclick="openPark('HS')">
+          <span class="emoji">🎬</span>
+          <span>Hollywood Studios</span>
+        </button>
+        <button class="menu-btn" onclick="openPark('AK')">
+          <span class="emoji">🦁</span>
+          <span>Animal Kingdom</span>
+        </button>
+        <button class="menu-btn" onclick="openPark('USF')">
+          <span class="emoji">🧙‍♂️</span>
+          <span>Universal Studios Florida</span>
+        </button>
+        <button class="menu-btn" onclick="openPark('IOA')">
+          <span class="emoji">🦖</span>
+          <span>Islands of Adventure</span>
+        </button>
+        <button class="menu-btn" onclick="openPark('EU')">
+          <span class="emoji">🌌</span>
+          <span>Epic Universe</span>
+        </button>
       </div>
+      
       <button class="reset-btn" onclick="resetProgress()">🔄 Reset All Progress</button>
     </div>
-<!-- MAGIC KINGDOM -->
-<div id="park-MK" class="page">
-  <button class="back-btn" onclick="goHome()">← Back</button>
-  <div class="park-title">🏰 Magic Kingdom</div>
-  <div class="section-header">Must-Do Rides</div>
-    <div class="land-header">Fantasyland</div>
-    <ul id="MK-rides-fantasy"></ul>
-    <div class="land-header">Frontierland</div>
-    <ul id="MK-rides-frontier"></ul>
-    <div class="land-header">Adventureland</div>
-    <ul id="MK-rides-adventure"></ul>
-    <div class="land-header">Liberty Square</div>
-    <ul id="MK-rides-liberty"></ul>
-    <div class="land-header">Tomorrowland</div>
-    <ul id="MK-rides-tomorrow"></ul>
-  <div class="section-header">Cool Hidden Stuff</div>
-  <ul id="MK-secrets"></ul>
-</div>
-<!-- HOLLYWOOD STUDIOS -->
-<div id="park-HS" class="page">
-  <button class="back-btn" onclick="goHome()">← Back</button>
-  <div class="park-title">🎬 Hollywood Studios</div>
-  <div class="section-header">Must-Do Rides</div>
-    <div class="land-header">Star Wars: Galaxy’s Edge</div>
-    <ul id="HS-rides-sw"></ul>
-    <div class="land-header">Toy Story Land</div>
-    <ul id="HS-rides-toy"></ul>
-    <div class="land-header">Sunset Boulevard</div>
-    <ul id="HS-rides-sunset"></ul>
-  <div class="section-header">Cool Hidden Stuff</div>
-  <ul id="HS-secrets"></ul>
-</div>
-<!-- ANIMAL KINGDOM -->
-<div id="park-AK" class="page">
-  <button class="back-btn" onclick="goHome()">← Back</button>
-  <div class="park-title">🦁 Animal Kingdom</div>
-  <div class="section-header">Must-Do Rides</div>
-    <div class="land-header">Pandora</div>
-    <ul id="AK-rides-pandora"></ul>
-    <div class="land-header">Africa</div>
-    <ul id="AK-rides-africa"></ul>
-    <div class="land-header">Asia</div>
-    <ul id="AK-rides-asia"></ul>
-    <div class="land-header">DinoLand U.S.A.</div>
-    <ul id="AK-rides-dino"></ul>
-  <div class="section-header">Cool Hidden Stuff</div>
-  <ul id="AK-secrets"></ul>
-</div>
-<!-- EPCOT -->
-<div id="park-EPCOT" class="page">
-  <button class="back-btn" onclick="goHome()">← Back</button>
-  <div class="park-title">🌐 EPCOT</div>
-  <div class="section-header">Must-Do Rides</div>
-    <div class="land-header">World Discovery</div>
-    <ul id="EPCOT-rides-discovery"></ul>
-    <div class="land-header">World Celebration/Test Track</div>
-    <ul id="EPCOT-rides-test"></ul>
-  <div class="section-header">Cool Hidden Stuff</div>
-  <ul id="EPCOT-secrets"></ul>
-</div>
-<!-- UNIVERSAL STUDIOS FLORIDA -->
-<div id="park-USF" class="page">
-  <button class="back-btn" onclick="goHome()">← Back</button>
-  <div class="park-title">🧙‍♂️ Universal Studios Florida</div>
-  <div class="section-header">Must-Do Rides</div>
-    <div class="land-header">Diagon Alley</div>
-    <ul id="USF-rides-diagon"></ul>
-    <div class="land-header">Park Connector</div>
-    <ul id="USF-rides-hogwarts"></ul>
-  <div class="section-header">Cool Hidden Stuff</div>
-  <ul id="USF-secrets"></ul>
-</div>
-<!-- ISLANDS OF ADVENTURE -->
-<div id="park-IOA" class="page">
-  <button class="back-btn" onclick="goHome()">← Back</button>
-  <div class="park-title">🦖 Islands of Adventure</div>
-  <div class="section-header">Must-Do Rides</div>
-    <div class="land-header">Jurassic Park</div>
-    <ul id="IOA-rides-jurassic"></ul>
-    <div class="land-header">Hogsmeade</div>
-    <ul id="IOA-rides-hogsmeade"></ul>
-  <div class="section-header">Cool Hidden Stuff</div>
-  <ul id="IOA-secrets"></ul>
-</div>
-<!-- EPIC UNIVERSE -->
-<div id="park-EU" class="page">
-  <button class="back-btn" onclick="goHome()">← Back</button>
-  <div class="park-title">🌌 Epic Universe</div>
-  <div class="section-header">Must-Do Rides</div>
-    <div class="land-header">Celestial Park</div>
-    <ul id="EU-rides-celestial"></ul>
-    <div class="land-header">Ministry of Magic</div>
-    <ul id="EU-rides-ministry"></ul>
-    <div class="land-header">Super Nintendo World</div>
-    <ul id="EU-rides-snw"></ul>
-    <div class="land-header">Isle of Berk</div>
-    <ul id="EU-rides-berk"></ul>
-  <div class="section-header">Cool Hidden Stuff</div>
-  <ul id="EU-secrets"></ul>
-</div>
-    <!-- Welcome modal -->
-    <div id="welcome-modal" class="modal" style="display:none;">
-      <div class="modal-content">
-        <div style="font-size:2.4em; margin-bottom:0.4em;">🎉✨</div>
-        <div>Welcome to your magical park adventure guide!<br><br>
-        Pick a park, tick off rides & cool secrets, and enjoy your Disney & Universal trip.<br><br>
-        <span style="color:#257eff;font-weight:bold;">Tip:</span> Tap <b>Share</b> &gt; <b>Add to Home Screen</b> for the best app-like experience.</div>
-        <button onclick="closeModal()">Let’s go!</button>
-      </div>
+    <!-- MAGIC KINGDOM -->
+    <div id="park-MK" class="page">
+      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <div class="park-title">🏰 Magic Kingdom</div>
+      <div class="section-header">Must-Do Rides</div>
+      <div class="land-header">Fantasyland</div>
+      <div class="rides-grid" id="MK-rides-fantasy"></div>
+      <div class="land-header">Frontierland</div>
+      <div class="rides-grid" id="MK-rides-frontier"></div>
+      <div class="land-header">Adventureland</div>
+      <div class="rides-grid" id="MK-rides-adventure"></div>
+      <div class="land-header">Liberty Square</div>
+      <div class="rides-grid" id="MK-rides-liberty"></div>
+      <div class="land-header">Tomorrowland</div>
+      <div class="rides-grid" id="MK-rides-tomorrow"></div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <div class="secrets-grid" id="MK-secrets"></div>
+    </div>
+    <!-- HOLLYWOOD STUDIOS -->
+    <div id="park-HS" class="page">
+      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <div class="park-title">🎬 Hollywood Studios</div>
+      <div class="section-header">Must-Do Rides</div>
+      <div class="land-header">Star Wars: Galaxy's Edge</div>
+      <div class="rides-grid" id="HS-rides-sw"></div>
+      <div class="land-header">Toy Story Land</div>
+      <div class="rides-grid" id="HS-rides-toy"></div>
+      <div class="land-header">Sunset Boulevard</div>
+      <div class="rides-grid" id="HS-rides-sunset"></div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <div class="secrets-grid" id="HS-secrets"></div>
+    </div>
+    <!-- ANIMAL KINGDOM -->
+    <div id="park-AK" class="page">
+      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <div class="park-title">🦁 Animal Kingdom</div>
+      <div class="section-header">Must-Do Rides</div>
+      <div class="land-header">Pandora</div>
+      <div class="rides-grid" id="AK-rides-pandora"></div>
+      <div class="land-header">Africa</div>
+      <div class="rides-grid" id="AK-rides-africa"></div>
+      <div class="land-header">Asia</div>
+      <div class="rides-grid" id="AK-rides-asia"></div>
+      <div class="land-header">DinoLand U.S.A.</div>
+      <div class="rides-grid" id="AK-rides-dino"></div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <div class="secrets-grid" id="AK-secrets"></div>
+    </div>
+    <!-- EPCOT -->
+    <div id="park-EPCOT" class="page">
+      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <div class="park-title">🌐 EPCOT</div>
+      <div class="section-header">Must-Do Rides</div>
+      <div class="land-header">World Discovery</div>
+      <div class="rides-grid" id="EPCOT-rides-discovery"></div>
+      <div class="land-header">World Celebration/Test Track</div>
+      <div class="rides-grid" id="EPCOT-rides-test"></div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <div class="secrets-grid" id="EPCOT-secrets"></div>
+    </div>
+    <!-- UNIVERSAL STUDIOS FLORIDA -->
+    <div id="park-USF" class="page">
+      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <div class="park-title">🧙‍♂️ Universal Studios Florida</div>
+      <div class="section-header">Must-Do Rides</div>
+      <div class="land-header">Diagon Alley</div>
+      <div class="rides-grid" id="USF-rides-diagon"></div>
+      <div class="land-header">Park Connector</div>
+      <div class="rides-grid" id="USF-rides-hogwarts"></div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <div class="secrets-grid" id="USF-secrets"></div>
+    </div>
+    <!-- ISLANDS OF ADVENTURE -->
+    <div id="park-IOA" class="page">
+      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <div class="park-title">🦖 Islands of Adventure</div>
+      <div class="section-header">Must-Do Rides</div>
+      <div class="land-header">Jurassic Park</div>
+      <div class="rides-grid" id="IOA-rides-jurassic"></div>
+      <div class="land-header">Hogsmeade</div>
+      <div class="rides-grid" id="IOA-rides-hogsmeade"></div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <div class="secrets-grid" id="IOA-secrets"></div>
+    </div>
+    <!-- EPIC UNIVERSE -->
+    <div id="park-EU" class="page">
+      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <div class="park-title">🌌 Epic Universe</div>
+      <div class="section-header">Must-Do Rides</div>
+      <div class="land-header">Celestial Park</div>
+      <div class="rides-grid" id="EU-rides-celestial"></div>
+      <div class="land-header">Ministry of Magic</div>
+      <div class="rides-grid" id="EU-rides-ministry"></div>
+      <div class="land-header">Super Nintendo World</div>
+      <div class="rides-grid" id="EU-rides-snw"></div>
+      <div class="land-header">Isle of Berk</div>
+      <div class="rides-grid" id="EU-rides-berk"></div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <div class="secrets-grid" id="EU-secrets"></div>
+    </div>
+  </div>
+  <!-- Welcome Modal -->
+  <div id="welcome-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="modal-emoji">🎉✨</span>
+      <p>Welcome to your magical park adventure guide!<br><br>
+      Pick a park, check off rides & cool secrets, and make the most of your Disney & Universal trip.<br><br>
+      <strong style="color: var(--accent);">Pro Tip:</strong> Add this to your home screen for the best experience!</p>
+      <button class="modal-btn" onclick="closeModal()">Let's Begin the Magic!</button>
     </div>
   </div>
   <script>
-    // --- Button ripple
-    document.addEventListener('DOMContentLoaded', function() {
-      document.querySelectorAll('.menu-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          let ripple = document.createElement('span');
-          ripple.className = 'ripple';
-          ripple.style.left = (e.offsetX - 25) + 'px';
-          ripple.style.top = (e.offsetY - 25) + 'px';
-          ripple.style.width = ripple.style.height = '50px';
-          this.appendChild(ripple);
-          setTimeout(()=>ripple.remove(), 390);
-        });
-      });
-    });
-
+    // Create floating particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = window.innerWidth > 768 ? 50 : 25;
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 6 + 's';
+        particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        particlesContainer.appendChild(particle);
+      }
+    }
+    createParticles();
+    // Navigation functions
     function openPark(park) {
-      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-      document.getElementById('main-menu').classList.remove('active');
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('park-' + park).classList.add('active');
       window.scrollTo(0, 0);
     }
     function goHome() {
-      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('main-menu').classList.add('active');
       window.scrollTo(0, 0);
     }
-    // Welcome modal (once per visit)
+    // Modal functions
     function showModal() {
       document.getElementById('welcome-modal').style.display = 'flex';
     }
@@ -307,268 +400,278 @@
       document.getElementById('welcome-modal').style.display = 'none';
       localStorage.setItem("seenCharlieWelcome", "1");
     }
-    if(!localStorage.getItem("seenCharlieWelcome")) setTimeout(showModal, 400);
-
-const secrets = {
-  MK: [
-    {emoji:"💍", name:"Find the Haunted Mansion ring in the pavement", desc:"Liberty Square"},
-    {emoji:"✨", name:"Get 'pixie dusted' at Sir Mickey’s", desc:"Behind the castle"},
-    {emoji:"🐫", name:"Get sprayed by the camel at Aladdin's Magic Carpets", desc:"Adventureland"},
-    {emoji:"🕯️", name:"Pose for lantern photos at Tangled bathrooms & look for hidden Pascals", desc:"Near Rapunzel tower"},
-    {emoji:"💦", name:"Notice the brown 'sewage line' in Liberty Square", desc:"A historical detail!"},
-    {emoji:"🔔", name:"Listen in Tomorrowland Power & Light phone booths", desc:"Hear a secret call"},
-    {emoji:"🏰", name:"Make a wish at Cinderella's Wishing Well", desc:"Right of the castle"},
-    {emoji:"📞", name:"Pick up the phone at City Hall for a surprise", desc:"Main Street"},
-    {emoji:"📸", name:"Ask for a Photopass 'magic shot'", desc:"Try waving or asking!"},
-    {emoji:"🌈", name:"Watch the 'Kiss Goodnight' at closing", desc:"Castle lights farewell"},
-    {emoji:"🎹", name:"Listen to live piano at Casey’s Corner", desc:"Ragtime on Main Street"},
-    {emoji:"🗝️", name:"Ask about the 'Keys to the Kingdom' tour", desc:"Only for superfans"},
-    {emoji:"🦴", name:"Look for the talking trash can (Push!)", desc:"Tomorrowland (sometimes appears)"},
-    {emoji:"🐶", name:"Spot the 'Smiling Dog' in Pirates of the Caribbean", desc:"The one with keys in his mouth!"}
-  ],
-  EPCOT: [
-    {emoji:"🥤", name:"Try every soda at Club Cool (even Beverly)", desc:"Near Creations Shop"},
-    {emoji:"🚇", name:"Snap a photo at the Bubblegum Wall", desc:"Exit of Spaceship Earth"},
-    {emoji:"🚃", name:"Find a hidden Mickey in Germany's train garden", desc:"World Showcase"},
-    {emoji:"⛲", name:"Notice the 'burning Rome' scent in Spaceship Earth", desc:"During the fire scene"},
-    {emoji:"🌸", name:"Explore Morocco’s quiet back alleys", desc:"So many details!"},
-    {emoji:"🎤", name:"Enjoy Voices of Liberty a cappella", desc:"American Adventure rotunda"},
-    {emoji:"🎡", name:"See night lights on Spaceship Earth", desc:"'Beacons of Magic' show"},
-    {emoji:"🍧", name:"Eat School Bread in Norway", desc:"Bakery in Norway pavilion"},
-    {emoji:"🍦", name:"Try a macaron ice cream sandwich", desc:"France pavilion"},
-    {emoji:"🔎", name:"Spot a hidden Mickey in Living with the Land", desc:"Greenhouse scenes"},
-    {emoji:"🥚", name:"Try a festival scavenger hunt", desc:"Like Remy’s or Figment’s!"},
-    {emoji:"🗼", name:"Notice the bird-free Eiffel Tower", desc:"Painted with special paint"},
-    {emoji:"🎩", name:"Find Dreamfinder references at Imagination Pavilion", desc:"Classic EPCOT fans only!"}
-  ],
-  HS: [
-    {emoji:"☂️", name:"Stand under the Singing in the Rain umbrella", desc:"Pull the handle near Echo Lake"},
-    {emoji:"🎸", name:"See the Tower of Terror neon at night", desc:"Perfect spooky photo"},
-    {emoji:"🐦", name:"See dino Gertie by Echo Lake", desc:"Classic Disney dinosaur!"},
-    {emoji:"🎥", name:"See droids in Galaxy’s Edge", desc:"Check near shops and doors"},
-    {emoji:"🌟", name:"Watch Fantasmic! or Indiana Jones", desc:"Epic live shows"},
-    {emoji:"🚂", name:"See Walt’s model train car in One Man’s Dream", desc:"History lovers only"},
-    {emoji:"🍿", name:"Try all flavors at Kat Saka’s Kettle", desc:"Colorful Star Wars popcorn"},
-    {emoji:"💼", name:"Find Walt’s office window", desc:"Look for his name in the windows"},
-    {emoji:"🥓", name:"Eat Totchos at Woody’s Lunch Box", desc:"Potato barrel + chili cheese"},
-    {emoji:"🍪", name:"Get a Jack-Jack’s Num Num Cookie", desc:"Super gooey, Pixar Place"}
-  ],
-  AK: [
-    {emoji:"🦖", name:"Take a selfie with Dino Sue", desc:"Near DINOSAUR entrance"},
-    {emoji:"🌱", name:"See DiVine, the living plant", desc:"Path from Africa to Asia"},
-    {emoji:"🎭", name:"Enjoy Festival of the Lion King", desc:"Fantastic live show"},
-    {emoji:"🦍", name:"Walk the Gorilla Falls or Maharajah Jungle Trek", desc:"See gorillas and tigers"},
-    {emoji:"🔍", name:"Try the Wilderness Explorer game", desc:"Collect badges all over"},
-    {emoji:"💦", name:"Drink a Night Blossom slush in Pandora", desc:"Tastes as wild as it looks!"},
-    {emoji:"🔥", name:"See Tree of Life Awakenings at night", desc:"Projections on the tree"},
-    {emoji:"🍟", name:"Eat Mr. Kamal’s seasoned fries", desc:"Asia, legendary snack"},
-    {emoji:"🦘", name:"Watch kangaroos by Tree of Life", desc:"Morning is best"},
-    {emoji:"⛰️", name:"Spot the Yeti Shrine at Everest", desc:"Near the ride entrance"},
-    {emoji:"🦕", name:"Listen for dinosaur sounds outside DINOSAUR", desc:"Hidden speakers!"}
-  ],
-  USF: [
-    {emoji:"🐍", name:"See Kreacher peek from 12 Grimmauld Place", desc:"Knock, watch the window"},
-    {emoji:"📞", name:"Dial 'MAGIC' at the red phone booth", desc:"Dial 62442 for a secret!"},
-    {emoji:"🐉", name:"Watch the dragon breathe fire over Gringotts", desc:"Every 10-15 minutes"},
-    {emoji:"🧙", name:"Chat with the Knight Bus shrunken head", desc:"It talks!"},
-    {emoji:"🦑", name:"Spot the Jaws shark & movie tributes", desc:"San Francisco & Diagon Alley"},
-    {emoji:"🚀", name:"Use single rider for Escape from Gringotts", desc:"Beat the lines!"},
-    {emoji:"🎟️", name:"See E.T.'s passport Easter egg in the queue", desc:"A tribute to the movie"},
-    {emoji:"🥤", name:"Try Butterbeer as frozen, hot, or ice cream", desc:"Diagon Alley"},
-    {emoji:"🎮", name:"Try a secret wand spell", desc:"Ask for a hint!"},
-    {emoji:"👾", name:"Spot hidden Minions in the park", desc:"Look up in the gift shops!"}
-  ],
-  IOA: [
-    {emoji:"🦖", name:"Watch Blue the Raptor at Jurassic Park", desc:"Photo ops through the day"},
-    {emoji:"🐍", name:"Request the Men in Black Immigration Room tour", desc:"If you catch staff in a good mood!"},
-    {emoji:"🐲", name:"Try Butterbeer or pumpkin juice at Three Broomsticks", desc:"Or sticky toffee pudding!"},
-    {emoji:"👻", name:"Listen for Moaning Myrtle in Hogsmeade bathrooms", desc:"Harry Potter fans only!"},
-    {emoji:"🎢", name:"Ride front row on Hulk or VelociCoaster", desc:"Top thrill!"},
-    {emoji:"🦄", name:"See a house elf in a Hogsmeade shop window", desc:"Look up for moving elves!"},
-    {emoji:"🚪", name:"Try the secret knock in Knockturn Alley", desc:"Watch what happens!"},
-    {emoji:"🍈", name:"Ask about the Olive at Popeye ride", desc:"A quirky prop fact!"}
-  ],
-  EU: [
-    {emoji:"🌌", name:"Walk the gardens of Celestial Park", desc:"Relax and people-watch"},
-    {emoji:"🍄", name:"Ride Mario Kart: Bowser's Challenge", desc:"Super Nintendo World"},
-    {emoji:"🐉", name:"See Toothless in Isle of Berk", desc:"How to Train Your Dragon area"},
-    {emoji:"🎩", name:"Tour the Ministry of Magic", desc:"Brand new for Harry Potter fans"},
-    {emoji:"👻", name:"Check out Frankenstein’s Dark Universe", desc:"Classic monsters meet the future!"}
-  ]
-};
-
-const rides = {
-  MK: {
-    fantasy: [
-      {emoji:"⛏️", name:"Seven Dwarfs Mine Train"},
-      {emoji:"🌊", name:"Tiana's Bayou Adventure (Log Flume)"},
-      {emoji:"🌍", name:"It's a Small World"}
-    ],
-    frontier: [
-      {emoji:"🚂", name:"Big Thunder Mountain Railroad"}
-    ],
-    adventure: [
-      {emoji:"🦜", name:"Jungle Cruise"},
-      {emoji:"🏴‍☠️", name:"Pirates of the Caribbean"}
-    ],
-    liberty: [
-      {emoji:"👻", name:"Haunted Mansion"}
-    ],
-    tomorrow: [
-      {emoji:"🏍️", name:"TRON Lightcycle Run"}
-    ]
-  },
-  HS: {
-    sw: [
-      {emoji:"⭐", name:"Star Wars: Rise of the Resistance"},
-      {emoji:"🚀", name:"Millennium Falcon: Smugglers Run"}
-    ],
-    toy: [
-      {emoji:"🐶", name:"Slinky Dog Dash"}
-    ],
-    sunset: [
-      {emoji:"🏨", name:"Tower of Terror"}
-    ]
-  },
-  AK: {
-    pandora: [
-      {emoji:"🦋", name:"Avatar Flight of Passage"},
-      {emoji:"🛶", name:"Na'vi River Journey"}
-    ],
-    africa: [
-      {emoji:"🦁", name:"Kilimanjaro Safaris"}
-    ],
-    asia: [
-      {emoji:"⛰️", name:"Expedition Everest"},
-      {emoji:"🌊", name:"Kali River Rapids"}
-    ],
-    dino: [
-      {emoji:"🦖", name:"DINOSAUR"}
-    ]
-  },
-  EPCOT: {
-    discovery: [
-      {emoji:"🚀", name:"Guardians of the Galaxy: Cosmic Rewind"}
-    ],
-    test: [
-      {emoji:"🏎️", name:"Test Track"}
-    ]
-  },
-  USF: {
-    diagon: [
-      {emoji:"🐉", name:"Harry Potter and the Escape from Gringotts"}
-    ],
-    hogwarts: [
-      {emoji:"🚂", name:"Hogwarts Express"}
-    ]
-  },
-  IOA: {
-    jurassic: [
-      {emoji:"🎢", name:"Jurassic World VelociCoaster"},
-      {emoji:"🚤", name:"Jurassic Park River Adventure"}
-    ],
-    hogsmeade: [
-      {emoji:"🏍️", name:"Hagrid's Magical Creatures Motorbike Adventure"},
-      {emoji:"🧙‍♂️", name:"Harry Potter and the Forbidden Journey"}
-    ]
-  },
-  EU: {
-    celestial: [
-      {emoji:"🚗", name:"Starfall Racers"}
-    ],
-    ministry: [
-      {emoji:"🎩", name:"Harry Potter and the Ministry of Magic"}
-    ],
-    snw: [
-      {emoji:"🏎️", name:"Bowser’s Challenge"},
-      {emoji:"⛏️", name:"Minecart Madness"}
-    ],
-    berk: [
-      {emoji:"🐉", name:"Hiccup’s Wing Gliders"},
-      {emoji:"🐲", name:"Dragon Racer Rally"}
-    ]
-  }
-};
-
-const parkList = ["MK","EPCOT","HS","AK","USF","IOA","EU"];
-const saved = JSON.parse(localStorage.getItem("hiddenParkFullScreenCharlieRides") || "{}");
-
-// Render secrets (Cool Hidden Stuff)
-parkList.forEach(park => {
-  const ul = document.getElementById(park+"-secrets");
-  secrets[park].forEach((s, idx) => {
-    const key = `${park}-secret-${idx}`;
-    const li = document.createElement("li");
-    li.className = "secret-card" + (saved[key] ? " done" : "");
-    li.innerHTML = `<span class="secret-emoji">${s.emoji}</span>
-      <div class="secret-info">${s.name}<div class="secret-desc">${s.desc}</div></div>
-      <span class="tick">✔️</span>`;
-    li.onclick = function(e) {
-      li.classList.toggle("done");
-      saved[key] = li.classList.contains("done");
-      localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
+    // Show welcome modal for first-time visitors
+    if (!localStorage.getItem("seenCharlieWelcome")) {
+      setTimeout(showModal, 800);
+    }
+    // DATA:
+    const secrets = {
+      MK: [
+        {emoji:"💍", name:"Find the Haunted Mansion ring in the pavement", desc:"Liberty Square"},
+        {emoji:"✨", name:"Get 'pixie dusted' at Sir Mickey's", desc:"Behind the castle"},
+        {emoji:"🐫", name:"Get sprayed by the camel at Aladdin's Magic Carpets", desc:"Adventureland"},
+        {emoji:"🕯️", name:"Pose for lantern photos at Tangled bathrooms & look for hidden Pascals", desc:"Near Rapunzel tower"},
+        {emoji:"💦", name:"Notice the brown 'sewage line' in Liberty Square", desc:"A historical detail!"},
+        {emoji:"🔔", name:"Listen in Tomorrowland Power & Light phone booths", desc:"Hear a secret call"},
+        {emoji:"🏰", name:"Make a wish at Cinderella's Wishing Well", desc:"Right of the castle"},
+        {emoji:"📞", name:"Pick up the phone at City Hall for a surprise", desc:"Main Street"},
+        {emoji:"📸", name:"Ask for a Photopass 'magic shot'", desc:"Try waving or asking!"},
+        {emoji:"🌈", name:"Watch the 'Kiss Goodnight' at closing", desc:"Castle lights farewell"},
+        {emoji:"🎹", name:"Listen to live piano at Casey’s Corner", desc:"Ragtime on Main Street"},
+        {emoji:"🗝️", name:"Ask about the 'Keys to the Kingdom' tour", desc:"Only for superfans"},
+        {emoji:"🦴", name:"Look for the talking trash can (Push!)", desc:"Tomorrowland (sometimes appears)"},
+        {emoji:"🐶", name:"Spot the 'Smiling Dog' in Pirates of the Caribbean", desc:"The one with keys in his mouth!"}
+      ],
+      EPCOT: [
+        {emoji:"🥤", name:"Try every soda at Club Cool (even Beverly)", desc:"Near Creations Shop"},
+        {emoji:"🚇", name:"Snap a photo at the Bubblegum Wall", desc:"Exit of Spaceship Earth"},
+        {emoji:"🚃", name:"Find a hidden Mickey in Germany's train garden", desc:"World Showcase"},
+        {emoji:"⛲", name:"Notice the 'burning Rome' scent in Spaceship Earth", desc:"During the fire scene"},
+        {emoji:"🌸", name:"Explore Morocco’s quiet back alleys", desc:"So many details!"},
+        {emoji:"🎤", name:"Enjoy Voices of Liberty a cappella", desc:"American Adventure rotunda"},
+        {emoji:"🎡", name:"See night lights on Spaceship Earth", desc:"'Beacons of Magic' show"},
+        {emoji:"🍧", name:"Eat School Bread in Norway", desc:"Bakery in Norway pavilion"},
+        {emoji:"🍦", name:"Try a macaron ice cream sandwich", desc:"France pavilion"},
+        {emoji:"🔎", name:"Spot a hidden Mickey in Living with the Land", desc:"Greenhouse scenes"},
+        {emoji:"🥚", name:"Try a festival scavenger hunt", desc:"Like Remy’s or Figment’s!"},
+        {emoji:"🗼", name:"Notice the bird-free Eiffel Tower", desc:"Painted with special paint"},
+        {emoji:"🎩", name:"Find Dreamfinder references at Imagination Pavilion", desc:"Classic EPCOT fans only!"}
+      ],
+      HS: [
+        {emoji:"☂️", name:"Stand under the Singing in the Rain umbrella", desc:"Pull the handle near Echo Lake"},
+        {emoji:"🎸", name:"See the Tower of Terror neon at night", desc:"Perfect spooky photo"},
+        {emoji:"🐦", name:"See dino Gertie by Echo Lake", desc:"Classic Disney dinosaur!"},
+        {emoji:"🎥", name:"See droids in Galaxy’s Edge", desc:"Check near shops and doors"},
+        {emoji:"🌟", name:"Watch Fantasmic! or Indiana Jones", desc:"Epic live shows"},
+        {emoji:"🚂", name:"See Walt’s model train car in One Man’s Dream", desc:"History lovers only"},
+        {emoji:"🍿", name:"Try all flavors at Kat Saka’s Kettle", desc:"Colorful Star Wars popcorn"},
+        {emoji:"💼", name:"Find Walt’s office window", desc:"Look for his name in the windows"},
+        {emoji:"🥓", name:"Eat Totchos at Woody’s Lunch Box", desc:"Potato barrel + chili cheese"},
+        {emoji:"🍪", name:"Get a Jack-Jack’s Num Num Cookie", desc:"Super gooey, Pixar Place"}
+      ],
+      AK: [
+        {emoji:"🦖", name:"Take a selfie with Dino Sue", desc:"Near DINOSAUR entrance"},
+        {emoji:"🌱", name:"See DiVine, the living plant", desc:"Path from Africa to Asia"},
+        {emoji:"🎭", name:"Enjoy Festival of the Lion King", desc:"Fantastic live show"},
+        {emoji:"🦍", name:"Walk the Gorilla Falls or Maharajah Jungle Trek", desc:"See gorillas and tigers"},
+        {emoji:"🔍", name:"Try the Wilderness Explorer game", desc:"Collect badges all over"},
+        {emoji:"💦", name:"Drink a Night Blossom slush in Pandora", desc:"Tastes as wild as it looks!"},
+        {emoji:"🔥", name:"See Tree of Life Awakenings at night", desc:"Projections on the tree"},
+        {emoji:"🍟", name:"Eat Mr. Kamal’s seasoned fries", desc:"Asia, legendary snack"},
+        {emoji:"🦘", name:"Watch kangaroos by Tree of Life", desc:"Morning is best"},
+        {emoji:"⛰️", name:"Spot the Yeti Shrine at Everest", desc:"Near the ride entrance"},
+        {emoji:"🦕", name:"Listen for dinosaur sounds outside DINOSAUR", desc:"Hidden speakers!"}
+      ],
+      USF: [
+        {emoji:"🐍", name:"See Kreacher peek from 12 Grimmauld Place", desc:"Knock, watch the window"},
+        {emoji:"📞", name:"Dial 'MAGIC' at the red phone booth", desc:"Dial 62442 for a secret!"},
+        {emoji:"🐉", name:"Watch the dragon breathe fire over Gringotts", desc:"Every 10-15 minutes"},
+        {emoji:"🧙", name:"Chat with the Knight Bus shrunken head", desc:"It talks!"},
+        {emoji:"🦑", name:"Spot the Jaws shark & movie tributes", desc:"San Francisco & Diagon Alley"},
+        {emoji:"🚀", name:"Use single rider for Escape from Gringotts", desc:"Beat the lines!"},
+        {emoji:"🎟️", name:"See E.T.'s passport Easter egg in the queue", desc:"A tribute to the movie"},
+        {emoji:"🥤", name:"Try Butterbeer as frozen, hot, or ice cream", desc:"Diagon Alley"},
+        {emoji:"🎮", name:"Try a secret wand spell", desc:"Ask for a hint!"},
+        {emoji:"👾", name:"Spot hidden Minions in the park", desc:"Look up in the gift shops!"}
+      ],
+      IOA: [
+        {emoji:"🦖", name:"Watch Blue the Raptor at Jurassic Park", desc:"Photo ops through the day"},
+        {emoji:"🐍", name:"Request the Men in Black Immigration Room tour", desc:"If you catch staff in a good mood!"},
+        {emoji:"🐲", name:"Try Butterbeer or pumpkin juice at Three Broomsticks", desc:"Or sticky toffee pudding!"},
+        {emoji:"👻", name:"Listen for Moaning Myrtle in Hogsmeade bathrooms", desc:"Harry Potter fans only!"},
+        {emoji:"🎢", name:"Ride front row on Hulk or VelociCoaster", desc:"Top thrill!"},
+        {emoji:"🦄", name:"See a house elf in a Hogsmeade shop window", desc:"Look up for moving elves!"},
+        {emoji:"🚪", name:"Try the secret knock in Knockturn Alley", desc:"Watch what happens!"},
+        {emoji:"🍈", name:"Ask about the Olive at Popeye ride", desc:"A quirky prop fact!"}
+      ],
+      EU: [
+        {emoji:"🌌", name:"Walk the gardens of Celestial Park", desc:"Relax and people-watch"},
+        {emoji:"🍄", name:"Ride Mario Kart: Bowser's Challenge", desc:"Super Nintendo World"},
+        {emoji:"🐉", name:"See Toothless in Isle of Berk", desc:"How to Train Your Dragon area"},
+        {emoji:"🎩", name:"Tour the Ministry of Magic", desc:"Brand new for Harry Potter fans"},
+        {emoji:"👻", name:"Check out Frankenstein’s Dark Universe", desc:"Classic monsters meet the future!"}
+      ]
     };
-    ul.appendChild(li);
-  });
-});
-
-// Render rides by area (Must-Do Rides)
-function renderRides(park, area, ulId) {
-  const rideArr = (rides[park] && rides[park][area]) || [];
-  const ul = document.getElementById(ulId);
-  rideArr.forEach((ride, idx) => {
-    const key = `${park}-ride-${area}-${idx}`;
-    const li = document.createElement("li");
-    li.className = "ride-card" + (saved[key] ? " done" : "");
-    li.innerHTML = `<span class="ride-emoji">${ride.emoji}</span>
-      <div class="ride-info">${ride.name}</div>
-      <span class="tick">✔️</span>`;
-    li.onclick = function(e) {
-      li.classList.toggle("done");
-      saved[key] = li.classList.contains("done");
-      localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
+    const rides = {
+      MK: {
+        fantasy: [
+          {emoji:"⛏️", name:"Seven Dwarfs Mine Train"},
+          {emoji:"🌊", name:"Tiana's Bayou Adventure (Log Flume)"},
+          {emoji:"🌍", name:"It's a Small World"}
+        ],
+        frontier: [
+          {emoji:"🚂", name:"Big Thunder Mountain Railroad"}
+        ],
+        adventure: [
+          {emoji:"🦜", name:"Jungle Cruise"},
+          {emoji:"🏴‍☠️", name:"Pirates of the Caribbean"}
+        ],
+        liberty: [
+          {emoji:"👻", name:"Haunted Mansion"}
+        ],
+        tomorrow: [
+          {emoji:"🏍️", name:"TRON Lightcycle Run"}
+        ]
+      },
+      HS: {
+        sw: [
+          {emoji:"⭐", name:"Star Wars: Rise of the Resistance"},
+          {emoji:"🚀", name:"Millennium Falcon: Smugglers Run"}
+        ],
+        toy: [
+          {emoji:"🐶", name:"Slinky Dog Dash"}
+        ],
+        sunset: [
+          {emoji:"🏨", name:"Tower of Terror"}
+        ]
+      },
+      AK: {
+        pandora: [
+          {emoji:"🦋", name:"Avatar Flight of Passage"},
+          {emoji:"🛶", name:"Na'vi River Journey"}
+        ],
+        africa: [
+          {emoji:"🦁", name:"Kilimanjaro Safaris"}
+        ],
+        asia: [
+          {emoji:"⛰️", name:"Expedition Everest"},
+          {emoji:"🌊", name:"Kali River Rapids"}
+        ],
+        dino: [
+          {emoji:"🦖", name:"DINOSAUR"}
+        ]
+      },
+      EPCOT: {
+        discovery: [
+          {emoji:"🚀", name:"Guardians of the Galaxy: Cosmic Rewind"}
+        ],
+        test: [
+          {emoji:"🏎️", name:"Test Track"}
+        ]
+      },
+      USF: {
+        diagon: [
+          {emoji:"🐉", name:"Harry Potter and the Escape from Gringotts"}
+        ],
+        hogwarts: [
+          {emoji:"🚂", name:"Hogwarts Express"}
+        ]
+      },
+      IOA: {
+        jurassic: [
+          {emoji:"🎢", name:"Jurassic World VelociCoaster"},
+          {emoji:"🚤", name:"Jurassic Park River Adventure"}
+        ],
+        hogsmeade: [
+          {emoji:"🏍️", name:"Hagrid's Magical Creatures Motorbike Adventure"},
+          {emoji:"🧙‍♂️", name:"Harry Potter and the Forbidden Journey"}
+        ]
+      },
+      EU: {
+        celestial: [
+          {emoji:"🚗", name:"Starfall Racers"}
+        ],
+        ministry: [
+          {emoji:"🎩", name:"Harry Potter and the Ministry of Magic"}
+        ],
+        snw: [
+          {emoji:"🏎️", name:"Bowser’s Challenge"},
+          {emoji:"⛏️", name:"Minecart Madness"}
+        ],
+        berk: [
+          {emoji:"🐉", name:"Hiccup’s Wing Gliders"},
+          {emoji:"🐲", name:"Dragon Racer Rally"}
+        ]
+      }
     };
-    ul.appendChild(li);
-  });
-}
-// Magic Kingdom
-renderRides("MK", "fantasy", "MK-rides-fantasy");
-renderRides("MK", "frontier", "MK-rides-frontier");
-renderRides("MK", "adventure", "MK-rides-adventure");
-renderRides("MK", "liberty", "MK-rides-liberty");
-renderRides("MK", "tomorrow", "MK-rides-tomorrow");
-// Hollywood Studios
-renderRides("HS", "sw", "HS-rides-sw");
-renderRides("HS", "toy", "HS-rides-toy");
-renderRides("HS", "sunset", "HS-rides-sunset");
-// Animal Kingdom
-renderRides("AK", "pandora", "AK-rides-pandora");
-renderRides("AK", "africa", "AK-rides-africa");
-renderRides("AK", "asia", "AK-rides-asia");
-renderRides("AK", "dino", "AK-rides-dino");
-// EPCOT
-renderRides("EPCOT", "discovery", "EPCOT-rides-discovery");
-renderRides("EPCOT", "test", "EPCOT-rides-test");
-// Universal Studios
-renderRides("USF", "diagon", "USF-rides-diagon");
-renderRides("USF", "hogwarts", "USF-rides-hogwarts");
-// Islands of Adventure
-renderRides("IOA", "jurassic", "IOA-rides-jurassic");
-renderRides("IOA", "hogsmeade", "IOA-rides-hogsmeade");
-// Epic Universe
-renderRides("EU", "celestial", "EU-rides-celestial");
-renderRides("EU", "ministry", "EU-rides-ministry");
-renderRides("EU", "snw", "EU-rides-snw");
-renderRides("EU", "berk", "EU-rides-berk");
-
-function resetProgress() {
-  localStorage.removeItem("hiddenParkFullScreenCharlieRides");
-  localStorage.removeItem("seenCharlieWelcome");
-  location.reload();
-}
+    const parkList = ["MK","EPCOT","HS","AK","USF","IOA","EU"];
+    const saved = JSON.parse(localStorage.getItem("hiddenParkFullScreenCharlieRides") || "{}");
+    // Render secrets (Cool Hidden Stuff)
+    parkList.forEach(park => {
+      const grid = document.getElementById(park + "-secrets");
+      secrets[park].forEach((s, idx) => {
+        const key = `${park}-secret-${idx}`;
+        const card = document.createElement("div");
+        card.className = "secret-card glass-card" + (saved[key] ? " done" : "");
+        card.innerHTML = `
+          <div class="card-content">
+            <span class="card-emoji">${s.emoji}</span>
+            <div class="card-info">
+              <div class="card-name">${s.name}</div>
+              <div class="card-desc">${s.desc}</div>
+            </div>
+            <span class="tick">✔️</span>
+          </div>`;
+        card.onclick = function(e) {
+          card.classList.toggle("done");
+          saved[key] = card.classList.contains("done");
+          localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
+        };
+        grid.appendChild(card);
+      });
+    });
+    // Render rides by area (Must-Do Rides)
+    function renderRides(park, area, gridId) {
+      const rideArr = (rides[park] && rides[park][area]) || [];
+      const grid = document.getElementById(gridId);
+      rideArr.forEach((ride, idx) => {
+        const key = `${park}-ride-${area}-${idx}`;
+        const card = document.createElement("div");
+        card.className = "ride-card glass-card" + (saved[key] ? " done" : "");
+        card.innerHTML = `
+          <div class="card-content">
+            <span class="card-emoji">${ride.emoji}</span>
+            <div class="card-info">
+              <div class="card-name">${ride.name}</div>
+            </div>
+            <span class="tick">✔️</span>
+          </div>`;
+        card.onclick = function(e) {
+          card.classList.toggle("done");
+          saved[key] = card.classList.contains("done");
+          localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
+        };
+        grid.appendChild(card);
+      });
+    }
+    // Magic Kingdom
+    renderRides("MK", "fantasy", "MK-rides-fantasy");
+    renderRides("MK", "frontier", "MK-rides-frontier");
+    renderRides("MK", "adventure", "MK-rides-adventure");
+    renderRides("MK", "liberty", "MK-rides-liberty");
+    renderRides("MK", "tomorrow", "MK-rides-tomorrow");
+    // Hollywood Studios
+    renderRides("HS", "sw", "HS-rides-sw");
+    renderRides("HS", "toy", "HS-rides-toy");
+    renderRides("HS", "sunset", "HS-rides-sunset");
+    // Animal Kingdom
+    renderRides("AK", "pandora", "AK-rides-pandora");
+    renderRides("AK", "africa", "AK-rides-africa");
+    renderRides("AK", "asia", "AK-rides-asia");
+    renderRides("AK", "dino", "AK-rides-dino");
+    // EPCOT
+    renderRides("EPCOT", "discovery", "EPCOT-rides-discovery");
+    renderRides("EPCOT", "test", "EPCOT-rides-test");
+    // Universal Studios
+    renderRides("USF", "diagon", "USF-rides-diagon");
+    renderRides("USF", "hogwarts", "USF-rides-hogwarts");
+    // Islands of Adventure
+    renderRides("IOA", "jurassic", "IOA-rides-jurassic");
+    renderRides("IOA", "hogsmeade", "IOA-rides-hogsmeade");
+    // Epic Universe
+    renderRides("EU", "celestial", "EU-rides-celestial");
+    renderRides("EU", "ministry", "EU-rides-ministry");
+    renderRides("EU", "snw", "EU-rides-snw");
+    renderRides("EU", "berk", "EU-rides-berk");
+    function resetProgress() {
+      localStorage.removeItem("hiddenParkFullScreenCharlieRides");
+      localStorage.removeItem("seenCharlieWelcome");
+      location.reload();
+    }
   </script>
 </body>
 </html>
+
 
 
 

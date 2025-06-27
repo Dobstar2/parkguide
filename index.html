@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Hidden Park Guide – by Charlie</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#257eff">
   <style>
     html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: linear-gradient(120deg,#f0f8ff 60%,#f8e0f8 100%); min-height: 100vh; color: #243343;}
@@ -31,15 +31,17 @@
       letter-spacing: 0.03em;
     }
     .reset-btn:hover { background: #ffe14c; color: #2d2d2d; }
-    .park-title { font-size: 1.7em; color: #257eff; font-weight: bold; margin: .7em 0 1.7em 0; text-align:center;}
+    .park-title { font-size: 1.7em; color: #257eff; font-weight: bold; margin: .7em 0 1.2em 0; text-align:center;}
     .back-btn {
       display: inline-block; margin: 0 0 1em 0; font-size: 1em; color: #257eff; background: #f4f4fa; border-radius: 14px;
       border: none; font-weight: bold; padding: .6em 1.25em; cursor: pointer; box-shadow: 0 2px 7px #c2d5ff11;
       position: relative; left: 0; top: 0; transition: background .12s, color .12s;
     }
     .back-btn:hover { background: #ffe14c; color: #24282f; }
+    .section-header { font-size: 1.22em; color: #2d5fff; font-weight: 700; margin: 2.1em 0 1em 0; border-left: 4px solid #ffe14c; padding-left: 10px;}
+    .land-header { font-size: 1.1em; color: #fe7c2a; margin: 1.1em 0 .7em 0; font-weight:600; border-left: 3px solid #b4e26d; padding-left:7px;}
     ul { list-style: none; padding: 0; margin: 0; }
-    .secret-card {
+    .secret-card, .ride-card {
       margin-bottom: 1.08em;
       background: #fafdff;
       border-radius: 12px;
@@ -52,26 +54,26 @@
       font-size: 1.09em;
       border-left: 5px solid #ffe14c;
     }
-    .secret-card.done {
+    .secret-card.done, .ride-card.done {
       background: #eaf4fa;
       opacity: 0.48;
       text-decoration: line-through;
       border-left: 5px solid #71eb97;
     }
-    .secret-emoji { font-size: 1.57em; margin-top: 2px; flex-shrink:0;}
-    .secret-info { flex: 1; }
-    .secret-desc { color: #444; font-size: .97em; margin-top: .13em;}
+    .secret-emoji, .ride-emoji { font-size: 1.57em; margin-top: 2px; flex-shrink:0;}
+    .secret-info, .ride-info { flex: 1; }
+    .secret-desc, .ride-desc { color: #444; font-size: .97em; margin-top: .13em;}
     .tick {
       font-size: 1.4em; color: #39c550;
       user-select: none; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
       display: none;
     }
-    .secret-card.done .tick { display: inline; }
+    .secret-card.done .tick, .ride-card.done .tick { display: inline; }
     @media (max-width: 700px) {
       .container { padding: 1em .1em; }
       .park-title { font-size: 1.17em; }
       .menu-btn { min-width: 120px; font-size:1.04em;}
-      .secret-card { padding: .7em .5em .57em .57em; }
+      .secret-card, .ride-card { padding: .7em .5em .57em .57em; }
     }
   </style>
 </head>
@@ -81,7 +83,7 @@
     <div id="main-menu" class="page active">
       <h1>Hidden Park Guide</h1>
       <div class="subtitle">Disney & Universal Cool Stuff – by Charlie</div>
-      <div class="author">Tap a park below to start. Tick secrets off as you go. Reset for a new adventure!</div>
+      <div class="author">Tap a park below to start. Tick secrets & rides off as you go. Reset for a new adventure!</div>
       <div class="main-menu-btns">
         <button class="menu-btn" onclick="openPark('MK')">🏰 Magic Kingdom</button>
         <button class="menu-btn" onclick="openPark('EPCOT')">🌐 EPCOT</button>
@@ -94,16 +96,101 @@
       <button class="reset-btn" onclick="resetProgress()">🔄 Reset All Progress</button>
     </div>
     <!-- Parks -->
-    <div id="park-MK" class="page"><button class="back-btn" onclick="goHome()">← Back</button><div class="park-title">🏰 Magic Kingdom</div><ul id="MK"></ul></div>
-    <div id="park-EPCOT" class="page"><button class="back-btn" onclick="goHome()">← Back</button><div class="park-title">🌐 EPCOT</div><ul id="EPCOT"></ul></div>
-    <div id="park-HS" class="page"><button class="back-btn" onclick="goHome()">← Back</button><div class="park-title">🎬 Hollywood Studios</div><ul id="HS"></ul></div>
-    <div id="park-AK" class="page"><button class="back-btn" onclick="goHome()">← Back</button><div class="park-title">🦁 Animal Kingdom</div><ul id="AK"></ul></div>
-    <div id="park-USF" class="page"><button class="back-btn" onclick="goHome()">← Back</button><div class="park-title">🧙‍♂️ Universal Studios Florida</div><ul id="USF"></ul></div>
-    <div id="park-IOA" class="page"><button class="back-btn" onclick="goHome()">← Back</button><div class="park-title">🦖 Islands of Adventure</div><ul id="IOA"></ul></div>
-    <div id="park-EU" class="page"><button class="back-btn" onclick="goHome()">← Back</button><div class="park-title">🌌 Epic Universe</div><ul id="EU"></ul></div>
+    <div id="park-MK" class="page">
+      <button class="back-btn" onclick="goHome()">← Back</button>
+      <div class="park-title">🏰 Magic Kingdom</div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <ul id="MK-secrets"></ul>
+      <div class="section-header">Must-Do Rides</div>
+        <div class="land-header">Fantasyland</div>
+        <ul id="MK-rides-fantasy"></ul>
+        <div class="land-header">Frontierland</div>
+        <ul id="MK-rides-frontier"></ul>
+        <div class="land-header">Adventureland</div>
+        <ul id="MK-rides-adventure"></ul>
+        <div class="land-header">Liberty Square</div>
+        <ul id="MK-rides-liberty"></ul>
+        <div class="land-header">Tomorrowland</div>
+        <ul id="MK-rides-tomorrow"></ul>
+    </div>
+    <div id="park-HS" class="page">
+      <button class="back-btn" onclick="goHome()">← Back</button>
+      <div class="park-title">🎬 Hollywood Studios</div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <ul id="HS-secrets"></ul>
+      <div class="section-header">Must-Do Rides</div>
+        <div class="land-header">Star Wars: Galaxy’s Edge</div>
+        <ul id="HS-rides-sw"></ul>
+        <div class="land-header">Toy Story Land</div>
+        <ul id="HS-rides-toy"></ul>
+        <div class="land-header">Sunset Boulevard</div>
+        <ul id="HS-rides-sunset"></ul>
+    </div>
+    <div id="park-AK" class="page">
+      <button class="back-btn" onclick="goHome()">← Back</button>
+      <div class="park-title">🦁 Animal Kingdom</div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <ul id="AK-secrets"></ul>
+      <div class="section-header">Must-Do Rides</div>
+        <div class="land-header">Pandora – The World of Avatar</div>
+        <ul id="AK-rides-pandora"></ul>
+        <div class="land-header">Africa</div>
+        <ul id="AK-rides-africa"></ul>
+        <div class="land-header">Asia</div>
+        <ul id="AK-rides-asia"></ul>
+        <div class="land-header">DinoLand U.S.A.</div>
+        <ul id="AK-rides-dino"></ul>
+    </div>
+    <div id="park-EPCOT" class="page">
+      <button class="back-btn" onclick="goHome()">← Back</button>
+      <div class="park-title">🌐 EPCOT</div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <ul id="EPCOT-secrets"></ul>
+      <div class="section-header">Must-Do Rides</div>
+        <div class="land-header">World Discovery</div>
+        <ul id="EPCOT-rides-discovery"></ul>
+        <div class="land-header">World Celebration/Test Track</div>
+        <ul id="EPCOT-rides-test"></ul>
+    </div>
+    <div id="park-USF" class="page">
+      <button class="back-btn" onclick="goHome()">← Back</button>
+      <div class="park-title">🧙‍♂️ Universal Studios Florida</div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <ul id="USF-secrets"></ul>
+      <div class="section-header">Must-Do Rides</div>
+        <div class="land-header">The Wizarding World of Harry Potter – Diagon Alley</div>
+        <ul id="USF-rides-diagon"></ul>
+        <div class="land-header">Park Connector</div>
+        <ul id="USF-rides-hogwarts"></ul>
+    </div>
+    <div id="park-IOA" class="page">
+      <button class="back-btn" onclick="goHome()">← Back</button>
+      <div class="park-title">🦖 Islands of Adventure</div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <ul id="IOA-secrets"></ul>
+      <div class="section-header">Must-Do Rides</div>
+        <div class="land-header">Jurassic Park</div>
+        <ul id="IOA-rides-jurassic"></ul>
+        <div class="land-header">The Wizarding World of Harry Potter – Hogsmeade</div>
+        <ul id="IOA-rides-hogsmeade"></ul>
+    </div>
+    <div id="park-EU" class="page">
+      <button class="back-btn" onclick="goHome()">← Back</button>
+      <div class="park-title">🌌 Epic Universe</div>
+      <div class="section-header">Cool Hidden Stuff</div>
+      <ul id="EU-secrets"></ul>
+      <div class="section-header">Must-Do Rides</div>
+        <div class="land-header">Celestial Park</div>
+        <ul id="EU-rides-celestial"></ul>
+        <div class="land-header">The Wizarding World of Harry Potter – Ministry of Magic</div>
+        <ul id="EU-rides-ministry"></ul>
+        <div class="land-header">Super Nintendo World</div>
+        <ul id="EU-rides-snw"></ul>
+        <div class="land-header">How to Train Your Dragon – Isle of Berk</div>
+        <ul id="EU-rides-berk"></ul>
+    </div>
   </div>
   <script>
-    // Navigation
     function openPark(park) {
       document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
       document.getElementById('park-' + park).classList.add('active');
@@ -114,8 +201,7 @@
       document.getElementById('main-menu').classList.add('active');
       window.scrollTo(0, 0);
     }
-
-    // Checklist Data
+    // ---- Charlie's Hidden Stuff (as before) ----
     const secrets = [
       // Magic Kingdom
       {park:"MK", emoji:"💍", name:"Find the Haunted Mansion ring in the pavement", desc:"Liberty Square"},
@@ -197,33 +283,177 @@
       {park:"EU", emoji:"👻", name:"Check out Frankenstein’s Dark Universe", desc:"Classic monsters meet the future!"},
     ];
 
-    const parkList = ["MK","EPCOT","HS","AK","USF","IOA","EU"];
-    const saved = JSON.parse(localStorage.getItem("hiddenParkFullScreenCharlie") || "{}");
+    // ---- Rides, Grouped By Land ----
+    const rides = {
+      MK: {
+        fantasy: [
+          {emoji:"⛏️", name:"Seven Dwarfs Mine Train"},
+          {emoji:"🌊", name:"Tiana's Bayou Adventure (Log Flume)"},
+          {emoji:"🌍", name:"It's a Small World"}
+        ],
+        frontier: [
+          {emoji:"🚂", name:"Big Thunder Mountain Railroad"}
+        ],
+        adventure: [
+          {emoji:"🦜", name:"Jungle Cruise"},
+          {emoji:"🏴‍☠️", name:"Pirates of the Caribbean"}
+        ],
+        liberty: [
+          {emoji:"👻", name:"Haunted Mansion"}
+        ],
+        tomorrow: [
+          {emoji:"🏍️", name:"TRON Lightcycle Run"}
+        ]
+      },
+      HS: {
+        sw: [
+          {emoji:"⭐", name:"Star Wars: Rise of the Resistance"},
+          {emoji:"🚀", name:"Millennium Falcon: Smugglers Run"}
+        ],
+        toy: [
+          {emoji:"🐶", name:"Slinky Dog Dash"}
+        ],
+        sunset: [
+          {emoji:"🏨", name:"Tower of Terror"}
+        ]
+      },
+      AK: {
+        pandora: [
+          {emoji:"🦋", name:"Avatar Flight of Passage"},
+          {emoji:"🛶", name:"Na'vi River Journey"}
+        ],
+        africa: [
+          {emoji:"🦁", name:"Kilimanjaro Safaris"}
+        ],
+        asia: [
+          {emoji:"⛰️", name:"Expedition Everest"},
+          {emoji:"🌊", name:"Kali River Rapids"}
+        ],
+        dino: [
+          {emoji:"🦖", name:"DINOSAUR"}
+        ]
+      },
+      EPCOT: {
+        discovery: [
+          {emoji:"🚀", name:"Guardians of the Galaxy: Cosmic Rewind"}
+        ],
+        test: [
+          {emoji:"🏎️", name:"Test Track"}
+        ]
+      },
+      USF: {
+        diagon: [
+          {emoji:"🐉", name:"Harry Potter and the Escape from Gringotts"}
+        ],
+        hogwarts: [
+          {emoji:"🚂", name:"Hogwarts Express"}
+        ]
+      },
+      IOA: {
+        jurassic: [
+          {emoji:"🎢", name:"Jurassic World VelociCoaster"},
+          {emoji:"🚤", name:"Jurassic Park River Adventure"}
+        ],
+        hogsmeade: [
+          {emoji:"🏍️", name:"Hagrid's Magical Creatures Motorbike Adventure"},
+          {emoji:"🧙‍♂️", name:"Harry Potter and the Forbidden Journey"}
+        ]
+      },
+      EU: {
+        celestial: [
+          {emoji:"🚗", name:"Starfall Racers"}
+        ],
+        ministry: [
+          {emoji:"🎩", name:"Harry Potter and the Ministry of Magic"}
+        ],
+        snw: [
+          {emoji:"🏎️", name:"Bowser’s Challenge"},
+          {emoji:"⛏️", name:"Minecart Madness"}
+        ],
+        berk: [
+          {emoji:"🐉", name:"Hiccup’s Wing Gliders"},
+          {emoji:"🐲", name:"Dragon Racer Rally"}
+        ]
+      }
+    };
 
+    // Storage and Rendering
+    const parkList = ["MK","EPCOT","HS","AK","USF","IOA","EU"];
+    const saved = JSON.parse(localStorage.getItem("hiddenParkFullScreenCharlieRides") || "{}");
+
+    // Render secrets
     parkList.forEach(park => {
-      const ul = document.getElementById(park);
+      const ul = document.getElementById(park+"-secrets");
       secrets.filter(s => s.park === park).forEach((s, idx) => {
-        const key = `${park}-${idx}`;
+        const key = `${park}-secret-${idx}`;
         const li = document.createElement("li");
         li.className = "secret-card" + (saved[key] ? " done" : "");
-        li.innerHTML = `
-          <span class="secret-emoji">${s.emoji}</span>
+        li.innerHTML = `<span class="secret-emoji">${s.emoji}</span>
           <div class="secret-info">${s.name}<div class="secret-desc">${s.desc}</div></div>
-          <span class="tick">✔️</span>
-        `;
+          <span class="tick">✔️</span>`;
         li.onclick = function(e) {
           li.classList.toggle("done");
           saved[key] = li.classList.contains("done");
-          localStorage.setItem("hiddenParkFullScreenCharlie", JSON.stringify(saved));
+          localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
         };
         ul.appendChild(li);
       });
     });
 
+    // Render rides by area
+    function renderRides(park, area, ulId) {
+      const rideArr = (rides[park] && rides[park][area]) || [];
+      const ul = document.getElementById(ulId);
+      rideArr.forEach((ride, idx) => {
+        const key = `${park}-ride-${area}-${idx}`;
+        const li = document.createElement("li");
+        li.className = "ride-card" + (saved[key] ? " done" : "");
+        li.innerHTML = `<span class="ride-emoji">${ride.emoji}</span>
+          <div class="ride-info">${ride.name}</div>
+          <span class="tick">✔️</span>`;
+        li.onclick = function(e) {
+          li.classList.toggle("done");
+          saved[key] = li.classList.contains("done");
+          localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
+        };
+        ul.appendChild(li);
+      });
+    }
+    // Magic Kingdom
+    renderRides("MK", "fantasy", "MK-rides-fantasy");
+    renderRides("MK", "frontier", "MK-rides-frontier");
+    renderRides("MK", "adventure", "MK-rides-adventure");
+    renderRides("MK", "liberty", "MK-rides-liberty");
+    renderRides("MK", "tomorrow", "MK-rides-tomorrow");
+    // Hollywood Studios
+    renderRides("HS", "sw", "HS-rides-sw");
+    renderRides("HS", "toy", "HS-rides-toy");
+    renderRides("HS", "sunset", "HS-rides-sunset");
+    // Animal Kingdom
+    renderRides("AK", "pandora", "AK-rides-pandora");
+    renderRides("AK", "africa", "AK-rides-africa");
+    renderRides("AK", "asia", "AK-rides-asia");
+    renderRides("AK", "dino", "AK-rides-dino");
+    // EPCOT
+    renderRides("EPCOT", "discovery", "EPCOT-rides-discovery");
+    renderRides("EPCOT", "test", "EPCOT-rides-test");
+    // Universal Studios
+    renderRides("USF", "diagon", "USF-rides-diagon");
+    renderRides("USF", "hogwarts", "USF-rides-hogwarts");
+    // Islands of Adventure
+    renderRides("IOA", "jurassic", "IOA-rides-jurassic");
+    renderRides("IOA", "hogsmeade", "IOA-rides-hogsmeade");
+    // Epic Universe
+    renderRides("EU", "celestial", "EU-rides-celestial");
+    renderRides("EU", "ministry", "EU-rides-ministry");
+    renderRides("EU", "snw", "EU-rides-snw");
+    renderRides("EU", "berk", "EU-rides-berk");
+
     function resetProgress() {
-      localStorage.removeItem("hiddenParkFullScreenCharlie");
+      localStorage.removeItem("hiddenParkFullScreenCharlieRides");
       location.reload();
     }
   </script>
 </body>
 </html>
+

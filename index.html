@@ -13,9 +13,11 @@
       --light-bg: linear-gradient(120deg,#f0f8ff 60%,#f8e0f8 100%);
       --dark-bg: linear-gradient(120deg,#1b2735 60%,#222034 100%);
       --card-bg: #fafdff;
-      --card-bg-dark: #212942;
+      --card-txt: #243343;
+      --card-bg-dark: #fff;
+      --card-txt-dark: #000;
       --card-done: #eaf4fa;
-      --card-done-dark: #25345a;
+      --card-done-dark: #eee;
       --txt-main: #243343;
       --txt-main-dark: #fff;
     }
@@ -31,8 +33,12 @@
     @media (prefers-color-scheme: dark) {
       html, body { background: var(--dark-bg); color: var(--txt-main-dark);}
       .container { background: #222034;}
-      .main-menu-btns, .secret-card, .ride-card { background: #212942;}
-      .secret-card.done, .ride-card.done { background: #25345a;}
+      .main-menu-btns, .secret-card, .ride-card {
+        background: var(--card-bg-dark)!important;
+        color: var(--card-txt-dark)!important;
+      }
+      .secret-card.done, .ride-card.done { background: var(--card-done-dark)!important; color: #555!important;}
+      .section-header, .land-header, .park-title, .menu-btn, .reset-btn, .back-btn { color: var(--blue)!important;}
     }
     .bg-stars {
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
@@ -40,80 +46,92 @@
       background-repeat: repeat;
       opacity: 0.8;
     }
-    .container { max-width: 540px; margin: auto; padding: 2.2em 0.3em 3em 0.3em; position:relative; z-index:1; border-radius: 26px; min-height: 90vh;}
+    .container {
+      max-width: 540px;
+      margin: auto;
+      padding: 2.2em 0.3em 3em 0.3em;
+      position:relative;
+      z-index:1;
+      border-radius: 30px;
+      min-height: 90vh;
+      box-shadow: 0 6px 36px 0 rgba(30,70,160,0.10);
+      background: rgba(250,250,250,0.88);
+    }
     .page { display: none; }
     .page.active { display: block; animation: fadeIn .26s;}
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    h1 { color: var(--blue); text-align: center; margin-bottom: .3em; font-size:2.2em;}
+    h1 { color: var(--blue); text-align: center; margin-bottom: .3em; font-size:2.2em; letter-spacing: .05em; font-weight:900;}
     .subtitle { text-align: center; color: var(--yellow); margin-bottom: 2.1em; font-size: 1.2em; font-weight: 700; }
-    .author { text-align:center; color: #444; margin-bottom: 2.1em; font-size: 1.08em; }
+    .author { text-align:center; color: #444; margin-bottom: 2.1em; font-size: 1.13em; font-weight: 600; }
     .main-menu-btns {
-      display: flex; flex-wrap: wrap; gap: 1.2em 1em; justify-content: center; margin-top: 2.2em;
+      display: flex; flex-wrap: wrap; gap: 1.3em 1em; justify-content: center; margin-top: 2.2em;
       background: none;
     }
     .menu-btn {
-      min-width: 190px; min-height: 72px; flex:1 0 45%; max-width: 245px;
-      border-radius: 19px; font-size: 1.38em; font-weight: 800; color: #fff; background: var(--blue);
+      min-width: 200px; min-height: 72px; flex:1 0 45%; max-width: 260px;
+      border-radius: 22px; font-size: 1.43em; font-weight: 900; color: #fff; background: var(--blue);
       border: none; box-shadow: 0 4px 20px #4ca8ff17; margin-bottom: 1em;
       display: flex; align-items: center; justify-content: center; gap: .72em; cursor: pointer;
-      letter-spacing: .9px; padding: 1em 1.2em; transition: background 0.14s, transform .12s;
+      letter-spacing: 1px; padding: 1.09em 1.3em; transition: background 0.14s, transform .12s;
       position:relative; overflow:hidden;
       touch-action: manipulation;
     }
     .menu-btn:active { background: var(--yellow); color: var(--txt-main); transform: scale(0.98);}
     .menu-btn .ripple {
       position:absolute; border-radius:50%; transform:scale(0); animation:ripple .4s linear;
-      background:rgba(255,255,255,0.6); pointer-events:none; z-index: 2;
+      background:rgba(255,255,255,0.5); pointer-events:none; z-index: 2;
     }
     @keyframes ripple {
       to {transform:scale(2.5); opacity:0;}
     }
     .reset-btn {
-      margin: 2.7em 0 0 0; background: var(--blue); color: #fff; border: none; border-radius: 16px;
-      font-size: 1.1em; padding: 1em 2em; font-weight: bold; box-shadow: 0 2px 13px #79a8fa32;
+      margin: 2.7em 0 0 0; background: var(--blue); color: #fff; border: none; border-radius: 17px;
+      font-size: 1.15em; padding: 1em 2.2em; font-weight: bold; box-shadow: 0 2px 13px #79a8fa32;
       cursor: pointer; transition: background 0.13s, color 0.13s;
       display: block; margin-left: auto; margin-right: auto;
       letter-spacing: 0.03em;
       touch-action: manipulation;
     }
     .reset-btn:active { background: var(--yellow); color: var(--txt-main); }
-    .park-title { font-size: 1.7em; color: var(--blue); font-weight: bold; margin: .7em 0 1.2em 0; text-align:center;}
+    .park-title { font-size: 2em; color: var(--blue); font-weight: 900; margin: .7em 0 1.2em 0; text-align:center; letter-spacing: .02em;}
     .back-btn {
-      display: inline-block; margin: 0 0 1em 0; font-size: 1.15em; color: var(--blue); background: #f4f4fa; border-radius: 15px;
-      border: none; font-weight: bold; padding: .73em 1.4em; cursor: pointer; box-shadow: 0 2px 7px #c2d5ff11;
+      display: inline-block; margin: 0 0 1em 0; font-size: 1.18em; color: var(--blue); background: #f4f4fa; border-radius: 18px;
+      border: none; font-weight: bold; padding: .78em 1.4em; cursor: pointer; box-shadow: 0 2px 7px #c2d5ff11;
       position: relative; left: 0; top: 0; transition: background .12s, color .12s;
       touch-action: manipulation;
     }
     .back-btn:active { background: var(--yellow); color: #24282f; }
-    .section-header { font-size: 1.24em; color: #2d5fff; font-weight: 700; margin: 2.2em 0 1em 0; border-left: 4px solid var(--yellow); padding-left: 11px;}
-    .land-header { font-size: 1.13em; color: #fe7c2a; margin: 1.2em 0 .7em 0; font-weight:700; border-left: 3px solid #b4e26d; padding-left:8px;}
+    .section-header { font-size: 1.34em; color: #2d5fff; font-weight: 800; margin: 2.3em 0 1em 0; border-left: 4px solid var(--yellow); padding-left: 14px;}
+    .land-header { font-size: 1.19em; color: #fe7c2a; margin: 1.15em 0 .7em 0; font-weight:700; border-left: 3px solid #b4e26d; padding-left:12px;}
     ul { list-style: none; padding: 0; margin: 0; }
     .secret-card, .ride-card {
       margin-bottom: 1.13em;
       background: var(--card-bg);
-      border-radius: 13px;
-      box-shadow: 0 2px 13px 0 rgba(80,140,220,.10);
-      padding: 1.05em 1.13em .7em 1.13em;
-      display: flex; align-items: flex-start; gap: 1.14em;
-      cursor: pointer; transition: background 0.13s, opacity 0.15s;
+      border-radius: 15px;
+      box-shadow: 0 2px 13px 0 rgba(80,140,220,.12);
+      padding: 1.1em 1.19em .75em 1.19em;
+      display: flex; align-items: flex-start; gap: 1.2em;
+      cursor: pointer; transition: background 0.13s, opacity 0.15s, color .15s;
       position: relative;
       min-height: 3em;
-      font-size: 1.17em;
-      border-left: 5px solid var(--yellow);
+      font-size: 1.21em;
+      border-left: 6px solid var(--yellow);
       will-change: background;
+      color: var(--card-txt);
       touch-action: manipulation;
     }
     .secret-card.done, .ride-card.done {
       background: var(--card-done);
       opacity: 0.45;
       text-decoration: line-through;
-      border-left: 5px solid #71eb97;
+      border-left: 6px solid #71eb97;
+      color: #999;
     }
-    .secret-emoji, .ride-emoji { font-size: 1.65em; margin-top: 2px; flex-shrink:0;}
+    .secret-emoji, .ride-emoji { font-size: 1.7em; margin-top: 2px; flex-shrink:0;}
     .secret-info, .ride-info { flex: 1; }
-    .secret-desc, .ride-desc { color: #444; font-size: .99em; margin-top: .13em;}
+    .secret-desc, .ride-desc { color: #444; font-size: 1em; margin-top: .13em;}
     .tick {
-      font-size: 1.48em; color: #39c550;
+      font-size: 1.5em; color: #39c550;
       user-select: none; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
       display: none;
     }
@@ -133,9 +151,9 @@
     .modal-content button:active { background: var(--yellow); color: #243343;}
     @media (max-width: 700px) {
       .container { padding: 1.1em .07em;}
-      .park-title { font-size: 1.17em; }
-      .menu-btn { min-width: 120px; font-size:1.09em;}
-      .secret-card, .ride-card { padding: .8em .5em .7em .6em; font-size:1.08em;}
+      .park-title { font-size: 1.23em; }
+      .menu-btn { min-width: 120px; font-size:1.15em;}
+      .secret-card, .ride-card { padding: .8em .5em .7em .6em; font-size:1.09em;}
     }
   </style>
 </head>
@@ -566,6 +584,7 @@ function resetProgress() {
   </script>
 </body>
 </html>
+
 
 
 

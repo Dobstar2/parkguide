@@ -26,6 +26,7 @@
       color: var(--txt-main);
       min-height: 100vh;
       transition: background .3s, color .3s;
+      -webkit-tap-highlight-color: transparent;
     }
     @media (prefers-color-scheme: dark) {
       html, body { background: var(--dark-bg); color: var(--txt-main-dark);}
@@ -39,7 +40,10 @@
       background-repeat: repeat;
       opacity: 0.8;
     }
-    .container { max-width: 540px; margin: auto; padding: 2.2em 0.3em 3em 0.3em; position:relative; z-index:1; border-radius: 26px; }
+    .container { max-width: 540px; margin: auto; padding: 2.2em 0.3em 3em 0.3em; position:relative; z-index:1; border-radius: 26px; min-height: 90vh;}
+    .page { display: none; }
+    .page.active { display: block; animation: fadeIn .26s;}
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     h1 { color: var(--blue); text-align: center; margin-bottom: .3em; font-size:2.2em;}
     .subtitle { text-align: center; color: var(--yellow); margin-bottom: 2.1em; font-size: 1.2em; font-weight: 700; }
     .author { text-align:center; color: #444; margin-bottom: 2.1em; font-size: 1.08em; }
@@ -54,6 +58,7 @@
       display: flex; align-items: center; justify-content: center; gap: .72em; cursor: pointer;
       letter-spacing: .9px; padding: 1em 1.2em; transition: background 0.14s, transform .12s;
       position:relative; overflow:hidden;
+      touch-action: manipulation;
     }
     .menu-btn:active { background: var(--yellow); color: var(--txt-main); transform: scale(0.98);}
     .menu-btn .ripple {
@@ -69,6 +74,7 @@
       cursor: pointer; transition: background 0.13s, color 0.13s;
       display: block; margin-left: auto; margin-right: auto;
       letter-spacing: 0.03em;
+      touch-action: manipulation;
     }
     .reset-btn:active { background: var(--yellow); color: var(--txt-main); }
     .park-title { font-size: 1.7em; color: var(--blue); font-weight: bold; margin: .7em 0 1.2em 0; text-align:center;}
@@ -76,6 +82,7 @@
       display: inline-block; margin: 0 0 1em 0; font-size: 1.15em; color: var(--blue); background: #f4f4fa; border-radius: 15px;
       border: none; font-weight: bold; padding: .73em 1.4em; cursor: pointer; box-shadow: 0 2px 7px #c2d5ff11;
       position: relative; left: 0; top: 0; transition: background .12s, color .12s;
+      touch-action: manipulation;
     }
     .back-btn:active { background: var(--yellow); color: #24282f; }
     .section-header { font-size: 1.24em; color: #2d5fff; font-weight: 700; margin: 2.2em 0 1em 0; border-left: 4px solid var(--yellow); padding-left: 11px;}
@@ -94,6 +101,7 @@
       font-size: 1.17em;
       border-left: 5px solid var(--yellow);
       will-change: background;
+      touch-action: manipulation;
     }
     .secret-card.done, .ride-card.done {
       background: var(--card-done);
@@ -150,8 +158,7 @@
       </div>
       <button class="reset-btn" onclick="resetProgress()">🔄 Reset All Progress</button>
     </div>
-    <!-- All park pages START -->
-    <!-- MAGIC KINGDOM -->
+<!-- MAGIC KINGDOM -->
 <div id="park-MK" class="page">
   <button class="back-btn" onclick="goHome()">← Back</button>
   <div class="park-title">🏰 Magic Kingdom</div>
@@ -251,7 +258,6 @@
   <div class="section-header">Cool Hidden Stuff</div>
   <ul id="EU-secrets"></ul>
 </div>
-<!-- All park pages END -->
     <!-- Welcome modal -->
     <div id="welcome-modal" class="modal" style="display:none;">
       <div class="modal-content">
@@ -281,6 +287,7 @@
 
     function openPark(park) {
       document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.getElementById('main-menu').classList.remove('active');
       document.getElementById('park-' + park).classList.add('active');
       window.scrollTo(0, 0);
     }
@@ -299,7 +306,6 @@
     }
     if(!localStorage.getItem("seenCharlieWelcome")) setTimeout(showModal, 400);
 
-    // DATA & RENDERING LOGIC
 const secrets = {
   MK: [
     {emoji:"💍", name:"Find the Haunted Mansion ring in the pavement", desc:"Liberty Square"},
@@ -560,5 +566,6 @@ function resetProgress() {
   </script>
 </body>
 </html>
+
 
 

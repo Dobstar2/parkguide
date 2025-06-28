@@ -256,6 +256,8 @@
     .food-card.done { background: rgba(78, 205, 196, 0.1); border-color: var(--success); opacity: 0.7; }
     .fav { position: absolute; top: 1rem; left: 1rem; font-size: 1.5rem; color: var(--warning); display: none; filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); }
     .favorite .fav { display: block; }
+    .land-header.badge-earned::after { content: '⭐'; margin-left: 0.25rem; }
+    #party-code { width: 100%; min-height: 100px; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-primary); }
   </style>
 </head>
 <body>
@@ -305,6 +307,14 @@
         <button class="menu-btn" onclick="openFood()">
           <span class="emoji">🍔</span>
           <span>Food & Snacks</span>
+        </button>
+        <button class="menu-btn" onclick="openPhotos()">
+          <span class="emoji">📸</span>
+          <span>Photo Hunts</span>
+        </button>
+        <button class="menu-btn" onclick="openParty()">
+          <span class="emoji">🎉</span>
+          <span>Party Mode</span>
         </button>
       </div>
       
@@ -453,6 +463,23 @@
       </div>
       <div id="food-sections"></div>
     </div>
+    <!-- PHOTO HUNTS -->
+    <div id="photo-page" class="page">
+      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <div class="park-title">📸 Photo Hunts</div>
+      <div class="secrets-grid" id="photo-list"></div>
+    </div>
+    <!-- PARTY MODE -->
+    <div id="party-page" class="page">
+      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <div class="park-title">🎉 Party Mode</div>
+      <p>Share your progress with friends. Copy the code below and send it to your group.</p>
+      <textarea id="party-code"></textarea>
+      <div style="margin-top:1rem;display:flex;gap:1rem;flex-wrap:wrap;">
+        <button class="modal-btn" onclick="exportProgress()">Copy My Progress</button>
+        <button class="modal-btn" onclick="importProgress()">Load Progress</button>
+      </div>
+    </div>
   </div>
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="modal" style="display:none;">
@@ -462,6 +489,14 @@
       Pick a park, check off rides & cool secrets, and make the most of your Disney & Universal trip.<br><br>
       <strong style="color: var(--accent);">Pro Tip:</strong> Add this to your home screen for the best experience!</p>
       <button class="modal-btn" onclick="closeModal()">Let's Begin the Magic!</button>
+    </div>
+  </div>
+  <!-- Badge Modal -->
+  <div id="badge-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="modal-emoji">🏆</span>
+      <p id="badge-text"></p>
+      <button class="modal-btn" onclick="closeBadge()">Awesome!</button>
     </div>
   </div>
   <script>
@@ -497,6 +532,18 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('food-page').classList.add('active');
       initFood();
+      window.scrollTo(0, 0);
+    }
+    function openPhotos() {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('photo-page').classList.add('active');
+      renderHunts();
+      window.scrollTo(0, 0);
+    }
+    function openParty() {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('party-page').classList.add('active');
+      exportProgress();
       window.scrollTo(0, 0);
     }
     function goHome() {
@@ -750,6 +797,8 @@
     const saved = JSON.parse(localStorage.getItem("hiddenParkFullScreenCharlieRides") || "{}");
     const foodDone = JSON.parse(localStorage.getItem('hiddenParkFoodStatus') || '{}');
     const foodFav = JSON.parse(localStorage.getItem('hiddenParkFoodFav') || '{}');
+    const achievements = JSON.parse(localStorage.getItem('parkAchievements') || '{}');
+    const huntStatus = JSON.parse(localStorage.getItem('photoHunts') || '{}');
     const waitTimes = {
       "Pirates of the Caribbean": {morning: 20, afternoon: 40, evening: 25},
       "Haunted Mansion": {morning: 15, afternoon: 35, evening: 20},
@@ -761,6 +810,12 @@
       "Pirates of the Caribbean is a great indoor escape.",
       "Catch Festival of the Lion King to stay dry.",
       "Harry Potter and the Forbidden Journey keeps you out of the rain."
+    ];
+    const photoHunts = [
+      {emoji:"🐭", desc:"Hidden Mickey in Pirates queue"},
+      {emoji:"🗝️", desc:"Secret key near MIB lockers"},
+      {emoji:"🧙‍♂️", desc:"Pose with a wand outside Ollivanders"},
+      {emoji:"🤖", desc:"Track marks in Galaxy's Edge"}
     ];
     // Render secrets (Cool Hidden Stuff)
     parkList.forEach(park => {
@@ -782,6 +837,7 @@
           card.classList.toggle("done");
           saved[key] = card.classList.contains("done");
           localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
+          checkBadge(grid);
         };
         grid.appendChild(card);
       });
@@ -806,6 +862,7 @@
           card.classList.toggle("done");
           saved[key] = card.classList.contains("done");
           localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
+          checkBadge(grid);
         };
         grid.appendChild(card);
       });
@@ -841,6 +898,7 @@
               card.classList.toggle('done');
               foodDone[key] = card.classList.contains('done');
               localStorage.setItem('hiddenParkFoodStatus', JSON.stringify(foodDone));
+              checkBadge(grid);
             }
           });
           grid.appendChild(card);
@@ -900,6 +958,8 @@
     renderRides("EU", "ministry", "EU-rides-ministry");
     renderRides("EU", "snw", "EU-rides-snw");
     renderRides("EU", "berk", "EU-rides-berk");
+
+    document.querySelectorAll('.rides-grid,.secrets-grid,.foods-grid').forEach(checkBadge);
 
     function getTimeSlot() {
       const h = new Date().getHours();
@@ -988,10 +1048,76 @@
         });
       }
     }
+    function checkBadge(grid) {
+      const id = grid.id;
+      const header = grid.previousElementSibling;
+      if (!header) return;
+      const allDone = Array.from(grid.children).length && Array.from(grid.children).every(c => c.classList.contains('done'));
+      if (allDone && !achievements[id]) {
+        achievements[id] = true;
+        localStorage.setItem('parkAchievements', JSON.stringify(achievements));
+        header.classList.add('badge-earned');
+        showBadge('Completed ' + header.textContent + '!');
+      } else if (!allDone && achievements[id]) {
+        achievements[id] = false;
+        localStorage.setItem('parkAchievements', JSON.stringify(achievements));
+        header.classList.remove('badge-earned');
+      }
+    }
+    function showBadge(text) {
+      document.getElementById('badge-text').textContent = text;
+      document.getElementById('badge-modal').style.display = 'flex';
+    }
+    function closeBadge() {
+      document.getElementById('badge-modal').style.display = 'none';
+    }
+    function renderHunts() {
+      const grid = document.getElementById('photo-list');
+      if (!grid.innerHTML) {
+        photoHunts.forEach((h, idx) => {
+          const key = 'hunt-' + idx;
+          const card = document.createElement('div');
+          card.className = 'secret-card glass-card' + (huntStatus[key] ? ' done' : '');
+          card.innerHTML = `<div class="card-content"><span class="card-emoji">${h.emoji}</span><div class="card-info"><div class="card-name">${h.desc}</div></div><span class="tick">✔️</span></div>`;
+          card.onclick = () => {
+            card.classList.toggle('done');
+            huntStatus[key] = card.classList.contains('done');
+            localStorage.setItem('photoHunts', JSON.stringify(huntStatus));
+            checkBadge(grid);
+          };
+          grid.appendChild(card);
+        });
+      }
+      Array.from(grid.children).forEach(() => {}); // trigger check
+      checkBadge(grid);
+    }
+    function exportProgress() {
+      const data = {
+        rides: saved,
+        foodDone,
+        foodFav,
+        achievements,
+        hunts: huntStatus
+      };
+      document.getElementById('party-code').value = btoa(JSON.stringify(data));
+    }
+    function importProgress() {
+      try {
+        const data = JSON.parse(atob(document.getElementById('party-code').value));
+        localStorage.setItem('hiddenParkFullScreenCharlieRides', JSON.stringify(data.rides || {}));
+        localStorage.setItem('hiddenParkFoodStatus', JSON.stringify(data.foodDone || {}));
+        localStorage.setItem('hiddenParkFoodFav', JSON.stringify(data.foodFav || {}));
+        localStorage.setItem('parkAchievements', JSON.stringify(data.achievements || {}));
+        localStorage.setItem('photoHunts', JSON.stringify(data.hunts || {}));
+        location.reload();
+      } catch(e) { alert('Invalid code'); }
+    }
     function resetProgress() {
       localStorage.removeItem("hiddenParkFullScreenCharlieRides");
       localStorage.removeItem('hiddenParkFoodStatus');
       localStorage.removeItem('hiddenParkFoodFav');
+      localStorage.removeItem('parkAchievements');
+      localStorage.removeItem('photoHunts');
       localStorage.removeItem("seenCharlieWelcome");
       location.reload();
     }

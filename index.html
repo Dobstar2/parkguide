@@ -698,10 +698,10 @@
           el.setAttribute('material', 'color: ' + park.color + ';');
           el.setAttribute('gps-entity-place', `latitude: ${park.lat}; longitude: ${park.lon};`);
         } else {
-          status.textContent = 'You are not near any supported park.';
+          status.textContent = 'Explore anywhere! For special surprises, head to a park.';
           el = document.createElement('a-box');
           el.setAttribute('material', 'color: gray;');
-          el.setAttribute('position', '0 1 -3');
+          el.setAttribute('gps-entity-place', `latitude: ${lat}; longitude: ${lon};`);
         }
         el.setAttribute('animation', 'property: rotation; dur: 5000; to: 0 360 0; loop: true; easing: linear;');
         container.appendChild(el);

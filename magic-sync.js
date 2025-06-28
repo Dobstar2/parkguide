@@ -14,6 +14,7 @@ let sessionCode = localStorage.getItem('magicSessionCode') || '';
 let memberId = localStorage.getItem('magicMemberId') || '';
 let memberName = localStorage.getItem('magicMemberName') || '';
 let unsubscribeMembers = null;
+let unsubscribeUpdates = null;
 
 function randomCode() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -43,8 +44,7 @@ function createSession() {
   db.collection('sessions').doc(sessionCode).set({ created: Date.now() });
   db.collection('sessions').doc(sessionCode).collection('members').doc(memberId).set({ name });
   document.getElementById('created-code').textContent = sessionCode;
-  document.getElementById('members').style.display = 'block';
-  listenMembers();
+  showSessionUI();
 }
 
 function joinSession() {
@@ -58,8 +58,7 @@ function joinSession() {
   localStorage.setItem('magicMemberId', memberId);
   localStorage.setItem('magicMemberName', memberName);
   db.collection('sessions').doc(sessionCode).collection('members').doc(memberId).set({ name });
-  document.getElementById('members').style.display = 'block';
-  listenMembers();
+  showSessionUI();
 }
 
 function listenMembers() {
@@ -79,11 +78,41 @@ function listenMembers() {
     });
 }
 
+function listenUpdates() {
+  if (!db || !sessionCode) return;
+  if (unsubscribeUpdates) unsubscribeUpdates();
+  unsubscribeUpdates = db.collection('sessions').doc(sessionCode).collection('updates')
+    .orderBy('time', 'desc').limit(10)
+    .onSnapshot(snap => {
+      const div = document.getElementById('updates');
+      if (!div) return;
+      div.style.display = 'block';
+      div.innerHTML = '';
+      snap.forEach(doc => {
+        const p = document.createElement('div');
+        p.textContent = doc.data().text;
+        div.appendChild(p);
+      });
+    });
+}
+
+function showSessionUI() {
+  const setup = document.getElementById('session-setup');
+  const createPanel = document.getElementById('create-panel');
+  const joinPanel = document.getElementById('join-panel');
+  const members = document.getElementById('members');
+  if (setup) setup.style.display = 'none';
+  if (createPanel) createPanel.style.display = 'none';
+  if (joinPanel) joinPanel.style.display = 'none';
+  if (members) members.style.display = 'block';
+  document.getElementById('created-code').textContent = sessionCode;
+  listenMembers();
+  listenUpdates();
+}
+
 window.addEventListener('load', () => {
   if (sessionCode && db) {
-    const div = document.getElementById('members');
-    if (div) div.style.display = 'block';
-    listenMembers();
+    showSessionUI();
   }
 });
 

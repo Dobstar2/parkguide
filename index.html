@@ -274,7 +274,7 @@
     .camera-btn:hover { transform: translateY(-2px); }
     #map-container { width:100%; height:60vh; max-height:400px; border-radius:12px; overflow:hidden; }
     #map-container iframe { width:100%; height:100%; border:0; }
-    #ar-page a-scene { width:100%; height:60vh; border-radius:12px; overflow:hidden; }
+    #ar-page a-scene { width:100%; height:70vh; border-radius:8px; overflow:hidden; }
   </style>
 </head>
 <body>
@@ -343,8 +343,8 @@
           <span>Photo Hunts</span>
         </button>
         <button class="menu-btn" onclick="openAR()">
-          <span class="emoji">🕵️</span>
-          <span>Secrets AR</span>
+          <span class="emoji">🛰️</span>
+          <span>AR Explorer</span>
         </button>
       </div>
     </div>
@@ -545,13 +545,13 @@
       <video id="qr-video" style="display:none;width:100%;max-width:300px;margin-top:1rem;" playsinline></video>
       <canvas id="qr-canvas" style="display:none;"></canvas>
     </div>
-    <!-- SECRETS AR -->
+    <!-- AR EXPLORER -->
     <div id="ar-page" class="page">
       <button class="back-btn" onclick="openDisney()">← Back</button>
-      <div class="park-title">🕵️ Secrets Revealed</div>
-      <p id="ar-status">Allow location access to reveal secrets around you.</p>
+      <div class="park-title">🛰️ AR Explorer</div>
+      <p id="ar-message">Look around to discover nearby landmarks.</p>
       <a-scene embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
-        <a-entity id="park-object"></a-entity>
+        <a-entity id="ar-target"></a-entity>
         <a-camera gps-camera rotation-reader></a-camera>
       </a-scene>
     </div>
@@ -713,8 +713,8 @@
     }
     function detectPark(lat, lon) {
       const parks = [
-        { name: 'Disneyland', lat: 33.8121, lon: -117.9190, shape: 'cone', color: 'red' },
-        { name: 'Universal Studios Florida', lat: 28.4723, lon: -81.4679, shape: 'sphere', color: 'blue' }
+        { name: 'Disneyland', lat: 33.8121, lon: -117.9190, shape: 'dodecahedron', color: 'yellow' },
+        { name: 'Universal Studios Florida', lat: 28.4723, lon: -81.4679, shape: 'torus', color: 'orange' }
       ];
       const maxDist = 0.02; // roughly ~2km radius
       for (const p of parks) {
@@ -736,8 +736,8 @@
     }
 
     function initAR() {
-      const status = document.getElementById('ar-status');
-      const container = document.getElementById('park-object');
+      const status = document.getElementById('ar-message');
+      const container = document.getElementById('ar-target');
       if (!status || !container || !navigator.geolocation) return;
       status.textContent = 'Getting your location...';
       container.innerHTML = '';
@@ -747,16 +747,16 @@
         const park = detectPark(lat, lon);
         let el;
         if (park) {
-          status.textContent = 'Welcome to ' + park.name + '! Look around for secrets.';
+          status.textContent = 'Landmark detected: ' + park.name + '. See it in AR!';
           el = document.createElement('a-entity');
           el.setAttribute('geometry', `primitive: ${park.shape};`);
           el.setAttribute('material', `color: ${park.color};`);
           el.setAttribute('scale', '0.5 0.5 0.5');
           el.setAttribute('gps-entity-place', `latitude: ${park.lat}; longitude: ${park.lon};`);
         } else {
-          status.textContent = 'Explore anywhere! For special surprises, head to a park.';
-          el = document.createElement('a-box');
-          el.setAttribute('material', 'color: gray;');
+          status.textContent = 'No landmarks nearby. Explore to find something cool!';
+          el = document.createElement('a-sphere');
+          el.setAttribute('material', 'color: purple;');
           el.setAttribute('position', '0 0 -2');
         }
         el.setAttribute('animation', 'property: rotation; dur: 5000; to: 0 360 0; loop: true; easing: linear;');
@@ -772,7 +772,7 @@
       if (ok) {
         initAR();
       } else {
-        const status = document.getElementById('ar-status');
+        const status = document.getElementById('ar-message');
         if (status) status.textContent = 'Camera access denied.';
       }
       window.scrollTo(0, 0);

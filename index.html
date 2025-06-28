@@ -78,8 +78,8 @@
       transform: translateY(-5px); box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
     }
     .page { display: none; }
-    .page.active { display: block; }
-    .page.fade-out { }
+    .page.active { display: block; animation: fadeInUp 0.5s; }
+    .page.fade-out { animation: fadeOutDown 0.5s forwards; }
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(30px);}
       to { opacity: 1; transform: translateY(0);}
@@ -641,7 +641,11 @@
       if (page && !page.classList.contains('active')) {
         page.classList.add('active');
       }
+      const html = document.documentElement;
+      const prevBehavior = html.style.scrollBehavior;
+      html.style.scrollBehavior = 'auto';
       window.scrollTo(0, 0);
+      html.style.scrollBehavior = prevBehavior;
     }
 
     // Navigation functions

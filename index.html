@@ -164,6 +164,7 @@
     .card-info { flex: 1; }
     .card-name { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); line-height: 1.4;}
     .card-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.4;}
+    .card-wait { font-size: 0.9rem; color: var(--warning); }
     .done .card-name { text-decoration: line-through; color: var(--success);}
     .tick {
       position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--success); display: none;
@@ -846,6 +847,7 @@
       }
       populatePlanner();
       loadSchedule();
+      updateRideWaitTimes();
     }
     const rainyTips = [
       "Pirates of the Caribbean is a great indoor escape.",
@@ -896,6 +898,7 @@
             <span class="card-emoji">${ride.emoji}</span>
             <div class="card-info">
               <div class="card-name">${ride.name}</div>
+              <div class="card-wait"></div>
             </div>
             <span class="tick">✔️</span>
           </div>`;
@@ -907,6 +910,7 @@
         };
         grid.appendChild(card);
       });
+      updateRideWaitTimes();
     }
 
     function createFoodCards() {
@@ -1001,10 +1005,22 @@
     renderRides("EU", "berk", "EU-rides-berk");
 
     document.querySelectorAll('.rides-grid,.secrets-grid,.foods-grid').forEach(checkBadge);
+    fetchWaitTimes();
 
     function getTimeSlot() {
       const h = new Date().getHours();
       return h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+    }
+
+    function updateRideWaitTimes() {
+      const slot = getTimeSlot();
+      document.querySelectorAll('.ride-card').forEach(card => {
+        const nameEl = card.querySelector('.card-name');
+        const waitEl = card.querySelector('.card-wait');
+        if (!nameEl || !waitEl) return;
+        const w = waitTimes[nameEl.textContent] ? waitTimes[nameEl.textContent][slot] : null;
+        waitEl.textContent = w ? w + 'm' : '';
+      });
     }
 
     function populatePlanner() {

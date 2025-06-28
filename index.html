@@ -522,10 +522,17 @@
       <button class="back-btn" onclick="goHome()">← Back to Parks</button>
       <div class="park-title">🕵️ Secrets Revealed</div>
       <p>Point your camera at an AR marker to uncover hidden surprises.</p>
+      <div style="margin:0.5rem 0;">
+        <label for="ar-select">Choose your secret object:</label>
+        <select id="ar-select" style="margin-left:0.5rem;">
+          <option value="box">Mystery Box</option>
+          <option value="sphere">Magic Orb</option>
+          <option value="cone">Wizard's Hat</option>
+        </select>
+      </div>
       <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-        <a-marker preset="hiro">
-          <a-box position="0 0.5 0" material="color: yellow;"></a-box>
-          <a-animation attribute="rotation" dur="5000" to="0 360 0" repeat="indefinite"></a-animation>
+        <a-marker id="ar-marker" preset="hiro">
+          <a-entity id="marker-content"></a-entity>
         </a-marker>
         <a-entity camera></a-entity>
       </a-scene>
@@ -671,9 +678,41 @@
       exportProgress();
       window.scrollTo(0, 0);
     }
+    function initAR() {
+      const select = document.getElementById('ar-select');
+      const container = document.getElementById('marker-content');
+      if (!select || !container) return;
+      function update() {
+        container.innerHTML = '';
+        let el;
+        switch (select.value) {
+          case 'sphere':
+            el = document.createElement('a-sphere');
+            el.setAttribute('material', 'color: blue;');
+            el.setAttribute('radius', '0.5');
+            break;
+          case 'cone':
+            el = document.createElement('a-cone');
+            el.setAttribute('material', 'color: red;');
+            el.setAttribute('radius-bottom', '0.5');
+            el.setAttribute('height', '1');
+            break;
+          default:
+            el = document.createElement('a-box');
+            el.setAttribute('material', 'color: yellow;');
+            break;
+        }
+        el.setAttribute('position', '0 0.5 0');
+        el.setAttribute('animation', 'property: rotation; dur: 5000; to: 0 360 0; loop: true; easing: linear;');
+        container.appendChild(el);
+      }
+      select.addEventListener('change', update);
+      update();
+    }
     function openAR() {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('ar-page').classList.add('active');
+      initAR();
       window.scrollTo(0, 0);
     }
     function goHome() {

@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dobby's Magical Park Guide</title>
+  <title>Dobbies Magical Park Guide</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#1a1a2e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Dobby's Guide">
+  <meta name="apple-mobile-web-app-title" content="Dobbies Guide">
   <link rel="apple-touch-icon" href="icon.png">
   <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -284,7 +284,7 @@
   <div class="container">
     <!-- Main Menu -->
     <div id="main-menu" class="page active">
-      <h1>Dobby's Magical Park Guide</h1>
+      <h1>Dobbies Magical Park Guide</h1>
       <div class="subtitle">Disney & Universal Cool Stuff – by Charlie</div>
       <div class="author">Tap a park below to start your magical journey. Check off rides & secrets as you discover them. Reset anytime for a fresh adventure!</div>
       
@@ -722,6 +722,17 @@
       return null;
     }
 
+    async function ensureCameraAccess() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return false;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: 'environment'}});
+        stream.getTracks().forEach(t => t.stop());
+        return true;
+      } catch(e) {
+        return false;
+      }
+    }
+
     function initAR() {
       const status = document.getElementById('ar-status');
       const container = document.getElementById('park-object');
@@ -742,7 +753,7 @@
           status.textContent = 'Explore anywhere! For special surprises, head to a park.';
           el = document.createElement('a-box');
           el.setAttribute('material', 'color: gray;');
-          el.setAttribute('gps-entity-place', `latitude: ${lat}; longitude: ${lon};`);
+          el.setAttribute('position', '0 0 -2');
         }
         el.setAttribute('animation', 'property: rotation; dur: 5000; to: 0 360 0; loop: true; easing: linear;');
         container.appendChild(el);
@@ -750,10 +761,16 @@
         status.textContent = 'Location unavailable.';
       });
     }
-    function openAR() {
+    async function openAR() {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('ar-page').classList.add('active');
-      initAR();
+      const ok = await ensureCameraAccess();
+      if (ok) {
+        initAR();
+      } else {
+        const status = document.getElementById('ar-status');
+        if (status) status.textContent = 'Camera access denied.';
+      }
       window.scrollTo(0, 0);
     }
     function goHome() {

@@ -473,10 +473,11 @@
     <div id="party-page" class="page">
       <button class="back-btn" onclick="goHome()">← Back to Parks</button>
       <div class="park-title">🎉 Party Mode</div>
-      <p>Share your progress with friends. Copy the code below and send it to your group.</p>
+      <p>Share your progress with friends. Use the link or scan the QR code.</p>
       <textarea id="party-code"></textarea>
+      <div id="qr-code" style="margin-top:1rem;"></div>
       <div style="margin-top:1rem;display:flex;gap:1rem;flex-wrap:wrap;">
-        <button class="modal-btn" onclick="exportProgress()">Copy My Progress</button>
+        <button class="modal-btn" onclick="exportProgress()">Generate Link</button>
         <button class="modal-btn" onclick="importProgress()">Load Progress</button>
       </div>
     </div>
@@ -563,6 +564,23 @@
     if (!localStorage.getItem("seenCharlieWelcome")) {
       setTimeout(showModal, 800);
     }
+
+    function applyLinkProgress() {
+      const params = new URLSearchParams(location.hash.substring(1) || location.search.substring(1));
+      const code = params.get('share');
+      if (!code) return;
+      try {
+        const data = JSON.parse(atob(code));
+        localStorage.setItem('hiddenParkFullScreenCharlieRides', JSON.stringify(data.rides || {}));
+        localStorage.setItem('hiddenParkFoodStatus', JSON.stringify(data.foodDone || {}));
+        localStorage.setItem('hiddenParkFoodFav', JSON.stringify(data.foodFav || {}));
+        localStorage.setItem('parkAchievements', JSON.stringify(data.achievements || {}));
+        localStorage.setItem('photoHunts', JSON.stringify(data.hunts || {}));
+      } catch (e) {
+        console.error('Invalid share data');
+      }
+    }
+    applyLinkProgress();
     // DATA:
     const secrets = {
       MK: [
@@ -1099,11 +1117,26 @@
         achievements,
         hunts: huntStatus
       };
-      document.getElementById('party-code').value = btoa(JSON.stringify(data));
+      const code = btoa(JSON.stringify(data));
+      const url = location.origin + location.pathname + '#share=' + encodeURIComponent(code);
+      document.getElementById('party-code').value = url;
+      if (window.QRCode) {
+        const q = document.getElementById('qr-code');
+        q.innerHTML = '';
+        new QRCode(q, { text: url, width: 128, height: 128 });
+      }
     }
     function importProgress() {
       try {
-        const data = JSON.parse(atob(document.getElementById('party-code').value));
+        let input = document.getElementById('party-code').value.trim();
+        let code = '';
+        const idx = input.indexOf('#share=') >= 0 ? input.indexOf('#share=') : input.indexOf('?share=');
+        if (idx >= 0) {
+          code = decodeURIComponent(input.substring(idx + 7));
+        } else {
+          code = input;
+        }
+        const data = JSON.parse(atob(code));
         localStorage.setItem('hiddenParkFullScreenCharlieRides', JSON.stringify(data.rides || {}));
         localStorage.setItem('hiddenParkFoodStatus', JSON.stringify(data.foodDone || {}));
         localStorage.setItem('hiddenParkFoodFav', JSON.stringify(data.foodFav || {}));
@@ -1122,6 +1155,7 @@
       location.reload();
     }
   </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>
 

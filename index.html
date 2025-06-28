@@ -521,20 +521,10 @@
     <div id="ar-page" class="page">
       <button class="back-btn" onclick="goHome()">← Back to Parks</button>
       <div class="park-title">🕵️ Secrets Revealed</div>
-      <p>Point your camera at an AR marker to uncover hidden surprises.</p>
-      <div style="margin:0.5rem 0;">
-        <label for="ar-select">Choose your secret object:</label>
-        <select id="ar-select" style="margin-left:0.5rem;">
-          <option value="box">Mystery Box</option>
-          <option value="sphere">Magic Orb</option>
-          <option value="cone">Wizard's Hat</option>
-        </select>
-      </div>
+      <p id="ar-status">Allow location access to reveal secrets around you.</p>
       <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-        <a-marker id="ar-marker" preset="hiro">
-          <a-entity id="marker-content"></a-entity>
-        </a-marker>
-        <a-entity camera></a-entity>
+        <a-entity id="park-object"></a-entity>
+        <a-camera gps-camera rotation-reader></a-camera>
       </a-scene>
     </div>
   </div>
@@ -678,36 +668,46 @@
       exportProgress();
       window.scrollTo(0, 0);
     }
+    function detectPark(lat, lon) {
+      const parks = [
+        { name: 'Disneyland', lat: 33.8121, lon: -117.9190, shape: 'cone', color: 'red' },
+        { name: 'Universal Studios Florida', lat: 28.4723, lon: -81.4679, shape: 'sphere', color: 'blue' }
+      ];
+      const maxDist = 0.02; // roughly ~2km radius
+      for (const p of parks) {
+        const dist = Math.hypot(lat - p.lat, lon - p.lon);
+        if (dist < maxDist) return p;
+      }
+      return null;
+    }
+
     function initAR() {
-      const select = document.getElementById('ar-select');
-      const container = document.getElementById('marker-content');
-      if (!select || !container) return;
-      function update() {
-        container.innerHTML = '';
+      const status = document.getElementById('ar-status');
+      const container = document.getElementById('park-object');
+      if (!status || !container || !navigator.geolocation) return;
+      status.textContent = 'Getting your location...';
+      container.innerHTML = '';
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        const park = detectPark(lat, lon);
         let el;
-        switch (select.value) {
-          case 'sphere':
-            el = document.createElement('a-sphere');
-            el.setAttribute('material', 'color: blue;');
-            el.setAttribute('radius', '0.5');
-            break;
-          case 'cone':
-            el = document.createElement('a-cone');
-            el.setAttribute('material', 'color: red;');
-            el.setAttribute('radius-bottom', '0.5');
-            el.setAttribute('height', '1');
-            break;
-          default:
-            el = document.createElement('a-box');
-            el.setAttribute('material', 'color: yellow;');
-            break;
+        if (park) {
+          status.textContent = 'Welcome to ' + park.name + '! Look around for secrets.';
+          el = document.createElement('a-' + park.shape);
+          el.setAttribute('material', 'color: ' + park.color + ';');
+          el.setAttribute('gps-entity-place', `latitude: ${park.lat}; longitude: ${park.lon};`);
+        } else {
+          status.textContent = 'You are not near any supported park.';
+          el = document.createElement('a-box');
+          el.setAttribute('material', 'color: gray;');
+          el.setAttribute('position', '0 1 -3');
         }
-        el.setAttribute('position', '0 0.5 0');
         el.setAttribute('animation', 'property: rotation; dur: 5000; to: 0 360 0; loop: true; easing: linear;');
         container.appendChild(el);
-      }
-      select.addEventListener('change', update);
-      update();
+      }, () => {
+        status.textContent = 'Location unavailable.';
+      });
     }
     function openAR() {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));

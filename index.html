@@ -493,6 +493,7 @@
         </div>
       </div>
       <div class="section-header">Weather Tips</div>
+      <div id="live-weather" class="subtitle"></div>
       <select id="weather-select">
         <option value="sunny">Sunny</option>
         <option value="rainy">Rainy</option>
@@ -600,6 +601,7 @@
       document.getElementById('planner-page').classList.add('active');
       fetchWaitTimes();
       initWeatherTips();
+      fetchWeather();
       window.scrollTo(0, 0);
     }
     let foodMode = 'disney';
@@ -1360,6 +1362,35 @@
           list.appendChild(li);
         });
       }
+    }
+
+    async function fetchWeather() {
+      const out = document.getElementById('live-weather');
+      if (!navigator.geolocation || !out) return;
+      out.textContent = 'Loading weather...';
+      navigator.geolocation.getCurrentPosition(async pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        try {
+          const resp = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+          if (resp.ok) {
+            const data = await resp.json();
+            const cw = data.current_weather;
+            if (cw) {
+              const rainy = cw.weathercode >= 61 && cw.weathercode <= 67 || cw.weathercode >= 80 && cw.weathercode <= 82;
+              out.textContent = `${cw.temperature}\u00B0C, ${rainy ? 'Rain' : 'Clear'}`;
+              document.getElementById('weather-select').value = rainy ? 'rainy' : 'sunny';
+              showWeatherTips();
+              return;
+            }
+          }
+          out.textContent = 'Weather unavailable';
+        } catch(e) {
+          out.textContent = 'Weather load failed';
+        }
+      }, () => {
+        out.textContent = 'Location unavailable';
+      });
     }
     function checkBadge(grid) {
       const id = grid.id;

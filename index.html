@@ -214,6 +214,32 @@
       0% { background-position: -200% 0;}
       100% { background-position: 200% 0;}
     }
+    /* Day Planner styles */
+    .planner-flex { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .planner-list { flex: 1; min-width: 250px; }
+    .planner-item {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 0.5rem 1rem;
+      margin-bottom: 0.5rem;
+      cursor: grab;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .planner-item .wait { font-size: 0.8rem; color: var(--warning); margin-left: auto; }
+    .planner-schedule { flex: 2; display: flex; gap: 1rem; flex-wrap: wrap; }
+    .schedule-column {
+      flex: 1;
+      min-width: 180px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 15px;
+      padding: 1rem;
+    }
+    .schedule-header { font-weight: 700; margin-bottom: 0.5rem; text-align: center; }
+    .dropzone { min-height: 150px; }
   </style>
 </head>
 <body>
@@ -255,6 +281,10 @@
         <button class="menu-btn" onclick="openPark('EU')">
           <span class="emoji">🌌</span>
           <span>Epic Universe</span>
+        </button>
+        <button class="menu-btn" onclick="openPlanner()">
+          <span class="emoji">🗓️</span>
+          <span>Plan Your Day</span>
         </button>
       </div>
       
@@ -360,6 +390,34 @@
       <div class="section-header">Cool Hidden Stuff</div>
       <div class="secrets-grid" id="EU-secrets"></div>
     </div>
+    <!-- DAY PLANNER -->
+    <div id="planner-page" class="page">
+      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <div class="park-title">🗓️ Plan Your Day</div>
+      <div class="planner-flex">
+        <div class="planner-list" id="planner-list"></div>
+        <div class="planner-schedule">
+          <div class="schedule-column">
+            <div class="schedule-header">Morning</div>
+            <div class="dropzone" id="slot-morning"></div>
+          </div>
+          <div class="schedule-column">
+            <div class="schedule-header">Afternoon</div>
+            <div class="dropzone" id="slot-afternoon"></div>
+          </div>
+          <div class="schedule-column">
+            <div class="schedule-header">Evening</div>
+            <div class="dropzone" id="slot-evening"></div>
+          </div>
+        </div>
+      </div>
+      <div class="section-header">Weather Tips</div>
+      <select id="weather-select">
+        <option value="sunny">Sunny</option>
+        <option value="rainy">Rainy</option>
+      </select>
+      <ul id="weather-tips"></ul>
+    </div>
   </div>
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="modal" style="display:none;">
@@ -391,6 +449,13 @@
     function openPark(park) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('park-' + park).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+    function openPlanner() {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('planner-page').classList.add('active');
+      populatePlanner();
+      initWeatherTips();
       window.scrollTo(0, 0);
     }
     function goHome() {
@@ -592,6 +657,18 @@
     };
     const parkList = ["MK","EPCOT","HS","AK","USF","IOA","EU"];
     const saved = JSON.parse(localStorage.getItem("hiddenParkFullScreenCharlieRides") || "{}");
+    const waitTimes = {
+      "Pirates of the Caribbean": {morning: 20, afternoon: 40, evening: 25},
+      "Haunted Mansion": {morning: 15, afternoon: 35, evening: 20},
+      "Avatar Flight of Passage": {morning: 60, afternoon: 90, evening: 40},
+      "Harry Potter and the Forbidden Journey": {morning: 30, afternoon: 45, evening: 25},
+      "Bowser’s Challenge": {morning: 40, afternoon: 70, evening: 35}
+    };
+    const rainyTips = [
+      "Pirates of the Caribbean is a great indoor escape.",
+      "Catch Festival of the Lion King to stay dry.",
+      "Harry Potter and the Forbidden Journey keeps you out of the rain."
+    ];
     // Render secrets (Cool Hidden Stuff)
     parkList.forEach(park => {
       const grid = document.getElementById(park + "-secrets");
@@ -669,6 +746,94 @@
     renderRides("EU", "ministry", "EU-rides-ministry");
     renderRides("EU", "snw", "EU-rides-snw");
     renderRides("EU", "berk", "EU-rides-berk");
+
+    function getTimeSlot() {
+      const h = new Date().getHours();
+      return h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+    }
+
+    function populatePlanner() {
+      const list = document.getElementById('planner-list');
+      list.innerHTML = '';
+      const slot = getTimeSlot();
+      const items = [];
+      parkList.forEach(p => {
+        if (rides[p]) {
+          Object.values(rides[p]).forEach(arr => arr.forEach(r => items.push(r)));
+        }
+        if (secrets[p]) { secrets[p].forEach(s => items.push(s)); }
+      });
+      items.forEach(obj => {
+        const w = waitTimes[obj.name] ? waitTimes[obj.name][slot] : null;
+        const el = document.createElement('div');
+        el.className = 'planner-item';
+        el.draggable = true;
+        el.dataset.name = obj.name;
+        el.innerHTML = `<span>${obj.emoji}</span><span>${obj.name}</span><span class="wait">${w ? w + 'm' : ''}</span>`;
+        el.addEventListener('dragstart', e => {
+          e.dataTransfer.setData('text/plain', obj.name);
+        });
+        list.appendChild(el);
+      });
+      loadSchedule();
+    }
+
+    function loadSchedule() {
+      const sched = JSON.parse(localStorage.getItem('dayPlan') || '{}');
+      ['morning','afternoon','evening'].forEach(slot => {
+        const zone = document.getElementById('slot-'+slot);
+        if (!zone) return;
+        zone.innerHTML = '';
+        (sched[slot] || []).forEach(name => {
+          const w = waitTimes[name] ? waitTimes[name][slot] : null;
+          const div = document.createElement('div');
+          div.className = 'planner-item';
+          div.textContent = name;
+          if (w) {
+            const span = document.createElement('span');
+            span.className = 'wait';
+            span.textContent = w + 'm';
+            div.appendChild(span);
+          }
+          zone.appendChild(div);
+        });
+      });
+    }
+
+    function addToSchedule(slot, name) {
+      const sched = JSON.parse(localStorage.getItem('dayPlan') || '{}');
+      sched[slot] = sched[slot] || [];
+      sched[slot].push(name);
+      localStorage.setItem('dayPlan', JSON.stringify(sched));
+      loadSchedule();
+    }
+
+    document.querySelectorAll('.dropzone').forEach(zone => {
+      zone.addEventListener('dragover', e => e.preventDefault());
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        const name = e.dataTransfer.getData('text/plain');
+        const slot = zone.id.replace('slot-','');
+        addToSchedule(slot, name);
+      });
+    });
+
+    function initWeatherTips() {
+      document.getElementById('weather-select').addEventListener('change', showWeatherTips);
+      showWeatherTips();
+    }
+    function showWeatherTips() {
+      const val = document.getElementById('weather-select').value;
+      const list = document.getElementById('weather-tips');
+      list.innerHTML = '';
+      if (val === 'rainy') {
+        rainyTips.forEach(t => {
+          const li = document.createElement('li');
+          li.textContent = t;
+          list.appendChild(li);
+        });
+      }
+    }
     function resetProgress() {
       localStorage.removeItem("hiddenParkFullScreenCharlieRides");
       localStorage.removeItem("seenCharlieWelcome");

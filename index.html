@@ -77,11 +77,16 @@
     .glass-card:hover {
       transform: translateY(-5px); box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
     }
-    .page { display: none; animation: fadeInUp 0.6s ease-out; }
-    .page.active { display: block; }
+    .page { display: none; }
+    .page.active { display: block; animation: fadeInUp 0.6s ease-out forwards; }
+    .page.fade-out { animation: fadeOutDown 0.5s ease forwards; }
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(30px);}
       to { opacity: 1; transform: translateY(0);}
+    }
+    @keyframes fadeOutDown {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(30px); }
     }
     h1 {
       font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; text-align: center; margin-bottom: 1rem;
@@ -621,51 +626,55 @@
       }
     }
     createParticles();
-    // Navigation functions
-    function openPark(park) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('park-' + park).classList.add('active');
+
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => {
+        if (p.id === id) return;
+        if (p.classList.contains('active')) {
+          p.classList.add('fade-out');
+          setTimeout(() => {
+            p.classList.remove('active', 'fade-out');
+          }, 500);
+        }
+      });
+      const page = document.getElementById(id);
+      if (page && !page.classList.contains('active')) {
+        page.classList.add('active');
+      }
       window.scrollTo(0, 0);
     }
+
+    // Navigation functions
+    function openPark(park) {
+      showPage('park-' + park);
+    }
     function openPlanner() {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('planner-page').classList.add('active');
+      showPage('planner-page');
       fetchWaitTimes();
       initWeatherTips();
       fetchWeather();
-      window.scrollTo(0, 0);
     }
     let foodMode = 'disney';
     function openFood(mode = 'disney') {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('food-page').classList.add('active');
+      showPage('food-page');
       foodMode = mode;
       const backBtn = document.getElementById('food-back-btn');
       if (backBtn) backBtn.onclick = mode === 'disney' ? openDisney : openUniversal;
       initFood();
-      window.scrollTo(0, 0);
     }
     function openPhotos() {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('photo-page').classList.add('active');
+      showPage('photo-page');
       renderHunts();
-      window.scrollTo(0, 0);
     }
     function openDisney() {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('disney-menu').classList.add('active');
-      window.scrollTo(0, 0);
+      showPage('disney-menu');
     }
     function openUniversal() {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('universal-menu').classList.add('active');
-      window.scrollTo(0, 0);
+      showPage('universal-menu');
     }
     function openMap() {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('map-page').classList.add('active');
+      showPage('map-page');
       updateMapLocation();
-      window.scrollTo(0, 0);
     }
     function updateMapLocation() {
       const frame = document.getElementById('map-frame');
@@ -762,10 +771,8 @@
     }
     function openParty() {
       stopQRScan();
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('party-page').classList.add('active');
+      showPage('party-page');
       exportProgress();
-      window.scrollTo(0, 0);
     }
     function isiOS() {
       return /iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -776,8 +783,7 @@
     }
     function openCameraPage() {
       stopARCamera();
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('camera-page').classList.add('active');
+      showPage('camera-page');
       const btn = document.getElementById('enter-ar-btn');
       const cube = document.getElementById('ar-cube');
       const video = document.getElementById('ar-video');
@@ -791,14 +797,11 @@
         if (video) video.style.display = 'block';
         startARCamera();
       }
-      window.scrollTo(0, 0);
     }
     function goHome() {
       stopQRScan();
       stopARCamera();
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('main-menu').classList.add('active');
-      window.scrollTo(0, 0);
+      showPage('main-menu');
     }
     // Modal functions
     function showModal() {

@@ -293,6 +293,29 @@
     }
     #map-container { width:100%; height:60vh; max-height:400px; border-radius:12px; overflow:hidden; }
     #map-container iframe { width:100%; height:100%; border:0; }
+    /* Memory Trail styles */
+    .memory-entry {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .memory-entry img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
+    .memory-user {
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+    .memory-time {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .memory-note { margin-top: 0.5rem; }
   </style>
 </head>
 <body>
@@ -322,6 +345,10 @@
         <button class="menu-btn" onclick="openParty()">
           <span class="emoji">🎉</span>
           <span>Party Mode</span>
+        </button>
+        <button class="menu-btn" onclick="openMemories()">
+          <span class="emoji">📖</span>
+          <span>Memory Trail</span>
         </button>
         <button class="menu-btn" onclick="openCameraPage()">
           <span class="emoji">📷</span>
@@ -541,6 +568,12 @@
       <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none;">
       <div class="secrets-grid" id="photo-list"></div>
     </div>
+    <!-- MEMORY TRAIL -->
+    <div id="memory-page" class="page">
+      <button class="back-btn" onclick="goHome()">← Back</button>
+      <div class="park-title">📖 Memory Trail</div>
+      <div id="memory-list"></div>
+    </div>
     <!-- PARK MAP -->
   <div id="map-page" class="page">
     <button class="back-btn" onclick="goHome()">← Back to Parks</button>
@@ -656,6 +689,10 @@
     function openPhotos() {
       showPage('photo-page');
       renderHunts();
+    }
+    function openMemories() {
+      showPage('memory-page');
+      renderMemoryTrail();
     }
     function openDisney() {
       showPage('disney-menu');
@@ -1076,6 +1113,55 @@
     const foodFav = JSON.parse(localStorage.getItem('hiddenParkFoodFav') || '{}');
     const achievements = JSON.parse(localStorage.getItem('parkAchievements') || '{}');
     const huntStatus = JSON.parse(localStorage.getItem('photoHunts') || '{}');
+    const memories = JSON.parse(localStorage.getItem('memoryTrail') || '[]');
+
+    let memoryPhotoItem = null;
+
+    function getUserName() {
+      let name = localStorage.getItem('memoryUserName');
+      if (!name) {
+        name = prompt("What's your name?") || 'Guest';
+        localStorage.setItem('memoryUserName', name);
+      }
+      return name;
+    }
+
+    function addMemory(entry) {
+      memories.push(entry);
+      localStorage.setItem('memoryTrail', JSON.stringify(memories));
+    }
+
+    function renderMemoryTrail() {
+      const list = document.getElementById('memory-list');
+      if (!list) return;
+      list.innerHTML = '';
+      memories.sort((a,b) => a.time - b.time);
+      memories.forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'memory-entry glass-card';
+        let html = `<div class="memory-user">${m.user} - ${m.item}</div>`;
+        html += `<div class="memory-time">${new Date(m.time).toLocaleString()}</div>`;
+        if (m.photo) html += `<img src="${m.photo}">`;
+        if (m.note) html += `<div class="memory-note">${m.note}</div>`;
+        div.innerHTML = html;
+        list.appendChild(div);
+      });
+    }
+
+    function promptMemory(item) {
+      const addPhoto = confirm('Add a photo for "' + item + '"?');
+      if (addPhoto) {
+        memoryPhotoItem = item;
+        const input = document.getElementById('camera-input');
+        if (input) input.click();
+      } else {
+        const note = prompt('Write a quick note?');
+        if (note) {
+          addMemory({ item, note, time: Date.now(), user: getUserName() });
+          renderMemoryTrail();
+        }
+      }
+    }
     const waitTimes = {
       "Tiana's Bayou Adventure (Log Flume)": {morning: 25, afternoon: 45, evening: 35},
       "It's a Small World": {morning: 15, afternoon: 25, evening: 20},
@@ -1167,10 +1253,14 @@
             <span class="tick">✔️</span>
           </div>`;
         card.onclick = function(e) {
+          const wasDone = card.classList.contains('done');
           card.classList.toggle("done");
           saved[key] = card.classList.contains("done");
           localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
           checkBadge(grid);
+          if (!wasDone && card.classList.contains('done')) {
+            promptMemory(s.name);
+          }
         };
         grid.appendChild(card);
       });
@@ -1193,10 +1283,14 @@
             <span class="tick">✔️</span>
           </div>`;
         card.onclick = function(e) {
+          const wasDone = card.classList.contains('done');
           card.classList.toggle("done");
           saved[key] = card.classList.contains("done");
           localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
           checkBadge(grid);
+          if (!wasDone && card.classList.contains('done')) {
+            promptMemory(ride.name);
+          }
         };
         grid.appendChild(card);
       });
@@ -1230,10 +1324,14 @@
               foodFav[favKey] = card.classList.contains('favorite');
               localStorage.setItem('hiddenParkFoodFav', JSON.stringify(foodFav));
             } else {
+              const wasDone = card.classList.contains('done');
               card.classList.toggle('done');
               foodDone[key] = card.classList.contains('done');
               localStorage.setItem('hiddenParkFoodStatus', JSON.stringify(foodDone));
               checkBadge(grid);
+              if (!wasDone && card.classList.contains('done')) {
+                promptMemory(f.name);
+              }
             }
           });
           grid.appendChild(card);
@@ -1496,24 +1594,34 @@
     }
     function handleHuntPhoto(e) {
       const file = e.target.files[0];
-      if (!file || !currentHuntKey) return;
+      if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
-        huntStatus[currentHuntKey] = { done: true, photo: reader.result };
-        localStorage.setItem('photoHunts', JSON.stringify(huntStatus));
-        if (currentHuntCard) {
-          currentHuntCard.classList.add('done');
-          let img = currentHuntCard.querySelector('img.hunt-photo');
-          if (!img) {
-            img = document.createElement('img');
-            img.className = 'hunt-photo';
-            currentHuntCard.querySelector('.card-info').appendChild(img);
+        if (currentHuntKey) {
+          huntStatus[currentHuntKey] = { done: true, photo: reader.result };
+          localStorage.setItem('photoHunts', JSON.stringify(huntStatus));
+          if (currentHuntCard) {
+            currentHuntCard.classList.add('done');
+            let img = currentHuntCard.querySelector('img.hunt-photo');
+            if (!img) {
+              img = document.createElement('img');
+              img.className = 'hunt-photo';
+              currentHuntCard.querySelector('.card-info').appendChild(img);
+            }
+            img.src = reader.result;
+            checkBadge(document.getElementById('photo-list'));
+            const nameEl = currentHuntCard.querySelector('.card-name');
+            if (nameEl) {
+              addMemory({ item: nameEl.textContent, photo: reader.result, time: Date.now(), user: getUserName() });
+            }
           }
-          img.src = reader.result;
-          checkBadge(document.getElementById('photo-list'));
+          currentHuntKey = null;
+          currentHuntCard = null;
+        } else if (memoryPhotoItem) {
+          addMemory({ item: memoryPhotoItem, photo: reader.result, time: Date.now(), user: getUserName() });
+          renderMemoryTrail();
+          memoryPhotoItem = null;
         }
-        currentHuntKey = null;
-        currentHuntCard = null;
         e.target.value = '';
       };
       reader.readAsDataURL(file);

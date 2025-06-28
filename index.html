@@ -587,26 +587,6 @@
       <video id="qr-video" style="display:none;width:100%;max-width:300px;margin-top:1rem;" playsinline></video>
       <canvas id="qr-canvas" style="display:none;"></canvas>
 
-      <div id="magic-sync" style="margin-top:2rem;">
-        <div class="section-header">Magic Names Sync</div>
-        <div id="session-setup" style="display:flex;gap:1rem;margin-top:1rem;">
-          <button class="modal-btn" onclick="showCreateSession()">Start Our Day</button>
-          <button class="modal-btn" onclick="showJoinSession()">Join Our Day</button>
-        </div>
-        <div id="create-panel" style="display:none;margin-top:1rem;">
-          <input id="create-name-input" placeholder="Your name" style="width:100%;margin-bottom:0.5rem;" />
-          <button class="modal-btn" onclick="createSession()">Create</button>
-          <p style="margin-top:1rem;">Share this code:</p>
-          <div id="created-code" style="font-size:1.5rem;margin-top:0.5rem;"></div>
-        </div>
-        <div id="join-panel" style="display:none;margin-top:1rem;">
-          <input id="join-code-input" placeholder="Code" style="width:100%;margin-bottom:0.5rem;text-transform:uppercase;" />
-          <input id="join-name-input" placeholder="Your name" style="width:100%;margin-bottom:0.5rem;" />
-          <button class="modal-btn" onclick="joinSession()">Join</button>
-        </div>
-        <div id="members" style="display:none;margin-top:1rem;"></div>
-        <div id="updates" style="display:none;margin-top:1rem;font-size:0.9rem;"></div>
-      </div>
     </div>
   <!-- QUEST SPINNER -->
   <div id="quest-page" class="page">
@@ -1223,7 +1203,6 @@
           saved[key] = card.classList.contains("done");
           localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
           checkBadge(grid);
-          announce(`${memberName || 'Someone'} checked off ${s.name}!`);
         };
         grid.appendChild(card);
       });
@@ -1250,7 +1229,6 @@
           saved[key] = card.classList.contains("done");
           localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
           checkBadge(grid);
-          announce(`${memberName || 'Someone'} checked off ${ride.name}!`);
         };
         grid.appendChild(card);
       });
@@ -1288,7 +1266,6 @@
               foodDone[key] = card.classList.contains('done');
               localStorage.setItem('hiddenParkFoodStatus', JSON.stringify(foodDone));
               checkBadge(grid);
-              announce(`${memberName || 'Someone'} checked off ${f.name}!`);
             }
           });
           grid.appendChild(card);
@@ -1587,7 +1564,6 @@
       questLog.push(currentQuest);
       localStorage.setItem('questLog', JSON.stringify(questLog));
       showBadge('Quest Complete!');
-      announce(`${memberName || 'Someone'} completed a quest!`);
       renderQuestLog();
       document.getElementById('quest-result').textContent = '';
       document.getElementById('quest-complete-btn').style.display = 'none';
@@ -1653,9 +1629,6 @@
       location.reload();
     }
   </script>
-  <script src="firebase-app.js"></script>
-  <script src="firebase-firestore.js"></script>
-  <script src="magic-sync.js"></script>
   <script src="qrcode.min.js"></script>
   <script src="jsQR.js"></script>
 </body>

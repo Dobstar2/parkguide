@@ -240,6 +240,22 @@
     }
     .schedule-header { font-weight: 700; margin-bottom: 0.5rem; text-align: center; }
     .dropzone { min-height: 150px; }
+    /* Food Tracker styles */
+    .filter-controls { display: flex; gap: 1rem; margin: 1rem 0 2rem; }
+    .filter-controls input, .filter-controls select {
+      flex: 1;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      color: var(--text-primary);
+    }
+    .foods-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .food-card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1.5rem; cursor: pointer; position: relative; transition: all 0.3s ease; overflow: hidden; }
+    .food-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-soft); border-color: rgba(255, 255, 255, 0.3); }
+    .food-card.done { background: rgba(78, 205, 196, 0.1); border-color: var(--success); opacity: 0.7; }
+    .fav { position: absolute; top: 1rem; left: 1rem; font-size: 1.5rem; color: var(--warning); display: none; filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); }
+    .favorite .fav { display: block; }
   </style>
 </head>
 <body>
@@ -285,6 +301,10 @@
         <button class="menu-btn" onclick="openPlanner()">
           <span class="emoji">🗓️</span>
           <span>Plan Your Day</span>
+        </button>
+        <button class="menu-btn" onclick="openFood()">
+          <span class="emoji">🍔</span>
+          <span>Food & Snacks</span>
         </button>
       </div>
       
@@ -418,6 +438,21 @@
       </select>
       <ul id="weather-tips"></ul>
     </div>
+    <!-- FOOD TRACKER -->
+    <div id="food-page" class="page">
+      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <div class="park-title">🍔 Food & Snacks</div>
+      <div class="filter-controls">
+        <input type="text" id="food-search" placeholder="Search snacks...">
+        <select id="food-filter">
+          <option value="">All</option>
+          <option value="sweet">Sweet</option>
+          <option value="savory">Savory</option>
+          <option value="drink">Drink</option>
+        </select>
+      </div>
+      <div id="food-sections"></div>
+    </div>
   </div>
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="modal" style="display:none;">
@@ -456,6 +491,12 @@
       document.getElementById('planner-page').classList.add('active');
       populatePlanner();
       initWeatherTips();
+      window.scrollTo(0, 0);
+    }
+    function openFood() {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('food-page').classList.add('active');
+      initFood();
       window.scrollTo(0, 0);
     }
     function goHome() {
@@ -563,6 +604,56 @@
         {emoji:"👻", name:"Check out Frankenstein’s Dark Universe", desc:"Classic monsters meet the future!"}
       ]
     };
+    const foods = {
+      MK: [
+        {emoji:"🍍", name:"Dole Whip", desc:"Aloha Isle (Adventureland)", type:"sweet"},
+        {emoji:"🥐", name:"Cheshire Cat Tail", desc:"Cheshire Café (Fantasyland)", type:"sweet"},
+        {emoji:"🥨", name:"Mickey Pretzel", desc:"Snack Carts", type:"savory"},
+        {emoji:"🥟", name:"Spring Rolls", desc:"Adventureland cart", type:"savory"},
+        {emoji:"🌭", name:"Corn Dog Nuggets", desc:"Casey’s Corner", type:"savory"},
+        {emoji:"🍎", name:"LeFou’s Brew", desc:"Gaston’s Tavern", type:"drink"}
+      ],
+      EPCOT: [
+        {emoji:"🍞", name:"School Bread", desc:"Kringla Bakeri Og Kafe (Norway)", type:"sweet"},
+        {emoji:"🍦", name:"Macaron Ice Cream Sandwich", desc:"France pavilion", type:"sweet"},
+        {emoji:"🍰", name:"Funnel Cake", desc:"America Pavilion", type:"sweet"},
+        {emoji:"🍿", name:"Caramel Popcorn", desc:"Karamell-Küche (Germany)", type:"sweet"},
+        {emoji:"🍹", name:"Margaritas", desc:"La Cava del Tequila (Mexico)", type:"drink"},
+        {emoji:"🥃", name:"Beverly", desc:"Club Cool", type:"drink"}
+      ],
+      HS: [
+        {emoji:"🌯", name:"Ronto Wrap", desc:"Ronto Roasters", type:"savory"},
+        {emoji:"🍪", name:"Num Num Cookie", desc:"Pixar Place Market", type:"sweet"},
+        {emoji:"🥔", name:"Totchos", desc:"Woody’s Lunch Box", type:"savory"},
+        {emoji:"🥛", name:"Blue/Green Milk", desc:"Milk Stand", type:"drink"},
+        {emoji:"🥕", name:"Carrot Cake Cookie", desc:"Trolley Car Café", type:"sweet"}
+      ],
+      AK: [
+        {emoji:"🧃", name:"Night Blossom Slush", desc:"Pongu Pongu", type:"drink"},
+        {emoji:"🍟", name:"Mr. Kamal’s Fries", desc:"Asia", type:"savory"},
+        {emoji:"🧀", name:"Pulled Pork Mac and Cheese", desc:"Flame Tree Barbecue", type:"savory"},
+        {emoji:"🌽", name:"Grilled Corn on the Cob", desc:"Harambe Market", type:"savory"},
+        {emoji:"🦁", name:"Simba Pretzel", desc:"Harambe Fruit Market", type:"savory"}
+      ],
+      USF: [
+        {emoji:"🍺", name:"Butterbeer", desc:"Diagon Alley", type:"drink"},
+        {emoji:"🎃", name:"Pumpkin Juice", desc:"The Leaky Cauldron", type:"drink"},
+        {emoji:"🟢", name:"Fishy Green Ale", desc:"The Hopping Pot", type:"drink"},
+        {emoji:"🍩", name:"Lard Lad Donut", desc:"Simpsons area", type:"sweet"},
+        {emoji:"🔥", name:"Moe’s Flaming Moe", desc:"Moe’s Tavern", type:"drink"}
+      ],
+      IOA: [
+        {emoji:"🍧", name:"Frozen Butterbeer", desc:"Three Broomsticks", type:"drink"},
+        {emoji:"🥟", name:"Pumpkin Pasties", desc:"Honeydukes", type:"sweet"},
+        {emoji:"🍗", name:"Giant Turkey Leg", desc:"Multiple Locations", type:"savory"},
+        {emoji:"🥖", name:"Churros", desc:"Snack Carts", type:"sweet"}
+      ],
+      EU: [
+        {emoji:"🍄", name:"Toadstool Café treats", desc:"Super Nintendo World", type:"sweet"},
+        {emoji:"🧙", name:"Wizarding World specialty drinks", desc:"Ministry of Magic", type:"drink"},
+        {emoji:"🐲", name:"Dragon Fruit Sorbet", desc:"Isle of Berk", type:"sweet"}
+      ]
+    };
     const rides = {
       MK: {
         fantasy: [
@@ -657,6 +748,8 @@
     };
     const parkList = ["MK","EPCOT","HS","AK","USF","IOA","EU"];
     const saved = JSON.parse(localStorage.getItem("hiddenParkFullScreenCharlieRides") || "{}");
+    const foodDone = JSON.parse(localStorage.getItem('hiddenParkFoodStatus') || '{}');
+    const foodFav = JSON.parse(localStorage.getItem('hiddenParkFoodFav') || '{}');
     const waitTimes = {
       "Pirates of the Caribbean": {morning: 20, afternoon: 40, evening: 25},
       "Haunted Mansion": {morning: 15, afternoon: 35, evening: 20},
@@ -716,6 +809,67 @@
         };
         grid.appendChild(card);
       });
+    }
+
+    function createFoodCards() {
+      const container = document.getElementById('food-sections');
+      if (!container) return;
+      container.innerHTML = '';
+      Object.keys(foods).forEach(park => {
+        const header = document.createElement('div');
+        header.className = 'land-header';
+        header.textContent = parkName(park);
+        container.appendChild(header);
+        const grid = document.createElement('div');
+        grid.className = 'foods-grid';
+        container.appendChild(grid);
+        foods[park].forEach((f, idx) => {
+          const key = `${park}-food-${idx}`;
+          const favKey = `${park}-foodfav-${idx}`;
+          const card = document.createElement('div');
+          card.className = 'food-card glass-card' + (foodDone[key] ? ' done' : '') + (foodFav[favKey] ? ' favorite' : '');
+          card.dataset.name = f.name.toLowerCase();
+          card.dataset.type = f.type;
+          card.innerHTML = `<div class="card-content"><span class="card-emoji">${f.emoji}</span><div class="card-info"><div class="card-name">${f.name}</div><div class="card-desc">${f.desc}</div></div><span class="fav">★</span><span class="tick">✔️</span></div>`;
+          card.addEventListener('click', e => {
+            if (e.target.classList.contains('fav')) {
+              e.stopPropagation();
+              card.classList.toggle('favorite');
+              foodFav[favKey] = card.classList.contains('favorite');
+              localStorage.setItem('hiddenParkFoodFav', JSON.stringify(foodFav));
+            } else {
+              card.classList.toggle('done');
+              foodDone[key] = card.classList.contains('done');
+              localStorage.setItem('hiddenParkFoodStatus', JSON.stringify(foodDone));
+            }
+          });
+          grid.appendChild(card);
+        });
+      });
+    }
+
+    function parkName(code) {
+      const names = {MK:'Magic Kingdom', EPCOT:'EPCOT', HS:'Hollywood Studios', AK:'Animal Kingdom', USF:'Universal Studios Florida', IOA:'Islands of Adventure', EU:'Epic Universe'};
+      return names[code] || code;
+    }
+
+    function filterFoods() {
+      const term = document.getElementById('food-search').value.toLowerCase();
+      const type = document.getElementById('food-filter').value;
+      document.querySelectorAll('.food-card').forEach(card => {
+        const matchText = card.dataset.name.includes(term);
+        const matchType = !type || card.dataset.type === type;
+        card.style.display = matchText && matchType ? '' : 'none';
+      });
+    }
+
+    function initFood() {
+      if (!document.getElementById('food-sections').children.length) {
+        createFoodCards();
+      }
+      document.getElementById('food-search').addEventListener('input', filterFoods);
+      document.getElementById('food-filter').addEventListener('change', filterFoods);
+      filterFoods();
     }
     // Magic Kingdom
     renderRides("MK", "fantasy", "MK-rides-fantasy");
@@ -836,6 +990,8 @@
     }
     function resetProgress() {
       localStorage.removeItem("hiddenParkFullScreenCharlieRides");
+      localStorage.removeItem('hiddenParkFoodStatus');
+      localStorage.removeItem('hiddenParkFoodFav');
       localStorage.removeItem("seenCharlieWelcome");
       location.reload();
     }

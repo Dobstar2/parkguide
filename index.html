@@ -288,6 +288,31 @@
       <div class="author">Tap a park below to start your magical journey. Check off rides & secrets as you discover them. Reset anytime for a fresh adventure!</div>
       
       <div class="main-menu-grid">
+        <button class="menu-btn" onclick="openDisney()">
+          <span class="emoji">🏰</span>
+          <span>Disney Parks</span>
+        </button>
+        <button class="menu-btn" onclick="openUniversal()">
+          <span class="emoji">🧙‍♂️</span>
+          <span>Universal Parks</span>
+        </button>
+        <button class="menu-btn" onclick="openMap()">
+          <span class="emoji">🗺️</span>
+          <span>Park Map</span>
+        </button>
+        <button class="menu-btn" onclick="openParty()">
+          <span class="emoji">🎉</span>
+          <span>Party Mode</span>
+        </button>
+      </div>
+      
+      <button class="reset-btn" onclick="resetProgress()">🔄 Reset All Progress</button>
+    </div>
+    <!-- DISNEY MENU -->
+    <div id="disney-menu" class="page">
+      <button class="back-btn" onclick="goHome()">← Back</button>
+      <div class="park-title">🏰 Disney Parks</div>
+      <div class="main-menu-grid">
         <button class="menu-btn" onclick="openPark('MK')">
           <span class="emoji">🏰</span>
           <span>Magic Kingdom</span>
@@ -304,18 +329,6 @@
           <span class="emoji">🦁</span>
           <span>Animal Kingdom</span>
         </button>
-        <button class="menu-btn" onclick="openPark('USF')">
-          <span class="emoji">🧙‍♂️</span>
-          <span>Universal Studios Florida</span>
-        </button>
-        <button class="menu-btn" onclick="openPark('IOA')">
-          <span class="emoji">🦖</span>
-          <span>Islands of Adventure</span>
-        </button>
-        <button class="menu-btn" onclick="openPark('EU')">
-          <span class="emoji">🌌</span>
-          <span>Epic Universe</span>
-        </button>
         <button class="menu-btn" onclick="openPlanner()">
           <span class="emoji">🗓️</span>
           <span>Plan Your Day</span>
@@ -328,25 +341,34 @@
           <span class="emoji">📸</span>
           <span>Photo Hunts</span>
         </button>
-        <button class="menu-btn" onclick="openMap()">
-          <span class="emoji">🗺️</span>
-          <span>Park Map</span>
-        </button>
-        <button class="menu-btn" onclick="openParty()">
-          <span class="emoji">🎉</span>
-          <span>Party Mode</span>
-        </button>
         <button class="menu-btn" onclick="openAR()">
           <span class="emoji">🕵️</span>
           <span>Secrets AR</span>
         </button>
       </div>
-      
-      <button class="reset-btn" onclick="resetProgress()">🔄 Reset All Progress</button>
+    </div>
+    <!-- UNIVERSAL MENU -->
+    <div id="universal-menu" class="page">
+      <button class="back-btn" onclick="goHome()">← Back</button>
+      <div class="park-title">🧙‍♂️ Universal Parks</div>
+      <div class="main-menu-grid">
+        <button class="menu-btn" onclick="openPark('USF')">
+          <span class="emoji">🧙‍♂️</span>
+          <span>Universal Studios Florida</span>
+        </button>
+        <button class="menu-btn" onclick="openPark('IOA')">
+          <span class="emoji">🦖</span>
+          <span>Islands of Adventure</span>
+        </button>
+        <button class="menu-btn" onclick="openPark('EU')">
+          <span class="emoji">🌌</span>
+          <span>Epic Universe</span>
+        </button>
+      </div>
     </div>
     <!-- MAGIC KINGDOM -->
     <div id="park-MK" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <button class="back-btn" onclick="openDisney()">← Back</button>
       <div class="park-title">🏰 Magic Kingdom</div>
       <div class="section-header">Must-Do Rides</div>
       <div class="land-header">Fantasyland</div>
@@ -364,7 +386,7 @@
     </div>
     <!-- HOLLYWOOD STUDIOS -->
     <div id="park-HS" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <button class="back-btn" onclick="openDisney()">← Back</button>
       <div class="park-title">🎬 Hollywood Studios</div>
       <div class="section-header">Must-Do Rides</div>
       <div class="land-header">Star Wars: Galaxy's Edge</div>
@@ -378,7 +400,7 @@
     </div>
     <!-- ANIMAL KINGDOM -->
     <div id="park-AK" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <button class="back-btn" onclick="openDisney()">← Back</button>
       <div class="park-title">🦁 Animal Kingdom</div>
       <div class="section-header">Must-Do Rides</div>
       <div class="land-header">Pandora</div>
@@ -394,7 +416,7 @@
     </div>
     <!-- EPCOT -->
     <div id="park-EPCOT" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <button class="back-btn" onclick="openDisney()">← Back</button>
       <div class="park-title">🌐 EPCOT</div>
       <div class="section-header">Must-Do Rides</div>
       <div class="land-header">World Discovery</div>
@@ -406,7 +428,7 @@
     </div>
     <!-- UNIVERSAL STUDIOS FLORIDA -->
     <div id="park-USF" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <button class="back-btn" onclick="openUniversal()">← Back</button>
       <div class="park-title">🧙‍♂️ Universal Studios Florida</div>
       <div class="section-header">Must-Do Rides</div>
       <div class="land-header">Diagon Alley</div>
@@ -418,7 +440,7 @@
     </div>
     <!-- ISLANDS OF ADVENTURE -->
     <div id="park-IOA" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <button class="back-btn" onclick="openUniversal()">← Back</button>
       <div class="park-title">🦖 Islands of Adventure</div>
       <div class="section-header">Must-Do Rides</div>
       <div class="land-header">Jurassic Park</div>
@@ -430,7 +452,7 @@
     </div>
     <!-- EPIC UNIVERSE -->
     <div id="park-EU" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <button class="back-btn" onclick="openUniversal()">← Back</button>
       <div class="park-title">🌌 Epic Universe</div>
       <div class="section-header">Must-Do Rides</div>
       <div class="land-header">Celestial Park</div>
@@ -446,7 +468,7 @@
     </div>
     <!-- DAY PLANNER -->
     <div id="planner-page" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <button class="back-btn" onclick="openDisney()">← Back</button>
       <div class="park-title">🗓️ Plan Your Day</div>
       <div class="planner-flex">
         <div class="planner-list" id="planner-list"></div>
@@ -474,7 +496,7 @@
     </div>
     <!-- FOOD TRACKER -->
     <div id="food-page" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <button class="back-btn" onclick="openDisney()">← Back</button>
       <div class="park-title">🍔 Food & Snacks</div>
       <div class="filter-controls">
         <input type="text" id="food-search" placeholder="Search snacks...">
@@ -489,7 +511,7 @@
     </div>
     <!-- PHOTO HUNTS -->
     <div id="photo-page" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <button class="back-btn" onclick="openDisney()">← Back</button>
       <div class="park-title">📸 Photo Hunts</div>
       <button class="camera-btn" onclick="launchCamera()">📷 Take Photo</button>
       <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none;">
@@ -519,7 +541,7 @@
     </div>
     <!-- SECRETS AR -->
     <div id="ar-page" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <button class="back-btn" onclick="openDisney()">← Back</button>
       <div class="park-title">🕵️ Secrets Revealed</div>
       <p>Point your camera at an AR marker to uncover hidden surprises.</p>
       <div style="margin:0.5rem 0;">
@@ -595,6 +617,16 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('photo-page').classList.add('active');
       renderHunts();
+      window.scrollTo(0, 0);
+    }
+    function openDisney() {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('disney-menu').classList.add('active');
+      window.scrollTo(0, 0);
+    }
+    function openUniversal() {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('universal-menu').classList.add('active');
       window.scrollTo(0, 0);
     }
     function openMap() {

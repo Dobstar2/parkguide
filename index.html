@@ -301,7 +301,54 @@
       to { transform: translate(-50%, -50%) rotateX(360deg) rotateY(360deg); }
     }
     #map-container { width:100%; height:60vh; max-height:400px; border-radius:12px; overflow:hidden; }
-    #map-container iframe { width:100%; height:100%; border:0; }
+  #map-container iframe { width:100%; height:100%; border:0; }
+    /* Party Mode additions */
+    #party-balloon {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      width: 60px;
+      height: 60px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      box-shadow: var(--shadow-glow);
+      cursor: pointer;
+      z-index: 5;
+      display: none;
+    }
+    #party-balloon.pulse { animation: pulse 2s ease-in-out infinite; }
+    #party-dashboard {
+      position: fixed;
+      bottom: 80px;
+      right: 1rem;
+      width: 260px;
+      max-height: 50vh;
+      overflow-y: auto;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1rem;
+      z-index: 5;
+      display: none;
+    }
+    #party-dashboard h3 { margin-top:0;margin-bottom:0.5rem;text-align:center; }
+    #join-toast {
+      position: fixed;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--success);
+      color: #000;
+      padding: 0.75rem 1.25rem;
+      border-radius: 20px;
+      box-shadow: var(--shadow-soft);
+      display: none;
+      z-index: 6;
+    }
   </style>
 </head>
 <body>
@@ -590,8 +637,14 @@
       </div>
       <video id="qr-video" style="display:none;width:100%;max-width:300px;margin-top:1rem;" playsinline></video>
       <canvas id="qr-canvas" style="display:none;"></canvas>
-    </div>
   </div>
+</div>
+  <div id="party-balloon" onclick="toggleDashboard()">🎈</div>
+  <div id="party-dashboard">
+    <h3>Party Dashboard</h3>
+    <ul id="party-list"></ul>
+  </div>
+  <div id="join-toast"></div>
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="modal" style="display:none;">
     <div class="modal-content">
@@ -626,6 +679,71 @@
       }
     }
     createParticles();
+
+    function getUserName() {
+      let name = localStorage.getItem('partyUserName');
+      if (!name) {
+        name = prompt('Enter your name for Party Mode:') || 'Guest';
+        localStorage.setItem('partyUserName', name);
+      }
+      return name;
+    }
+    function getPartyMembers() {
+      return JSON.parse(localStorage.getItem('partyMembers') || '[]');
+    }
+    function savePartyMembers(members) {
+      localStorage.setItem('partyMembers', JSON.stringify(members));
+    }
+    function showJoinToast(name) {
+      const toast = document.getElementById('join-toast');
+      if (!toast) return;
+      toast.textContent = name + ' joined your party!';
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+    function toggleDashboard() {
+      const dash = document.getElementById('party-dashboard');
+      if (dash.style.display === 'block') {
+        dash.style.display = 'none';
+      } else {
+        renderPartyDashboard();
+        dash.style.display = 'block';
+      }
+    }
+    function renderPartyDashboard() {
+      const list = document.getElementById('party-list');
+      const members = getPartyMembers();
+      list.innerHTML = '';
+      members.forEach(m => {
+        const li = document.createElement('li');
+        const rideCount = Object.values(m.rides || {}).filter(v => v).length;
+        li.textContent = `${m.name}: ${rideCount} rides`; // simple summary
+        list.appendChild(li);
+      });
+    }
+    function mergeProgress(target, source) {
+      Object.keys(source || {}).forEach(k => {
+        if (typeof source[k] === 'object' && source[k] !== null) {
+          if (!target[k]) target[k] = {};
+          mergeProgress(target[k], source[k]);
+        } else {
+          if (source[k]) target[k] = source[k];
+        }
+      });
+    }
+    function addPartyMember(data) {
+      const members = getPartyMembers();
+      const existing = members.find(m => m.name === data.name);
+      if (existing) {
+        mergeProgress(existing.rides, data.rides);
+      } else {
+        members.push({ name: data.name, rides: data.rides });
+      }
+      savePartyMembers(members);
+      document.getElementById('party-balloon').style.display = 'flex';
+      document.getElementById('party-balloon').classList.add('pulse');
+      showJoinToast(data.name);
+    }
 
     function showPage(id) {
       document.querySelectorAll('.page').forEach(p => {
@@ -832,6 +950,10 @@
       }
     }
     applyLinkProgress();
+    if (getPartyMembers().length) {
+      document.getElementById('party-balloon').style.display = 'flex';
+      document.getElementById('party-balloon').classList.add('pulse');
+    }
     // DATA:
     const secrets = {
       MK: [
@@ -1531,6 +1653,7 @@
     if (camInput) camInput.addEventListener('change', handleHuntPhoto);
     function exportProgress() {
       const data = {
+        name: getUserName(),
         rides: saved,
         foodDone,
         foodFav,
@@ -1557,11 +1680,17 @@
           code = input;
         }
         const data = JSON.parse(atob(code));
-        localStorage.setItem('hiddenParkFullScreenCharlieRides', JSON.stringify(data.rides || {}));
-        localStorage.setItem('hiddenParkFoodStatus', JSON.stringify(data.foodDone || {}));
-        localStorage.setItem('hiddenParkFoodFav', JSON.stringify(data.foodFav || {}));
-        localStorage.setItem('parkAchievements', JSON.stringify(data.achievements || {}));
-        localStorage.setItem('photoHunts', JSON.stringify(data.hunts || {}));
+        addPartyMember(data);
+        mergeProgress(saved, data.rides);
+        mergeProgress(foodDone, data.foodDone);
+        mergeProgress(foodFav, data.foodFav);
+        mergeProgress(achievements, data.achievements);
+        mergeProgress(huntStatus, data.hunts);
+        localStorage.setItem('hiddenParkFullScreenCharlieRides', JSON.stringify(saved));
+        localStorage.setItem('hiddenParkFoodStatus', JSON.stringify(foodDone));
+        localStorage.setItem('hiddenParkFoodFav', JSON.stringify(foodFav));
+        localStorage.setItem('parkAchievements', JSON.stringify(achievements));
+        localStorage.setItem('photoHunts', JSON.stringify(huntStatus));
         location.reload();
       } catch(e) { alert('Invalid code'); }
     }
@@ -1573,6 +1702,8 @@
       localStorage.removeItem('photoHunts');
       localStorage.removeItem('dayPlan');
       localStorage.removeItem("seenCharlieWelcome");
+      localStorage.removeItem('partyMembers');
+      localStorage.removeItem('partyUserName');
       location.reload();
     }
   </script>

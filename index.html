@@ -230,7 +230,7 @@
     }
     .planner-item .wait { font-size: 0.8rem; color: var(--warning); margin-left: auto; }
     .planner-schedule { flex: 2; display: flex; gap: 1rem; flex-wrap: wrap; }
-    .schedule-column {
+.schedule-column {
       flex: 1;
       min-width: 180px;
       background: var(--glass-bg);
@@ -240,6 +240,28 @@
     }
     .schedule-header { font-weight: 700; margin-bottom: 0.5rem; text-align: center; }
     .dropzone { min-height: 150px; }
+    /* Food tracker */
+    .food-controls { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    #food-search, #food-filter {
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      color: var(--text-primary);
+    }
+    #food-search { flex: 1; min-width: 150px; }
+    #food-filter { flex: 0 0 150px; }
+    .fav {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      font-size: 1.5rem;
+      color: var(--accent);
+      display: none;
+      filter: drop-shadow(0 0 8px rgba(240, 147, 251, 0.5));
+    }
+    .favorite .fav { display: block; }
+    .favorite .card-name { color: var(--accent); }
   </style>
 </head>
 <body>
@@ -426,6 +448,15 @@
     <div id="food-page" class="page">
       <button class="back-btn" onclick="goHome()">← Back to Parks</button>
       <div class="park-title">🍔 Favorite Foods & Snacks</div>
+      <div class="food-controls">
+        <input type="text" id="food-search" placeholder="Search snacks...">
+        <select id="food-filter">
+          <option value="all">All Types</option>
+          <option value="sweet">Sweet</option>
+          <option value="savory">Savory</option>
+          <option value="drink">Drink</option>
+        </select>
+      </div>
       <div class="section-header">Yummy Treats</div>
       <div class="rides-grid" id="food-grid"></div>
     </div>
@@ -472,6 +503,7 @@
     function openFoods() {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('food-page').classList.add('active');
+      filterFoods();
       window.scrollTo(0, 0);
     }
     function goHome() {
@@ -686,12 +718,46 @@
       "Harry Potter and the Forbidden Journey keeps you out of the rain."
     ];
     const foods = [
-      {emoji:"🍦", name:"Dole Whip (MK)"},
-      {emoji:"🍪", name:"Jack-Jack's Num Num Cookie (HS)"},
-      {emoji:"🍿", name:"Kat Saka’s Kettle Popcorn (HS)"},
-      {emoji:"🌮", name:"Tacos at La Cantina (EPCOT)"},
-      {emoji:"🍗", name:"Turkey Leg (MK)"},
-      {emoji:"🍩", name:"Voodoo Doughnut (CityWalk)"}
+      {emoji:"🍍", name:"Dole Whip", park:"MK", type:"sweet"},
+      {emoji:"🥐", name:"Cheshire Cat Tail", park:"MK", type:"sweet"},
+      {emoji:"🥨", name:"Mickey Pretzel", park:"MK", type:"savory"},
+      {emoji:"🥟", name:"Cheeseburger Spring Roll", park:"MK", type:"savory"},
+      {emoji:"🌭", name:"Corn Dog Nuggets", park:"MK", type:"savory"},
+      {emoji:"🍎", name:"LeFou’s Brew", park:"MK", type:"drink"},
+
+      {emoji:"🍞", name:"School Bread", park:"EPCOT", type:"sweet"},
+      {emoji:"🍦", name:"Macaron Ice Cream Sandwich", park:"EPCOT", type:"sweet"},
+      {emoji:"🍰", name:"Funnel Cake", park:"EPCOT", type:"sweet"},
+      {emoji:"🍿", name:"Caramel Popcorn", park:"EPCOT", type:"sweet"},
+      {emoji:"🍹", name:"Margaritas", park:"EPCOT", type:"drink"},
+      {emoji:"🥃", name:"Beverly", park:"EPCOT", type:"drink"},
+
+      {emoji:"🌯", name:"Ronto Wrap", park:"HS", type:"savory"},
+      {emoji:"🍪", name:"Num Num Cookie", park:"HS", type:"sweet"},
+      {emoji:"🥔", name:"Totchos", park:"HS", type:"savory"},
+      {emoji:"🥛", name:"Blue/Green Milk", park:"HS", type:"drink"},
+      {emoji:"🥕", name:"Carrot Cake Cookie", park:"HS", type:"sweet"},
+
+      {emoji:"🧃", name:"Night Blossom Slush", park:"AK", type:"drink"},
+      {emoji:"🍟", name:"Mr. Kamal’s Fries", park:"AK", type:"savory"},
+      {emoji:"🧀", name:"Pulled Pork Mac and Cheese", park:"AK", type:"savory"},
+      {emoji:"🌽", name:"Grilled Corn on the Cob", park:"AK", type:"savory"},
+      {emoji:"🦁", name:"Simba Pretzel", park:"AK", type:"savory"},
+
+      {emoji:"🍺", name:"Butterbeer", park:"USF", type:"drink"},
+      {emoji:"🎃", name:"Pumpkin Juice", park:"USF", type:"drink"},
+      {emoji:"🟢", name:"Fishy Green Ale", park:"USF", type:"drink"},
+      {emoji:"🍩", name:"Lard Lad Donut", park:"USF", type:"sweet"},
+      {emoji:"🔥", name:"Moe’s Flaming Moe", park:"USF", type:"drink"},
+
+      {emoji:"🍧", name:"Frozen Butterbeer", park:"IOA", type:"drink"},
+      {emoji:"🥟", name:"Pumpkin Pasties", park:"IOA", type:"sweet"},
+      {emoji:"🍗", name:"Giant Turkey Leg", park:"IOA", type:"savory"},
+      {emoji:"🥖", name:"Churros", park:"IOA", type:"sweet"},
+
+      {emoji:"🍄", name:"Toadstool Café Treats", park:"EU", type:"sweet"},
+      {emoji:"🧙", name:"Wizarding World Drinks", park:"EU", type:"drink"},
+      {emoji:"🐲", name:"Dragon Fruit Sorbet", park:"EU", type:"sweet"}
     ];
     // Render secrets (Cool Hidden Stuff)
     parkList.forEach(park => {
@@ -743,11 +809,17 @@
     }
     function renderFoods() {
       const grid = document.getElementById('food-grid');
+      grid.innerHTML = '';
       foods.forEach((f, idx) => {
         const key = `food-${idx}`;
+        const favKey = `fav-food-${idx}`;
         const card = document.createElement('div');
-        card.className = 'ride-card glass-card' + (saved[key] ? ' done' : '');
+        card.className = 'ride-card glass-card' +
+          (saved[key] ? ' done' : '') + (saved[favKey] ? ' favorite' : '');
+        card.dataset.name = f.name;
+        card.dataset.type = f.type;
         card.innerHTML = `
+          <span class="fav">★</span>
           <div class="card-content">
             <span class="card-emoji">${f.emoji}</span>
             <div class="card-info">
@@ -755,12 +827,30 @@
             </div>
             <span class="tick">✔️</span>
           </div>`;
-        card.onclick = function(e) {
+        const star = card.querySelector('.fav');
+        star.onclick = function(e){
+          e.stopPropagation();
+          card.classList.toggle('favorite');
+          saved[favKey] = card.classList.contains('favorite');
+          localStorage.setItem('hiddenParkFullScreenCharlieRides', JSON.stringify(saved));
+        };
+        card.onclick = function(){
           card.classList.toggle('done');
           saved[key] = card.classList.contains('done');
           localStorage.setItem('hiddenParkFullScreenCharlieRides', JSON.stringify(saved));
         };
         grid.appendChild(card);
+      });
+      filterFoods();
+    }
+
+    function filterFoods() {
+      const q = document.getElementById('food-search').value.toLowerCase();
+      const type = document.getElementById('food-filter').value;
+      document.querySelectorAll('#food-grid .ride-card').forEach(card => {
+        const matchType = type === 'all' || card.dataset.type === type;
+        const matchSearch = card.dataset.name.toLowerCase().includes(q);
+        card.style.display = matchType && matchSearch ? '' : 'none';
       });
     }
     // Magic Kingdom
@@ -793,6 +883,8 @@
     renderRides("EU", "snw", "EU-rides-snw");
     renderRides("EU", "berk", "EU-rides-berk");
     renderFoods();
+    document.getElementById('food-search').addEventListener('input', filterFoods);
+    document.getElementById('food-filter').addEventListener('change', filterFoods);
 
     function getTimeSlot() {
       const h = new Date().getHours();

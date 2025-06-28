@@ -873,11 +873,37 @@
     const achievements = JSON.parse(localStorage.getItem('parkAchievements') || '{}');
     const huntStatus = JSON.parse(localStorage.getItem('photoHunts') || '{}');
     const waitTimes = {
+      "Tiana's Bayou Adventure (Log Flume)": {morning: 25, afternoon: 45, evening: 35},
+      "It's a Small World": {morning: 15, afternoon: 25, evening: 20},
+      "Big Thunder Mountain Railroad": {morning: 20, afternoon: 40, evening: 30},
+      "Jungle Cruise": {morning: 30, afternoon: 60, evening: 40},
       "Pirates of the Caribbean": {morning: 20, afternoon: 40, evening: 25},
       "Haunted Mansion": {morning: 15, afternoon: 35, evening: 20},
+      "TRON Lightcycle Run": {morning: 40, afternoon: 70, evening: 50},
+      "Star Wars: Rise of the Resistance": {morning: 60, afternoon: 90, evening: 70},
+      "Millennium Falcon: Smugglers Run": {morning: 45, afternoon: 75, evening: 55},
+      "Slinky Dog Dash": {morning: 40, afternoon: 80, evening: 60},
+      "Tower of Terror": {morning: 25, afternoon: 50, evening: 35},
       "Avatar Flight of Passage": {morning: 60, afternoon: 90, evening: 40},
+      "Na'vi River Journey": {morning: 30, afternoon: 60, evening: 35},
+      "Kilimanjaro Safaris": {morning: 20, afternoon: 40, evening: 25},
+      "Expedition Everest": {morning: 15, afternoon: 30, evening: 20},
+      "Kali River Rapids": {morning: 20, afternoon: 45, evening: 30},
+      "DINOSAUR": {morning: 20, afternoon: 40, evening: 25},
+      "Guardians of the Galaxy: Cosmic Rewind": {morning: 50, afternoon: 80, evening: 60},
+      "Test Track": {morning: 40, afternoon: 70, evening: 50},
+      "Harry Potter and the Escape from Gringotts": {morning: 35, afternoon: 65, evening: 45},
+      "Hogwarts Express": {morning: 20, afternoon: 40, evening: 25},
+      "Jurassic World VelociCoaster": {morning: 30, afternoon: 60, evening: 45},
+      "Jurassic Park River Adventure": {morning: 20, afternoon: 45, evening: 35},
+      "Hagrid's Magical Creatures Motorbike Adventure": {morning: 60, afternoon: 90, evening: 70},
       "Harry Potter and the Forbidden Journey": {morning: 30, afternoon: 45, evening: 25},
-      "Bowser’s Challenge": {morning: 40, afternoon: 70, evening: 35}
+      "Starfall Racers": {morning: 40, afternoon: 70, evening: 55},
+      "Harry Potter and the Ministry of Magic": {morning: 50, afternoon: 80, evening: 60},
+      "Bowser’s Challenge": {morning: 40, afternoon: 70, evening: 35},
+      "Minecart Madness": {morning: 30, afternoon: 60, evening: 40},
+      "Hiccup’s Wing Gliders": {morning: 25, afternoon: 50, evening: 35},
+      "Dragon Racer Rally": {morning: 20, afternoon: 45, evening: 30}
     };
     async function fetchWaitTimes() {
       try {
@@ -1072,8 +1098,9 @@
         const nameEl = card.querySelector('.card-name');
         const waitEl = card.querySelector('.card-wait');
         if (!nameEl || !waitEl) return;
-        const w = waitTimes[nameEl.textContent] ? waitTimes[nameEl.textContent][slot] : null;
-        waitEl.textContent = w ? w + 'm' : '';
+        const info = waitTimes[nameEl.textContent];
+        const w = info ? info[slot] : null;
+        waitEl.textContent = w != null ? w + 'm' : 'N/A';
       });
     }
 
@@ -1089,12 +1116,13 @@
         if (secrets[p]) { secrets[p].forEach(s => items.push(s)); }
       });
       items.forEach(obj => {
-        const w = waitTimes[obj.name] ? waitTimes[obj.name][slot] : null;
+        const info = waitTimes[obj.name];
+        const w = info ? info[slot] : null;
         const el = document.createElement('div');
         el.className = 'planner-item';
         el.draggable = true;
         el.dataset.name = obj.name;
-        el.innerHTML = `<span>${obj.emoji}</span><span>${obj.name}</span><span class="wait">${w ? w + 'm' : ''}</span>`;
+        el.innerHTML = `<span>${obj.emoji}</span><span>${obj.name}</span><span class="wait">${w != null ? w + 'm' : 'N/A'}</span>`;
         el.addEventListener('dragstart', e => {
           e.dataTransfer.setData('text/plain', obj.name);
         });
@@ -1110,16 +1138,15 @@
         if (!zone) return;
         zone.innerHTML = '';
         (sched[slot] || []).forEach(name => {
-          const w = waitTimes[name] ? waitTimes[name][slot] : null;
+          const info = waitTimes[name];
+          const w = info ? info[slot] : null;
           const div = document.createElement('div');
           div.className = 'planner-item';
           div.textContent = name;
-          if (w) {
-            const span = document.createElement('span');
-            span.className = 'wait';
-            span.textContent = w + 'm';
-            div.appendChild(span);
-          }
+          const span = document.createElement('span');
+          span.className = 'wait';
+          span.textContent = w != null ? w + 'm' : 'N/A';
+          div.appendChild(span);
           zone.appendChild(div);
         });
       });

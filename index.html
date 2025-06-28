@@ -10,27 +10,39 @@
   <meta name="apple-mobile-web-app-title" content="Dobbies Guide">
   <link rel="apple-touch-icon" href="icon.png">
   <link rel="manifest" href="manifest.json">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Henny+Penny&display=swap" rel="stylesheet">
   <style>
     :root {
+      --primary: #cdb6ff;
+      --secondary: #b5e3ff;
+      --accent: #b8f2e6;
+      --success: #4ecdc4;
+      --warning: #ffe66d;
+      --bg-dark: #f0f8ff;
+      --bg-card: rgba(255, 255, 255, 0.6);
+      --text-primary: #333;
+      --text-secondary: #555;
+      --glass-bg: rgba(255, 255, 255, 0.6);
+      --glass-border: rgba(0, 0, 0, 0.1);
+      --shadow-glow: 0 8px 32px rgba(204, 214, 235, 0.4);
+      --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    body.night {
       --primary: #667eea;
       --secondary: #764ba2;
       --accent: #f093fb;
-      --success: #4ecdc4;
-      --warning: #ffe66d;
-      --bg-dark: #0f0f23;
-      --bg-card: rgba(255, 255, 255, 0.1);
       --text-primary: #ffffff;
       --text-secondary: rgba(255, 255, 255, 0.8);
+      --bg-dark: #0f0f23;
+      --bg-card: rgba(255, 255, 255, 0.1);
       --glass-bg: rgba(255, 255, 255, 0.1);
       --glass-border: rgba(255, 255, 255, 0.2);
       --shadow-glow: 0 8px 32px rgba(102, 126, 234, 0.3);
-      --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
-      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
       color: var(--text-primary);
       min-height: 100vh;
       min-height: 100dvh;
@@ -40,7 +52,7 @@
     }
     .bg-animated {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
       background-size: 400% 400%; animation: gradientShift 15s ease infinite;
     }
     .bg-animated::before {
@@ -69,6 +81,24 @@
       0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
       50% { transform: translateY(-20px) rotate(180deg); opacity: 0.5; }
     }
+    .pixie-dust {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: radial-gradient(circle, #fff 0%, rgba(255,255,255,0) 70%);
+      pointer-events: none;
+      animation: dust 1s linear forwards;
+    }
+    @keyframes dust {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(-50%, -150%) scale(0); opacity: 0; }
+    }
+    .confetti-container { position: fixed; top:0; left:0; width:100%; height:0; pointer-events:none; z-index:2000; }
+    .confetti { position:absolute; top:0; width:8px; height:8px; opacity:0.9; animation: confettiFall 3s forwards; }
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
     .container { max-width: 1200px; margin: 0 auto; padding: 2rem; position: relative; z-index: 2; }
     .glass-card {
       background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
@@ -89,6 +119,7 @@
       to { opacity: 0; transform: translateY(30px); }
     }
     h1 {
+      font-family: 'Henny Penny', cursive;
       font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; text-align: center; margin-bottom: 1rem;
       background: linear-gradient(135deg, #fff 0%, #f093fb 100%);
       background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -113,7 +144,12 @@
     .menu-btn:hover {
       transform: translateY(-8px); box-shadow: 0 15px 45px rgba(102, 126, 234, 0.4); border-color: rgba(255, 255, 255, 0.3);
     }
-    .menu-btn:active { transform: translateY(-5px) scale(0.98); }
+    .menu-btn:active { animation: btnBounce 0.3s; transform: translateY(-5px) scale(0.95); }
+    @keyframes btnBounce {
+      0% { transform: translateY(-5px) scale(0.95); }
+      50% { transform: translateY(-8px) scale(1.05); }
+      100% { transform: translateY(-5px) scale(0.95); }
+    }
     .menu-btn .emoji { font-size: 2.5rem; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3)); }
     .reset-btn {
       margin: 4rem auto 0; background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
@@ -123,7 +159,9 @@
     .reset-btn:hover {
       transform: translateY(-3px); box-shadow: 0 10px 35px rgba(240, 147, 251, 0.4);
     }
+    .reset-btn:active { animation: btnBounce 0.3s; transform: scale(0.95); }
     .park-title {
+      font-family: 'Henny Penny', cursive;
       font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; text-align: center; margin: 2rem 0;
       background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
       background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -134,7 +172,9 @@
       cursor: pointer; margin-bottom: 2rem; touch-action: manipulation;
     }
     .back-btn:hover { transform: translateX(-5px); box-shadow: var(--shadow-soft);}
+    .back-btn:active { animation: btnBounce 0.3s; transform: translateX(-5px) scale(0.95); }
     .section-header {
+      font-family: 'Henny Penny', cursive;
       font-size: 1.8rem; font-weight: 800; margin: 3rem 0 2rem 0; color: var(--text-primary); text-align: center; position: relative;
     }
     .section-header::after {
@@ -160,6 +200,7 @@
     .secret-card:hover, .ride-card:hover {
       transform: translateY(-5px); box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3); border-color: rgba(255, 255, 255, 0.3);
     }
+    .secret-card:active, .ride-card:active { animation: btnBounce 0.3s; transform: translateY(-5px) scale(0.95); }
     .secret-card.done, .ride-card.done {
       background: rgba(78, 205, 196, 0.1); border-color: var(--success); opacity: 0.7;
     }
@@ -208,6 +249,7 @@
     .modal-btn:hover {
       transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
     }
+    .modal-btn:active { animation: btnBounce 0.3s; transform: translateY(-2px) scale(0.95); }
     @media (max-width: 768px) {
       .container { padding: 1rem;}
       .main-menu-grid { grid-template-columns: 1fr; gap: 1rem;}
@@ -283,6 +325,7 @@
       margin-bottom: 1rem;
     }
     .camera-btn:hover { transform: translateY(-2px); }
+    .camera-btn:active { animation: btnBounce 0.3s; transform: translateY(-2px) scale(0.95); }
     /* AR camera container */
     #camera-ar-container { position: relative; width:100%; max-width:500px; margin:0 auto; }
     #ar-cube { position: absolute; top:50%; left:50%; width:100px; height:100px;
@@ -309,6 +352,7 @@
   <div class="particles" id="particles"></div>
   
   <div class="container">
+    <button id="theme-toggle" class="back-btn" style="position:absolute;top:1rem;right:1rem;" onclick="toggleTheme()">🌙/☀️</button>
     <!-- Main Menu -->
     <div id="main-menu" class="page active">
       <h1>Dobbies Magical Park Guide</h1>
@@ -626,6 +670,56 @@
       }
     }
     createParticles();
+
+    document.addEventListener('pointerdown', e => {
+      const d = document.createElement('div');
+      d.className = 'pixie-dust';
+      d.style.left = e.clientX + 'px';
+      d.style.top = e.clientY + 'px';
+      document.body.appendChild(d);
+      setTimeout(() => d.remove(), 1000);
+    });
+
+    function runConfetti() {
+      const container = document.createElement('div');
+      container.className = 'confetti-container';
+      for (let i = 0; i < 40; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random() * 100 + '%';
+        c.style.background = 'hsl(' + Math.floor(Math.random()*360) + ',70%,80%)';
+        c.style.animationDelay = Math.random() * 0.5 + 's';
+        container.appendChild(c);
+      }
+      document.body.appendChild(container);
+      setTimeout(() => container.remove(), 3000);
+    }
+
+    function playChime() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g);
+      g.connect(ctx.destination);
+      o.frequency.value = 880;
+      o.type = 'sine';
+      o.start();
+      g.gain.setValueAtTime(0.3, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 1);
+      o.stop(ctx.currentTime + 1);
+    }
+
+    function loadTheme() {
+      const saved = localStorage.getItem('theme') || 'day';
+      document.body.classList.add(saved);
+    }
+    function toggleTheme() {
+      document.body.classList.toggle('night');
+      document.body.classList.toggle('day');
+      const theme = document.body.classList.contains('night') ? 'night' : 'day';
+      localStorage.setItem('theme', theme);
+    }
+    loadTheme();
 
     function showPage(id) {
       document.querySelectorAll('.page').forEach(p => {
@@ -1179,6 +1273,7 @@
           card.classList.toggle("done");
           saved[key] = card.classList.contains("done");
           localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
+          if (card.classList.contains('done')) playChime();
           checkBadge(grid);
         };
         grid.appendChild(card);
@@ -1205,6 +1300,7 @@
           card.classList.toggle("done");
           saved[key] = card.classList.contains("done");
           localStorage.setItem("hiddenParkFullScreenCharlieRides", JSON.stringify(saved));
+          if (card.classList.contains('done')) playChime();
           checkBadge(grid);
         };
         grid.appendChild(card);
@@ -1456,6 +1552,8 @@
     function showBadge(text) {
       document.getElementById('badge-text').textContent = text;
       document.getElementById('badge-modal').style.display = 'flex';
+      runConfetti();
+      playChime();
     }
     function closeBadge() {
       document.getElementById('badge-modal').style.display = 'none';
@@ -1521,6 +1619,7 @@
           img.src = reader.result;
           checkBadge(document.getElementById('photo-list'));
         }
+        playChime();
         currentHuntKey = null;
         currentHuntCard = null;
         e.target.value = '';

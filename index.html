@@ -552,6 +552,9 @@
     <div class="park-title">📷 Camera</div>
     <div id="camera-ar-container">
       <video id="ar-video" autoplay playsinline style="width:100%;border-radius:12px;"></video>
+      <!-- Add your own AR model file (cube.usdz) here -->
+      <a id="ar-link" rel="ar" href="cube.usdz"></a>
+      <button id="enter-ar-btn" class="camera-btn" style="display:none;margin-top:0.5rem;" onclick="openARQuickLook()">🕶️ View in AR</button>
       <div id="ar-cube">
         <div class="front"></div>
         <div class="back"></div>
@@ -754,11 +757,30 @@
       exportProgress();
       window.scrollTo(0, 0);
     }
+    function isiOS() {
+      return /iphone|ipad|ipod/i.test(navigator.userAgent);
+    }
+    function openARQuickLook() {
+      const link = document.getElementById('ar-link');
+      if (link) link.click();
+    }
     function openCameraPage() {
       stopARCamera();
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('camera-page').classList.add('active');
-      startARCamera();
+      const btn = document.getElementById('enter-ar-btn');
+      const cube = document.getElementById('ar-cube');
+      const video = document.getElementById('ar-video');
+      if (isiOS()) {
+        if (btn) btn.style.display = 'inline-flex';
+        if (cube) cube.style.display = 'none';
+        if (video) video.style.display = 'none';
+      } else {
+        if (btn) btn.style.display = 'none';
+        if (cube) cube.style.display = 'block';
+        if (video) video.style.display = 'block';
+        startARCamera();
+      }
       window.scrollTo(0, 0);
     }
     function goHome() {

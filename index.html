@@ -508,7 +508,10 @@
       <div style="margin-top:1rem;display:flex;gap:1rem;flex-wrap:wrap;">
         <button class="modal-btn" onclick="exportProgress()">Generate Link</button>
         <button class="modal-btn" onclick="importProgress()">Load Progress</button>
+        <button class="modal-btn" onclick="startQRScan()">Scan Code</button>
       </div>
+      <video id="qr-video" style="display:none;width:100%;max-width:300px;margin-top:1rem;" playsinline></video>
+      <canvas id="qr-canvas" style="display:none;"></canvas>
     </div>
   </div>
   <!-- Welcome Modal -->
@@ -596,13 +599,58 @@
       const input = document.getElementById('camera-input');
       if (input) input.click();
     }
+    let qrStream;
+    function startQRScan() {
+      const video = document.getElementById('qr-video');
+      const canvas = document.getElementById('qr-canvas');
+      if (!video || !canvas || !navigator.mediaDevices) return;
+      const ctx = canvas.getContext('2d');
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(stream => {
+        qrStream = stream;
+        video.srcObject = stream;
+        video.style.display = 'block';
+        video.play();
+        requestAnimationFrame(tick);
+      }).catch(() => alert('Camera access denied'));
+      function tick() {
+        if (!qrStream) return;
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const result = window.jsQR && jsQR(imageData.data, canvas.width, canvas.height);
+          if (result) {
+            stopQRScan();
+            document.getElementById('party-code').value = result.data;
+            importProgress();
+            return;
+          }
+        }
+        if (qrStream) requestAnimationFrame(tick);
+      }
+    }
+    function stopQRScan() {
+      const video = document.getElementById('qr-video');
+      if (video) {
+        video.pause();
+        video.srcObject = null;
+        video.style.display = 'none';
+      }
+      if (qrStream) {
+        qrStream.getTracks().forEach(t => t.stop());
+        qrStream = null;
+      }
+    }
     function openParty() {
+      stopQRScan();
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('party-page').classList.add('active');
       exportProgress();
       window.scrollTo(0, 0);
     }
     function goHome() {
+      stopQRScan();
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('main-menu').classList.add('active');
       window.scrollTo(0, 0);
@@ -1249,6 +1297,7 @@
     }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.min.js"></script>
 </body>
 </html>
 

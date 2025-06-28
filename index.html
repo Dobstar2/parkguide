@@ -78,8 +78,8 @@
       transform: translateY(-5px); box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
     }
     .page { display: none; }
-    .page.active { display: block; animation: fadeInUp 0.5s; }
-    .page.fade-out { animation: fadeOutDown 0.5s forwards; }
+    .page.active { display: block; }
+    .page.fade-out { display: none; }
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(30px);}
       to { opacity: 1; transform: translateY(0);}
@@ -629,16 +629,12 @@
 
     function showPage(id) {
       document.querySelectorAll('.page').forEach(p => {
-        if (p.id === id) return;
-        if (p.classList.contains('active')) {
-          p.classList.add('fade-out');
-          setTimeout(() => {
-            p.classList.remove('active', 'fade-out');
-          }, 500);
+        if (p.id !== id) {
+          p.classList.remove('active', 'fade-out');
         }
       });
       const page = document.getElementById(id);
-      if (page && !page.classList.contains('active')) {
+      if (page) {
         page.classList.add('active');
       }
       const html = document.documentElement;

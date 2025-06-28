@@ -282,10 +282,6 @@
           <span class="emoji">🌌</span>
           <span>Epic Universe</span>
         </button>
-        <button class="menu-btn" onclick="openFoods()">
-          <span class="emoji">🍔</span>
-          <span>Food Tracker</span>
-        </button>
         <button class="menu-btn" onclick="openPlanner()">
           <span class="emoji">🗓️</span>
           <span>Plan Your Day</span>
@@ -422,13 +418,6 @@
       </select>
       <ul id="weather-tips"></ul>
     </div>
-    <!-- FOOD TRACKER -->
-    <div id="food-page" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
-      <div class="park-title">🍔 Favorite Foods & Snacks</div>
-      <div class="section-header">Yummy Treats</div>
-      <div class="rides-grid" id="food-grid"></div>
-    </div>
   </div>
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="modal" style="display:none;">
@@ -467,11 +456,6 @@
       document.getElementById('planner-page').classList.add('active');
       populatePlanner();
       initWeatherTips();
-      window.scrollTo(0, 0);
-    }
-    function openFoods() {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('food-page').classList.add('active');
       window.scrollTo(0, 0);
     }
     function goHome() {
@@ -685,14 +669,6 @@
       "Catch Festival of the Lion King to stay dry.",
       "Harry Potter and the Forbidden Journey keeps you out of the rain."
     ];
-    const foods = [
-      {emoji:"🍦", name:"Dole Whip (MK)"},
-      {emoji:"🍪", name:"Jack-Jack's Num Num Cookie (HS)"},
-      {emoji:"🍿", name:"Kat Saka’s Kettle Popcorn (HS)"},
-      {emoji:"🌮", name:"Tacos at La Cantina (EPCOT)"},
-      {emoji:"🍗", name:"Turkey Leg (MK)"},
-      {emoji:"🍩", name:"Voodoo Doughnut (CityWalk)"}
-    ];
     // Render secrets (Cool Hidden Stuff)
     parkList.forEach(park => {
       const grid = document.getElementById(park + "-secrets");
@@ -741,28 +717,6 @@
         grid.appendChild(card);
       });
     }
-    function renderFoods() {
-      const grid = document.getElementById('food-grid');
-      foods.forEach((f, idx) => {
-        const key = `food-${idx}`;
-        const card = document.createElement('div');
-        card.className = 'ride-card glass-card' + (saved[key] ? ' done' : '');
-        card.innerHTML = `
-          <div class="card-content">
-            <span class="card-emoji">${f.emoji}</span>
-            <div class="card-info">
-              <div class="card-name">${f.name}</div>
-            </div>
-            <span class="tick">✔️</span>
-          </div>`;
-        card.onclick = function(e) {
-          card.classList.toggle('done');
-          saved[key] = card.classList.contains('done');
-          localStorage.setItem('hiddenParkFullScreenCharlieRides', JSON.stringify(saved));
-        };
-        grid.appendChild(card);
-      });
-    }
     // Magic Kingdom
     renderRides("MK", "fantasy", "MK-rides-fantasy");
     renderRides("MK", "frontier", "MK-rides-frontier");
@@ -792,7 +746,6 @@
     renderRides("EU", "ministry", "EU-rides-ministry");
     renderRides("EU", "snw", "EU-rides-snw");
     renderRides("EU", "berk", "EU-rides-berk");
-    renderFoods();
 
     function getTimeSlot() {
       const h = new Date().getHours();

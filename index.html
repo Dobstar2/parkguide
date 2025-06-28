@@ -175,6 +175,12 @@
       from { transform: scale(0) rotate(-180deg); opacity: 0;}
       to { transform: scale(1) rotate(0deg); opacity: 1;}
     }
+    .hunt-photo {
+      margin-top: 0.5rem;
+      max-width: 80px;
+      border-radius: 8px;
+      display: block;
+    }
     .modal {
       position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
       display: flex; align-items: center; justify-content: center; z-index: 1000; animation: modalFadeIn 0.3s ease-out;
@@ -1429,21 +1435,70 @@
       if (!grid.innerHTML) {
         photoHunts.forEach((h, idx) => {
           const key = 'hunt-' + idx;
+          const status = typeof huntStatus[key] === 'object' ? huntStatus[key] : { done: !!huntStatus[key] };
+          huntStatus[key] = status;
           const card = document.createElement('div');
-          card.className = 'secret-card glass-card' + (huntStatus[key] ? ' done' : '');
-          card.innerHTML = `<div class="card-content"><span class="card-emoji">${h.emoji}</span><div class="card-info"><div class="card-name">${h.desc}</div></div><span class="tick">✔️</span></div>`;
-          card.onclick = () => {
-            card.classList.toggle('done');
-            huntStatus[key] = card.classList.contains('done');
-            localStorage.setItem('photoHunts', JSON.stringify(huntStatus));
-            checkBadge(grid);
-          };
+          card.className = 'secret-card glass-card' + (status.done ? ' done' : '');
+          card.setAttribute('data-key', key);
+          const photoHtml = status.photo ? `<img class="hunt-photo" src="${status.photo}">` : '';
+          card.innerHTML = `<div class="card-content"><span class="card-emoji">${h.emoji}</span><div class="card-info"><div class="card-name">${h.desc}</div>${photoHtml}</div><span class="tick">✔️</span></div>`;
+          card.onclick = () => captureHuntPhoto(key, card);
           grid.appendChild(card);
         });
+      } else {
+        Array.from(grid.children).forEach(card => {
+          const key = card.getAttribute('data-key');
+          const status = huntStatus[key];
+          if (status && status.photo) {
+            let img = card.querySelector('img.hunt-photo');
+            if (!img) {
+              img = document.createElement('img');
+              img.className = 'hunt-photo';
+              card.querySelector('.card-info').appendChild(img);
+            }
+            img.src = status.photo;
+          }
+          if (status && status.done) card.classList.add('done');
+        });
       }
-      Array.from(grid.children).forEach(() => {}); // trigger check
+      localStorage.setItem('photoHunts', JSON.stringify(huntStatus));
       checkBadge(grid);
     }
+
+    let currentHuntKey = null;
+    let currentHuntCard = null;
+    function captureHuntPhoto(key, card) {
+      currentHuntKey = key;
+      currentHuntCard = card;
+      const input = document.getElementById('camera-input');
+      if (input) input.click();
+    }
+    function handleHuntPhoto(e) {
+      const file = e.target.files[0];
+      if (!file || !currentHuntKey) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        huntStatus[currentHuntKey] = { done: true, photo: reader.result };
+        localStorage.setItem('photoHunts', JSON.stringify(huntStatus));
+        if (currentHuntCard) {
+          currentHuntCard.classList.add('done');
+          let img = currentHuntCard.querySelector('img.hunt-photo');
+          if (!img) {
+            img = document.createElement('img');
+            img.className = 'hunt-photo';
+            currentHuntCard.querySelector('.card-info').appendChild(img);
+          }
+          img.src = reader.result;
+          checkBadge(document.getElementById('photo-list'));
+        }
+        currentHuntKey = null;
+        currentHuntCard = null;
+        e.target.value = '';
+      };
+      reader.readAsDataURL(file);
+    }
+    const camInput = document.getElementById('camera-input');
+    if (camInput) camInput.addEventListener('change', handleHuntPhoto);
     function exportProgress() {
       const data = {
         rides: saved,

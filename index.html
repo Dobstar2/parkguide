@@ -1123,11 +1123,17 @@
       "Catch Festival of the Lion King to stay dry.",
       "Harry Potter and the Forbidden Journey keeps you out of the rain."
     ];
-    const photoHunts = [
+    const baseHunts = [
       {emoji:"🐭", desc:"Hidden Mickey in Pirates queue"},
       {emoji:"🗝️", desc:"Secret key near MIB lockers"},
       {emoji:"🧙‍♂️", desc:"Pose with a wand outside Ollivanders"},
       {emoji:"🤖", desc:"Track marks in Galaxy's Edge"}
+    ];
+    const photoHunts = [
+      ...baseHunts,
+      ...parkList.flatMap(p =>
+        secrets[p].map(h => ({ emoji: h.emoji, desc: h.name }))
+      )
     ];
     // Render secrets (Cool Hidden Stuff)
     parkList.forEach(park => {

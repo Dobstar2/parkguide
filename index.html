@@ -334,7 +334,7 @@
           <span class="emoji">🗓️</span>
           <span>Plan Your Day</span>
         </button>
-        <button class="menu-btn" onclick="openFood()">
+        <button class="menu-btn" onclick="openFood('disney')">
           <span class="emoji">🍔</span>
           <span>Food & Snacks</span>
         </button>
@@ -364,6 +364,10 @@
         <button class="menu-btn" onclick="openPark('EU')">
           <span class="emoji">🌌</span>
           <span>Epic Universe</span>
+        </button>
+        <button class="menu-btn" onclick="openFood('universal')">
+          <span class="emoji">🍔</span>
+          <span>Food & Snacks</span>
         </button>
       </div>
     </div>
@@ -497,7 +501,7 @@
     </div>
     <!-- FOOD TRACKER -->
     <div id="food-page" class="page">
-      <button class="back-btn" onclick="openDisney()">← Back</button>
+      <button class="back-btn" id="food-back-btn" onclick="openDisney()">← Back</button>
       <div class="park-title">🍔 Food & Snacks</div>
       <div class="filter-controls">
         <input type="text" id="food-search" placeholder="Search snacks...">
@@ -598,9 +602,13 @@
       initWeatherTips();
       window.scrollTo(0, 0);
     }
-    function openFood() {
+    let foodMode = 'disney';
+    function openFood(mode = 'disney') {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('food-page').classList.add('active');
+      foodMode = mode;
+      const backBtn = document.getElementById('food-back-btn');
+      if (backBtn) backBtn.onclick = mode === 'disney' ? openDisney : openUniversal;
       initFood();
       window.scrollTo(0, 0);
     }
@@ -1140,11 +1148,11 @@
       updateRideWaitTimes();
     }
 
-    function createFoodCards() {
+    function createFoodCards(selectedParks) {
       const container = document.getElementById('food-sections');
       if (!container) return;
       container.innerHTML = '';
-      Object.keys(foods).forEach(park => {
+      (selectedParks || Object.keys(foods)).forEach(park => {
         const header = document.createElement('div');
         header.className = 'land-header';
         header.textContent = parkName(park);
@@ -1194,8 +1202,11 @@
     }
 
     function initFood() {
-      if (!document.getElementById('food-sections').children.length) {
-        createFoodCards();
+      const container = document.getElementById('food-sections');
+      const parks = foodMode === 'disney' ? ['MK','EPCOT','HS','AK'] : ['USF','IOA','EU'];
+      if (!container.dataset.mode || container.dataset.mode !== foodMode) {
+        createFoodCards(parks);
+        container.dataset.mode = foodMode;
       }
       document.getElementById('food-search').addEventListener('input', filterFoods);
       document.getElementById('food-filter').addEventListener('change', filterFoods);

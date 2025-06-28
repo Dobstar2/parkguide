@@ -304,6 +304,10 @@
           <span class="emoji">🎉</span>
           <span>Party Mode</span>
         </button>
+        <button class="menu-btn" onclick="openCameraPage()">
+          <span class="emoji">📷</span>
+          <span>Camera</span>
+        </button>
       </div>
       
       <button class="reset-btn" onclick="resetProgress()">🔄 Reset All Progress</button>
@@ -519,14 +523,20 @@
       <div class="secrets-grid" id="photo-list"></div>
     </div>
     <!-- PARK MAP -->
-    <div id="map-page" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
-      <div class="park-title">🗺️ Park Map</div>
-      <p>Grant location access to see where you are in the park.</p>
-      <div id="map-container"><iframe id="map-frame" allowfullscreen></iframe></div>
-    </div>
-    <!-- PARTY MODE -->
-    <div id="party-page" class="page">
+  <div id="map-page" class="page">
+    <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+    <div class="park-title">🗺️ Park Map</div>
+    <p>Grant location access to see where you are in the park.</p>
+    <div id="map-container"><iframe id="map-frame" allowfullscreen></iframe></div>
+  </div>
+  <!-- CAMERA PAGE -->
+  <div id="camera-page" class="page">
+    <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+    <div class="park-title">📷 Camera</div>
+    <video id="ar-video" autoplay playsinline style="width:100%;max-width:500px;border-radius:12px;"></video>
+  </div>
+  <!-- PARTY MODE -->
+  <div id="party-page" class="page">
       <button class="back-btn" onclick="goHome()">← Back to Parks</button>
       <div class="park-title">🎉 Party Mode</div>
       <p>Share your progress with friends. Use the link or scan the QR code.</p>
@@ -689,6 +699,27 @@
         qrStream = null;
       }
     }
+    let arStream;
+    function startARCamera() {
+      const video = document.getElementById('ar-video');
+      if (!video || !navigator.mediaDevices) return;
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(stream => {
+        arStream = stream;
+        video.srcObject = stream;
+        video.play();
+      }).catch(() => alert('Camera access denied'));
+    }
+    function stopARCamera() {
+      const video = document.getElementById('ar-video');
+      if (video) {
+        video.pause();
+        video.srcObject = null;
+      }
+      if (arStream) {
+        arStream.getTracks().forEach(t => t.stop());
+        arStream = null;
+      }
+    }
     function openParty() {
       stopQRScan();
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -696,8 +727,16 @@
       exportProgress();
       window.scrollTo(0, 0);
     }
+    function openCameraPage() {
+      stopARCamera();
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('camera-page').classList.add('active');
+      startARCamera();
+      window.scrollTo(0, 0);
+    }
     function goHome() {
       stopQRScan();
+      stopARCamera();
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('main-menu').classList.add('active');
       window.scrollTo(0, 0);

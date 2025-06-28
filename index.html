@@ -524,7 +524,7 @@
     function openPlanner() {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('planner-page').classList.add('active');
-      populatePlanner();
+      fetchWaitTimes();
       initWeatherTips();
       window.scrollTo(0, 0);
     }
@@ -806,6 +806,29 @@
       "Harry Potter and the Forbidden Journey": {morning: 30, afternoon: 45, evening: 25},
       "Bowser’s Challenge": {morning: 40, afternoon: 70, evening: 35}
     };
+    async function fetchWaitTimes() {
+      try {
+        const resp = await fetch('https://queue-times.com/en-US/api/park');
+        if (resp.ok) {
+          const data = await resp.json();
+          (data.parks || []).forEach(p => {
+            (p.rides || []).forEach(r => {
+              if (r.waitTime != null) {
+                waitTimes[r.name] = {
+                  morning: r.waitTime,
+                  afternoon: r.waitTime,
+                  evening: r.waitTime
+                };
+              }
+            });
+          });
+        }
+      } catch (e) {
+        console.error('Failed to fetch wait times', e);
+      }
+      populatePlanner();
+      loadSchedule();
+    }
     const rainyTips = [
       "Pirates of the Caribbean is a great indoor escape.",
       "Catch Festival of the Lion King to stay dry.",

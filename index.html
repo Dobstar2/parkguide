@@ -336,6 +336,10 @@
           <span class="emoji">🎉</span>
           <span>Party Mode</span>
         </button>
+        <button class="menu-btn" onclick="openAR()">
+          <span class="emoji">🕵️</span>
+          <span>Secrets AR</span>
+        </button>
       </div>
       
       <button class="reset-btn" onclick="resetProgress()">🔄 Reset All Progress</button>
@@ -513,6 +517,19 @@
       <video id="qr-video" style="display:none;width:100%;max-width:300px;margin-top:1rem;" playsinline></video>
       <canvas id="qr-canvas" style="display:none;"></canvas>
     </div>
+    <!-- SECRETS AR -->
+    <div id="ar-page" class="page">
+      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
+      <div class="park-title">🕵️ Secrets Revealed</div>
+      <p>Point your camera at an AR marker to uncover hidden surprises.</p>
+      <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+        <a-marker preset="hiro">
+          <a-box position="0 0.5 0" material="color: yellow;"></a-box>
+          <a-animation attribute="rotation" dur="5000" to="0 360 0" repeat="indefinite"></a-animation>
+        </a-marker>
+        <a-entity camera></a-entity>
+      </a-scene>
+    </div>
   </div>
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="modal" style="display:none;">
@@ -647,6 +664,11 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('party-page').classList.add('active');
       exportProgress();
+      window.scrollTo(0, 0);
+    }
+    function openAR() {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('ar-page').classList.add('active');
       window.scrollTo(0, 0);
     }
     function goHome() {
@@ -1323,6 +1345,8 @@
       location.reload();
     }
   </script>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.3.2/aframe/build/aframe-ar.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.min.js"></script>
 </body>

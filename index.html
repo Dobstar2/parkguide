@@ -639,8 +639,13 @@
           const result = window.jsQR && jsQR(imageData.data, canvas.width, canvas.height);
           if (result) {
             stopQRScan();
-            document.getElementById('party-code').value = result.data;
-            importProgress();
+            const text = result.data.trim();
+            document.getElementById('party-code').value = text;
+            if (/^https?:\/\//i.test(text)) {
+              window.location.href = text;
+            } else {
+              importProgress();
+            }
             return;
           }
         }

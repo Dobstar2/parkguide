@@ -3,9 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Charlie's Hidden Park Guide</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#1a1a2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Park Guide">
   <link rel="apple-touch-icon" href="icon.png">
+  <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -29,7 +33,9 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: var(--text-primary);
       min-height: 100vh;
+      min-height: 100dvh;
       overflow-x: hidden;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       -webkit-tap-highlight-color: transparent;
     }
     .bg-animated {

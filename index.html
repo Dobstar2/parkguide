@@ -80,14 +80,6 @@
     .page { display: none; }
     .page.active { display: block; }
     .page.fade-out { display: none; }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px);}
-      to { opacity: 1; transform: translateY(0);}
-    }
-    @keyframes fadeOutDown {
-      from { opacity: 1; transform: translateY(0); }
-      to { opacity: 0; transform: translateY(30px); }
-    }
     h1 {
       font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; text-align: center; margin-bottom: 1rem;
       background: linear-gradient(135deg, #fff 0%, #f093fb 100%);
@@ -217,7 +209,6 @@
     }
     @keyframes pulse { 0%, 100% { transform: scale(1);} 50% { transform: scale(1.05);} }
     .pulse-animation { animation: pulse 2s ease-in-out infinite;}
-    html { scroll-behavior: smooth;}
     .shimmer {
       background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 75%);
       background-size: 200% 100%; animation: shimmer 2s ease-in-out infinite;

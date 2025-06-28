@@ -684,6 +684,10 @@
       });
     }
     function launchCamera() {
+      if (!currentHuntKey) {
+        alert('Tap a hunt below first to attach your photo.');
+        return;
+      }
       const input = document.getElementById('camera-input');
       if (input) input.click();
     }
@@ -1564,6 +1568,7 @@
       localStorage.removeItem('hiddenParkFoodFav');
       localStorage.removeItem('parkAchievements');
       localStorage.removeItem('photoHunts');
+      localStorage.removeItem('dayPlan');
       localStorage.removeItem("seenCharlieWelcome");
       location.reload();
     }

@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Dobbies Guide">
+  <meta name="apple-touch-fullscreen" content="yes">
   <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
@@ -36,6 +37,11 @@
       overflow-x: hidden;
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      -webkit-touch-callout: none;
     }
     .bg-animated {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
@@ -70,6 +76,8 @@
     }
     .container { max-width: 1200px; margin: 0 auto; padding: 2rem; position: relative; z-index: 2; }
     .glass-card {
+      will-change: transform;
+      -webkit-backdrop-filter: blur(25px) saturate(1.2);
       background: var(--glass-bg);
       backdrop-filter: blur(25px) saturate(1.2);
       border: 1px solid var(--glass-border);
@@ -101,6 +109,8 @@
       display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;
     }
     .menu-btn {
+      -webkit-backdrop-filter: blur(20px);
+      will-change: transform;
       background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
       border-radius: 20px; padding: 2rem; font-size: 1.3rem; font-weight: 700; color: var(--text-primary);
       cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -150,6 +160,8 @@
       display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;
     }
     .secret-card, .ride-card {
+      -webkit-backdrop-filter: blur(20px);
+      will-change: transform;
       background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
       border-radius: 16px; padding: 1.5rem; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; touch-action: manipulation;
     }
@@ -216,6 +228,8 @@
       .main-menu-grid { grid-template-columns: 1fr; gap: 1rem;}
       .rides-grid, .secrets-grid { grid-template-columns: 1fr; gap: 1rem;}
       .menu-btn { min-height: 100px; padding: 1.5rem; font-size: 1.1rem;}
+      -webkit-backdrop-filter: blur(20px);
+      will-change: transform;
       .menu-btn .emoji { font-size: 2rem;}
     }
     @keyframes pulse { 0%, 100% { transform: scale(1);} 50% { transform: scale(1.05);} }
@@ -266,7 +280,7 @@
       color: var(--text-primary);
     }
     .foods-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-    .food-card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1.5rem; cursor: pointer; position: relative; transition: all 0.3s ease; overflow: hidden; }
+    .food-card { -webkit-backdrop-filter: blur(20px); will-change: transform; background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1.5rem; cursor: pointer; position: relative; transition: all 0.3s ease; overflow: hidden; }
     .food-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-soft); border-color: rgba(255, 255, 255, 0.3); }
     .food-card.done { background: rgba(78, 205, 196, 0.1); border-color: var(--success); opacity: 0.7; }
     .fav { position: absolute; top: 1rem; left: 1rem; font-size: 1.5rem; color: var(--warning); display: none; filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); }
@@ -274,6 +288,8 @@
     .land-header.badge-earned::after { content: '⭐'; margin-left: 0.25rem; }
     #party-code { width: 100%; min-height: 100px; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-primary); }
     .camera-btn {
+      -webkit-backdrop-filter: blur(20px);
+      will-change: transform;
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
       border-radius: 12px;
@@ -626,7 +642,7 @@
   <div id="welcome-modal" class="modal" style="display:none;">
     <div class="modal-content">
       <span class="modal-emoji">🎉✨</span>
-      <p>Welcome to your magical park adventure guide!<br><br>
+      <p id="welcome-message">Welcome to your magical park adventure guide!<br><br>
       Pick a park, check off rides & cool secrets, and make the most of your Disney & Universal trip.<br><br>
       <strong style="color: var(--accent);">Pro Tip:</strong> Add this to your home screen for the best experience!</p>
       <button class="modal-btn" onclick="closeModal()">Let's Begin the Magic!</button>
@@ -875,6 +891,10 @@
       }
     }
     applyLinkProgress();
+    if (isiOS() && !window.navigator.standalone) {
+      const msg = document.getElementById("welcome-message");
+      if (msg) msg.innerHTML += "<br><br>Tap the share icon and choose <strong>Add to Home Screen</strong>.";
+    }
     // DATA:
     const secrets = {
       MK: [

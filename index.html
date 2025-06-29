@@ -272,7 +272,6 @@
     }
     .schedule-header { font-weight: 700; margin-bottom: 0.5rem; text-align: center; }
     .dropzone { min-height: 150px; }
-    #quest-log li { margin-bottom: 0.5rem; }
     /* Food Tracker styles */
     .filter-controls { display: flex; gap: 1rem; margin: 1rem 0 2rem; }
     .filter-controls input, .filter-controls select {
@@ -354,10 +353,6 @@
         <button class="menu-btn" onclick="openParty()">
           <span class="emoji">🎉</span>
           <span>Party Mode</span>
-        </button>
-        <button class="menu-btn" onclick="openQuest()">
-          <span class="emoji">🔁</span>
-          <span>Quest Spinner</span>
         </button>
         <button class="menu-btn" onclick="openCameraPage()">
           <span class="emoji">📷</span>
@@ -631,16 +626,6 @@
       <canvas id="qr-canvas" style="display:none;"></canvas>
 
     </div>
-  <!-- QUEST SPINNER -->
-  <div id="quest-page" class="page">
-      <button class="back-btn" onclick="goHome()">← Back to Parks</button>
-      <div class="park-title">🔁 Family Quest Spinner</div>
-      <button class="modal-btn" onclick="spinQuest()">Tap to Spin</button>
-      <div id="quest-result" style="margin-top:1.5rem;font-size:1.2rem;text-align:center;"></div>
-      <button class="modal-btn" id="quest-complete-btn" style="display:none;margin-top:1rem;" onclick="completeQuest()">Complete Quest</button>
-      <div class="section-header">Quest Journal</div>
-      <ul id="quest-log" style="list-style:none;padding:0;"></ul>
-  </div>
   </main>
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="modal" style="display:none;">
@@ -852,13 +837,6 @@
       stopBeaconScan();
       showPage('beacon-page');
       renderBeacons();
-    }
-    function openQuest() {
-      showPage('quest-page');
-      renderQuestLog();
-      document.getElementById('quest-result').textContent = '';
-      document.getElementById('quest-complete-btn').style.display = 'none';
-      currentQuest = null;
     }
     function goHome() {
       stopQRScan();
@@ -1152,15 +1130,6 @@
     const foodFav = JSON.parse(localStorage.getItem('hiddenParkFoodFav') || '{}');
     const achievements = JSON.parse(localStorage.getItem('parkAchievements') || '{}');
     const huntStatus = JSON.parse(localStorage.getItem('photoHunts') || '{}');
-    const questLog = JSON.parse(localStorage.getItem('questLog') || '[]');
-    const quests = [
-      "Take a silly photo on the next ride",
-      "Each person finds something green",
-      "Try a snack you've never had",
-      "Compliment a cast member",
-      "Spot three hidden Mickeys",
-      "Trade pins with someone new"
-    ];
     const waitTimes = {
       "Tiana's Bayou Adventure (Log Flume)": {morning: 25, afternoon: 45, evening: 35},
       "It's a Small World": {morning: 15, afternoon: 25, evening: 20},
@@ -1662,40 +1631,13 @@
     const camInput = document.getElementById('camera-input');
     if (camInput) camInput.addEventListener('change', handleHuntPhoto);
 
-    let currentQuest = null;
-    function spinQuest() {
-      currentQuest = quests[Math.floor(Math.random() * quests.length)];
-      document.getElementById('quest-result').textContent = currentQuest;
-      document.getElementById('quest-complete-btn').style.display = 'inline-block';
-    }
-    function completeQuest() {
-      if (!currentQuest) return;
-      questLog.push(currentQuest);
-      localStorage.setItem('questLog', JSON.stringify(questLog));
-      showBadge('Quest Complete!');
-      renderQuestLog();
-      document.getElementById('quest-result').textContent = '';
-      document.getElementById('quest-complete-btn').style.display = 'none';
-      currentQuest = null;
-    }
-    function renderQuestLog() {
-      const list = document.getElementById('quest-log');
-      if (!list) return;
-      list.innerHTML = '';
-      questLog.forEach(q => {
-        const li = document.createElement('li');
-        li.textContent = q;
-        list.appendChild(li);
-      });
-    }
     function exportProgress() {
       const data = {
         rides: saved,
         foodDone,
         foodFav,
         achievements,
-        hunts: huntStatus,
-        quests: questLog
+        hunts: huntStatus
       };
       const code = btoa(JSON.stringify(data));
       const url = location.origin + location.pathname + '#share=' + encodeURIComponent(code);
@@ -1722,7 +1664,6 @@
         localStorage.setItem('hiddenParkFoodFav', JSON.stringify(data.foodFav || {}));
         localStorage.setItem('parkAchievements', JSON.stringify(data.achievements || {}));
         localStorage.setItem('photoHunts', JSON.stringify(data.hunts || {}));
-        localStorage.setItem('questLog', JSON.stringify(data.quests || []));
         location.reload();
       } catch(e) { alert('Invalid code'); }
     }
@@ -1732,7 +1673,6 @@
       localStorage.removeItem('hiddenParkFoodFav');
       localStorage.removeItem('parkAchievements');
       localStorage.removeItem('photoHunts');
-      localStorage.removeItem('questLog');
       localStorage.removeItem('beaconStatus');
       localStorage.removeItem('dayPlan');
       localStorage.removeItem("seenCharlieWelcome");

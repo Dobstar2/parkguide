@@ -9,27 +9,27 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Dobbies Guide">
   <link rel="manifest" href="manifest.json">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #667eea;
-      --secondary: #764ba2;
-      --accent: #f093fb;
-      --success: #4ecdc4;
-      --warning: #ffe66d;
-      --bg-dark: #0f0f23;
-      --bg-card: rgba(255, 255, 255, 0.1);
+      --primary: #6366f1;
+      --secondary: #9333ea;
+      --accent: #f472b6;
+      --success: #22c55e;
+      --warning: #facc15;
+      --bg-dark: #1e1b4b;
+      --bg-card: rgba(255, 255, 255, 0.08);
       --text-primary: #ffffff;
       --text-secondary: rgba(255, 255, 255, 0.8);
-      --glass-bg: rgba(255, 255, 255, 0.1);
-      --glass-border: rgba(255, 255, 255, 0.2);
-      --shadow-glow: 0 8px 32px rgba(102, 126, 234, 0.3);
+      --glass-bg: rgba(255, 255, 255, 0.12);
+      --glass-border: rgba(255, 255, 255, 0.25);
+      --shadow-glow: 0 8px 30px rgba(99, 102, 241, 0.3);
       --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
-      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #6366f1 0%, #9333ea 100%);
       color: var(--text-primary);
       min-height: 100vh;
       min-height: 100dvh;
@@ -39,7 +39,7 @@
     }
     .bg-animated {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      background: linear-gradient(135deg, #6366f1 0%, #9333ea 50%, #f472b6 100%);
       background-size: 400% 400%; animation: gradientShift 15s ease infinite;
     }
     .bg-animated::before {
@@ -70,18 +70,28 @@
     }
     .container { max-width: 1200px; margin: 0 auto; padding: 2rem; position: relative; z-index: 2; }
     .glass-card {
-      background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      backdrop-filter: blur(25px) saturate(1.2);
+      border: 1px solid var(--glass-border);
       border-radius: 20px; box-shadow: var(--shadow-glow); transition: all 0.3s ease;
     }
     .glass-card:hover {
       transform: translateY(-5px); box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
     }
-    .page { display: none; }
-    .page.active { display: block; }
-    .page.fade-out { display: none; }
+    .page {
+      display: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .page.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
     h1 {
       font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; text-align: center; margin-bottom: 1rem;
-      background: linear-gradient(135deg, #fff 0%, #f093fb 100%);
+      background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
       background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       text-shadow: 0 0 30px rgba(240, 147, 251, 0.5);
     }
@@ -149,7 +159,9 @@
     }
     .secret-card:hover::before, .ride-card:hover::before { width: 8px; }
     .secret-card:hover, .ride-card:hover {
-      transform: translateY(-5px); box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3); border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(99, 102, 241, 0.4);
+      border-color: rgba(255, 255, 255, 0.3);
     }
     .secret-card.done, .ride-card.done {
       background: rgba(78, 205, 196, 0.1); border-color: var(--success); opacity: 0.7;
@@ -648,7 +660,7 @@
     function showPage(id) {
       document.querySelectorAll('.page').forEach(p => {
         if (p.id !== id) {
-          p.classList.remove('active', 'fade-out');
+          p.classList.remove('active');
         }
       });
       const page = document.getElementById(id);

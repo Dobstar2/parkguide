@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-title" content="Dobbies Guide">
   <meta name="apple-touch-fullscreen" content="yes">
   <link rel="manifest" href="manifest.json">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <style>
     :root {
       --primary: #6366f1;
@@ -46,7 +46,7 @@
     .bg-animated {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
       background: linear-gradient(135deg, #6366f1 0%, #9333ea 50%, #f472b6 100%);
-      background-size: 400% 400%; animation: gradientShift 15s ease infinite;
+      background-size: 400% 400%; animation: gradientShift 10s ease infinite;
     }
     .bg-animated::before {
       content: '';
@@ -54,7 +54,7 @@
       background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
                   radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
                   radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
-      animation: floatingOrbs 20s ease-in-out infinite;
+      animation: floatingOrbs 15s ease-in-out infinite;
     }
     @keyframes gradientShift {
       0%, 100% { background-position: 0% 50%; }
@@ -126,6 +126,10 @@
     }
     .menu-btn:active { transform: translateY(-5px) scale(0.98); }
     .menu-btn .emoji { font-size: 2.5rem; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3)); }
+    .menu-btn:focus, .back-btn:focus, .reset-btn:focus, .modal-btn:focus, .camera-btn:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
     .reset-btn {
       margin: 4rem auto 0; background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
       color: white; border: none; border-radius: 15px; font-size: 1.1rem; padding: 1rem 2.5rem; font-weight: 600;
@@ -327,7 +331,7 @@
   <div class="bg-animated"></div>
   <div class="particles" id="particles"></div>
   
-  <div class="container">
+  <main class="container">
     <!-- Main Menu -->
     <div id="main-menu" class="page active">
       <h1>Dobbies Magical Park Guide</h1>
@@ -582,7 +586,7 @@
     <button class="back-btn" onclick="goHome()">← Back to Parks</button>
     <div class="park-title">🗺️ Park Map</div>
     <p>Grant location access to see where you are in the park.</p>
-    <div id="map-container"><iframe id="map-frame" allowfullscreen></iframe></div>
+    <div id="map-container"><iframe id="map-frame" allowfullscreen title="Park map"></iframe></div>
   </div>
   <!-- CAMERA PAGE -->
   <div id="camera-page" class="page">
@@ -637,7 +641,7 @@
       <div class="section-header">Quest Journal</div>
       <ul id="quest-log" style="list-style:none;padding:0;"></ul>
   </div>
-  </div>
+  </main>
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="modal" style="display:none;">
     <div class="modal-content">
@@ -1547,7 +1551,7 @@
           const card = document.createElement('div');
           card.className = 'secret-card glass-card' + (status.done ? ' done' : '');
           card.setAttribute('data-key', key);
-          const photoHtml = status.photo ? `<img class="hunt-photo" src="${status.photo}">` : '';
+          const photoHtml = status.photo ? `<img class="hunt-photo" src="${status.photo}" alt="${h.desc}">` : '';
           card.innerHTML = `<div class="card-content"><span class="card-emoji">${h.emoji}</span><div class="card-info"><div class="card-name">${h.desc}</div>${photoHtml}</div><span class="tick">✔️</span></div>`;
           card.onclick = () => captureHuntPhoto(key, card);
           grid.appendChild(card);
@@ -1561,6 +1565,7 @@
             if (!img) {
               img = document.createElement('img');
               img.className = 'hunt-photo';
+              img.alt = card.querySelector('.card-name').textContent;
               card.querySelector('.card-info').appendChild(img);
             }
             img.src = status.photo;
@@ -1642,6 +1647,7 @@
           if (!img) {
             img = document.createElement('img');
             img.className = 'hunt-photo';
+            img.alt = currentHuntCard.querySelector('.card-name').textContent;
             currentHuntCard.querySelector('.card-info').appendChild(img);
           }
           img.src = reader.result;

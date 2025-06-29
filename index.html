@@ -370,10 +370,6 @@
           <span class="emoji">📷</span>
           <span>Camera</span>
         </button>
-        <button class="menu-btn" onclick="openBeaconPage()">
-          <span class="emoji">📶</span>
-          <span>Beacon Check-Ins</span>
-        </button>
       </div>
       
       <button class="reset-btn" onclick="resetProgress()">🔄 Reset All Progress</button>
@@ -613,14 +609,6 @@
         <div class="bottom"></div>
       </div>
     </div>
-  </div>
-  <!-- BEACON CHECK-INS -->
-  <div id="beacon-page" class="page">
-    <button class="back-btn" onclick="goHome()">← Back to Parks</button>
-    <div class="park-title">📶 Beacon Check-Ins</div>
-    <p>Scan for Bluetooth beacons to mark rides complete.</p>
-    <button class="camera-btn" onclick="startBeaconScan()">🔍 Start Scanning</button>
-    <div class="secrets-grid" id="beacon-list"></div>
   </div>
   <!-- PARTY MODE -->
   <div id="party-page" class="page">
@@ -871,11 +859,6 @@
         startARCamera();
       }
     }
-    function openBeaconPage() {
-      stopBeaconScan();
-      showPage('beacon-page');
-      renderBeacons();
-    }
     function openQuest() {
       showPage('quest-page');
       renderQuestLog();
@@ -886,7 +869,6 @@
     function goHome() {
       stopQRScan();
       stopARCamera();
-      stopBeaconScan();
       showPage('main-menu');
     }
     // Modal functions
@@ -1265,11 +1247,6 @@
         secrets[p].map(h => ({ emoji: h.emoji, desc: h.name }))
       )
     ];
-    const beaconCheckpoints = [
-      {id:'tron', emoji:'🏍️', name:'TRON Lightcycle', device:'TronBeacon', ride:'MK-ride-tomorrow-0'},
-      {id:'haunt', emoji:'👻', name:'Haunted Mansion', device:'HauntBeacon', ride:'MK-ride-liberty-0'}
-    ];
-    const beaconStatus = JSON.parse(localStorage.getItem('beaconStatus') || '{}');
     // Render secrets (Cool Hidden Stuff)
     parkList.forEach(park => {
       const grid = document.getElementById(park + "-secrets");
@@ -1607,54 +1584,6 @@
       checkBadge(grid);
     }
 
-    function renderBeacons() {
-      const grid = document.getElementById('beacon-list');
-      if (!grid) return;
-      grid.innerHTML = '';
-      beaconCheckpoints.forEach(b => {
-        const card = document.createElement('div');
-        card.className = 'secret-card glass-card' + (beaconStatus[b.id] ? ' done' : '');
-        card.innerHTML = `<div class="card-content"><span class="card-emoji">${b.emoji}</span><div class="card-info"><div class="card-name">${b.name}</div></div><span class="tick">✔️</span></div>`;
-        grid.appendChild(card);
-      });
-      checkBadge(grid);
-    }
-
-    let beaconScan = null;
-    function startBeaconScan() {
-      if (!navigator.bluetooth || !navigator.bluetooth.requestLEScan) {
-        alert('Bluetooth scanning not supported.');
-        return;
-      }
-      if (beaconScan) return;
-      navigator.bluetooth.requestLEScan({ acceptAllAdvertisements: true })
-        .then(scan => {
-          beaconScan = scan;
-          navigator.bluetooth.addEventListener('advertisementreceived', handleBeacon);
-        })
-        .catch(() => alert('Scan failed or permission denied.'));
-    }
-    function handleBeacon(event) {
-      const name = event.device.name;
-      const b = beaconCheckpoints.find(x => x.device === name);
-      if (b && !beaconStatus[b.id]) {
-        beaconStatus[b.id] = true;
-        localStorage.setItem('beaconStatus', JSON.stringify(beaconStatus));
-        if (b.ride) {
-          saved[b.ride] = true;
-          localStorage.setItem('hiddenParkFullScreenCharlieRides', JSON.stringify(saved));
-        }
-        renderBeacons();
-        showBadge('Checked in: ' + b.name);
-      }
-    }
-    function stopBeaconScan() {
-      if (beaconScan) {
-        beaconScan.stop();
-        beaconScan = null;
-        navigator.bluetooth.removeEventListener('advertisementreceived', handleBeacon);
-      }
-    }
 
     let currentHuntKey = null;
     let currentHuntCard = null;
@@ -1763,7 +1692,6 @@
       localStorage.removeItem('parkAchievements');
       localStorage.removeItem('photoHunts');
       localStorage.removeItem('questLog');
-      localStorage.removeItem('beaconStatus');
       localStorage.removeItem('dayPlan');
       localStorage.removeItem("seenCharlieWelcome");
       location.reload();

@@ -324,6 +324,13 @@
       to { transform: translate(-50%, -50%) rotateX(360deg) rotateY(360deg); }
     }
     #map-container { width:100%; height:60vh; max-height:400px; border-radius:12px; overflow:hidden; }
+    #links-btn { position: fixed; bottom: 1rem; right: 1rem; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; color: var(--text-primary); font-size: 1.2rem; cursor: pointer; z-index: 1100; }
+    #links-btn:hover { transform: translateY(-2px); }
+    #links-modal .modal-content { max-width: 300px; padding: 1.5rem; text-align: left; }
+    #links-modal ul { list-style: none; padding: 0; margin: 0; }
+    #links-modal li { margin: 0.5rem 0; }
+    #links-modal a { color: var(--accent); text-decoration: none; }
+    #links-modal .close-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: none; border: none; color: var(--text-primary); font-size: 1.2rem; cursor: pointer; }
     #map-container iframe { width:100%; height:100%; border:0; }
   </style>
 </head>
@@ -642,6 +649,7 @@
       <ul id="quest-log" style="list-style:none;padding:0;"></ul>
   </div>
   </main>
+  <button id="links-btn" onclick="openLinks()">🔗</button>
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="modal" style="display:none;">
     <div class="modal-content">
@@ -658,6 +666,21 @@
       <span class="modal-emoji">🏆</span>
       <p id="badge-text"></p>
       <button class="modal-btn" onclick="closeBadge()">Awesome!</button>
+    </div>
+  </div>
+  <div id="links-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeLinks()">✖️</button>
+      <ul>
+        <li><a href="https://disneyworld.disney.go.com/plan/my-disney-experience/mobile-apps/" target="_blank" rel="noopener">My Disney Experience App</a></li>
+        <li><a href="https://disneyworld.disney.go.com/genie/" target="_blank" rel="noopener">Disney Genie+ Info</a></li>
+        <li><a href="https://disneyworld.disney.go.com/maps/" target="_blank" rel="noopener">Official Disney World Interactive Map</a></li>
+        <li><a href="https://touringplans.com/walt-disney-world/crowd-calendar" target="_blank" rel="noopener">TouringPlans Crowd Calendar</a></li>
+        <li><a href="https://www.universalorlando.com/web/en/us/plan-your-visit/mobile-app" target="_blank" rel="noopener">Universal Orlando App</a></li>
+        <li><a href="https://www.universalorlando.com/web/en/us/plan-your-visit/resort-maps" target="_blank" rel="noopener">Universal Orlando Resort Maps</a></li>
+        <li><a href="https://allears.net/" target="_blank" rel="noopener">AllEars.net Disney Tips</a></li>
+        <li><a href="https://www.mousesavers.com/" target="_blank" rel="noopener">MouseSavers</a></li>
+      </ul>
     </div>
   </div>
   <script>
@@ -878,6 +901,13 @@
     if (!localStorage.getItem("seenCharlieWelcome")) {
       setTimeout(showModal, 800);
     }
+    function openLinks() {
+      document.getElementById("links-modal").style.display = "flex";
+    }
+    function closeLinks() {
+      document.getElementById("links-modal").style.display = "none";
+    }
+
 
     function applyLinkProgress() {
       const params = new URLSearchParams(location.hash.substring(1) || location.search.substring(1));

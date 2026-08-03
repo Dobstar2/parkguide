@@ -7,6 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Stinky's List">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
   <title>Stinky's Checklist</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -16,7 +18,7 @@
       <div class="mascot">🐶</div>
       <p class="eyebrow">A shared little helper</p>
       <h1>Stinky's Checklist</h1>
-      <p>Breakfast, lunch, dinner and snacks — ticked live on both phones.</p>
+      <p>One simple check for breakfast, lunch, dinner and snacks — shared live on both phones.</p>
       <button id="createBtn" class="button primary large">Create Stinky's checklist</button>
       <div class="divider">or join using the code</div>
       <form id="joinForm" class="join-row">
@@ -31,24 +33,77 @@
   <main id="app" class="shell hidden">
     <header class="topbar">
       <button id="leaveBtn" class="round" aria-label="Leave">←</button>
-      <div class="identity"><div id="emoji" class="identity-emoji">🐶</div><div style="min-width:0"><h1 id="title">Stinky's Checklist</h1><button id="codeBtn" class="code"></button></div></div>
+      <div class="identity">
+        <div id="emoji" class="identity-emoji">🐶</div>
+        <div class="identity-copy">
+          <h1 id="title">Stinky's Checklist</h1>
+          <button id="codeBtn" class="code"></button>
+        </div>
+      </div>
       <button id="settingsBtn" class="round" aria-label="Settings">•••</button>
     </header>
+
     <div class="livebar"><span id="dot" class="dot"></span><span id="status">Connecting securely…</span><span>•</span><span id="phones">1 phone</span></div>
-    <section class="date-card"><button id="prev">‹</button><button id="dateMain" class="date-main"><strong id="dateLabel">Today</strong><span id="dateFull"></span></button><button id="next">›</button></section>
+
+    <button id="notifyBanner" class="notify-banner hidden">
+      <span class="notify-icon">🔔</span>
+      <span><strong>Get told when she eats</strong><small id="notifyBannerText">Turn on alerts on this phone</small></span>
+      <b>Enable</b>
+    </button>
+
+    <section class="date-card">
+      <button id="prev" aria-label="Previous day">‹</button>
+      <button id="dateMain" class="date-main"><strong id="dateLabel">Today</strong><span id="dateFull"></span></button>
+      <button id="next" aria-label="Next day">›</button>
+    </section>
     <input id="datePicker" type="date" class="hidden">
-    <section class="progress-card"><div><p class="eyebrow">Today's gentle progress</p><h2 id="progressTitle">Nothing added yet</h2><p id="progressSub">Add the first thing Stinky needs today.</p></div><div id="ring" class="ring"><span id="percent">0%</span></div></section>
+
+    <section class="progress-card">
+      <div>
+        <p class="eyebrow">Today's gentle progress</p>
+        <h2 id="progressTitle">0 of 4 checked</h2>
+        <p id="progressSub">She can write what she had, then tap the check button.</p>
+      </div>
+      <div id="ring" class="ring"><span id="percent">0%</span></div>
+    </section>
+
     <section id="meals" class="meal-grid"></section>
-    <button id="fab" class="fab" aria-label="Add">＋</button>
   </main>
 
-  <div id="addSheet" class="sheet-backdrop hidden"><section class="sheet"><div class="handle"></div><div class="sheet-head"><div><p class="eyebrow">Add to the day</p><h2>Food or drink</h2></div><button class="close" data-close="addSheet">×</button></div><form id="addForm"><label>When?</label><div id="mealChoices" class="meal-choices"></div><label for="itemText">What needs having?</label><input id="itemText" class="field" maxlength="90" placeholder="e.g. Toast and a drink" required><div class="quick"><button type="button">Cereal</button><button type="button">Toast</button><button type="button">Sandwich</button><button type="button">Fruit</button><button type="button">Yoghurt</button><button type="button">Water</button></div><label for="itemNote">Helpful note <span>(optional)</span></label><textarea id="itemNote" class="field" maxlength="180" placeholder="e.g. Strawberry yoghurt is in the fridge"></textarea><button class="button primary large" style="margin-top:16px">Add to checklist</button></form></section></div>
+  <div id="settingsSheet" class="sheet-backdrop hidden">
+    <section class="sheet">
+      <div class="handle"></div>
+      <div class="sheet-head"><div><p class="eyebrow">Shared settings</p><h2>Stinky's checklist</h2></div><button class="close" data-close="settingsSheet">×</button></div>
+      <form id="settingsForm">
+        <label for="listName">Checklist name</label>
+        <input id="listName" class="field" maxlength="40">
+        <label for="listEmoji">Little icon</label>
+        <select id="listEmoji" class="field"><option>🐶</option><option>🐻</option><option>🐱</option><option>🍓</option><option>🌼</option><option>💛</option><option>⭐</option><option>🙂</option></select>
+        <label for="myName">Your name on this phone</label>
+        <input id="myName" class="field" maxlength="40" placeholder="e.g. Charlie">
+        <button class="button primary large settings-save">Save</button>
+      </form>
+      <button id="notificationsBtn" class="settings-row"><span class="ico">🔔</span><span><strong id="notificationsTitle">Enable notifications</strong><small id="notificationsSub">Get an alert when another phone checks a meal</small></span></button>
+      <button id="shareBtn" class="settings-row"><span class="ico">🔗</span><span><strong>Share with her phone</strong><small>Send one private invite link</small></span></button>
+      <button id="resetBtn" class="settings-row"><span class="ico">↺</span><span><strong>Reset this day</strong><small>Clear the answers and untick all four</small></span></button>
+    </section>
+  </div>
 
-  <div id="editSheet" class="sheet-backdrop hidden"><section class="sheet"><div class="handle"></div><div class="sheet-head"><div><p class="eyebrow">Change item</p><h2>Edit checklist item</h2></div><button class="close" data-close="editSheet">×</button></div><form id="editForm"><label for="editText">Food or drink</label><input id="editText" class="field" maxlength="90" required><label for="editNote">Helpful note <span>(optional)</span></label><textarea id="editNote" class="field" maxlength="180"></textarea><div class="actions"><button id="deleteBtn" type="button" class="button danger">Delete</button><button class="button primary">Save</button></div></form></section></div>
+  <div id="notifySheet" class="sheet-backdrop hidden">
+    <section class="sheet compact-sheet">
+      <div class="handle"></div>
+      <div class="sheet-head"><div><p class="eyebrow">Phone alerts</p><h2>Add it to your Home Screen</h2></div><button class="close" data-close="notifySheet">×</button></div>
+      <div class="install-steps">
+        <div><b>1</b><span>In Safari, tap the <strong>Share</strong> button.</span></div>
+        <div><b>2</b><span>Tap <strong>Add to Home Screen</strong>.</span></div>
+        <div><b>3</b><span>Open Stinky's Checklist from its new icon, then tap <strong>Enable notifications</strong>.</span></div>
+      </div>
+      <button id="shareInstallBtn" class="button primary large">Open Share menu</button>
+    </section>
+  </div>
 
-  <div id="settingsSheet" class="sheet-backdrop hidden"><section class="sheet"><div class="handle"></div><div class="sheet-head"><div><p class="eyebrow">Shared settings</p><h2>Stinky's checklist</h2></div><button class="close" data-close="settingsSheet">×</button></div><form id="settingsForm"><label for="listName">Checklist name</label><input id="listName" class="field" maxlength="40"><label for="listEmoji">Little icon</label><select id="listEmoji" class="field"><option>🐶</option><option>🐻</option><option>🐱</option><option>🍓</option><option>🌼</option><option>💛</option><option>⭐</option><option>🙂</option></select><label for="myName">Your name on this phone</label><input id="myName" class="field" maxlength="40" placeholder="e.g. Charlie"><button class="button primary large" style="margin-top:16px">Save</button></form><button id="shareBtn" class="settings-row"><span class="ico">🔗</span><span><strong>Share with the other phone</strong><small>Send one private invite link</small></span></button><button id="resetBtn" class="settings-row"><span class="ico">↺</span><span><strong>Untick this day</strong><small>Keep the food but reset progress</small></span></button><button id="clearBtn" class="settings-row"><span class="ico">🗑️</span><span><strong>Clear this day</strong><small>Remove every item today</small></span></button></section></div>
-
-  <div id="toast" class="toast"></div><div id="confetti" class="confetti"></div>
+  <div id="toast" class="toast"></div>
+  <div id="confetti" class="confetti"></div>
   <script src="https://unpkg.com/nostr-tools@2.24.1/lib/nostr.bundle.js"></script>
   <script src="app.js"></script>
 </body>

@@ -1,0 +1,14 @@
+{
+  "name": "Pocket Sports Lab",
+  "short_name": "Sports Lab",
+  "description": "Invent modular sports and master them in fast physics-based matches.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#060915",
+  "theme_color": "#070b18",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}

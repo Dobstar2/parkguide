@@ -1,0 +1,14 @@
+{
+  "id": "/parkguide/stinky/",
+  "name": "Stinky's Checklist",
+  "short_name": "Stinky's List",
+  "description": "A friendly shared meal checklist for two phones.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fffaf3",
+  "theme_color": "#fff7ed",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}

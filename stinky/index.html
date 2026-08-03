@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Stinky's List">
-  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="manifest" href="manifest.webmanifest?v=4">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <title>Stinky's Checklist</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
   <section id="welcome" class="welcome">
@@ -18,7 +18,7 @@
       <div class="mascot">🐶</div>
       <p class="eyebrow">A shared little helper</p>
       <h1>Stinky's Checklist</h1>
-      <p>One simple check for breakfast, lunch, dinner and snacks — shared live on both phones.</p>
+      <p>Stinky taps one big button after breakfast, lunch, dinner or snacks, and Charlie is told.</p>
       <button id="createBtn" class="button primary large">Create Stinky's checklist</button>
       <div class="divider">or join using the code</div>
       <form id="joinForm" class="join-row">
@@ -26,7 +26,7 @@
         <button class="button secondary">Join</button>
       </form>
       <button id="recentBtn" class="recent hidden"></button>
-      <p class="privacy">🔒 Checklist contents are encrypted before being shared.</p>
+      <p class="privacy">🔒 The checklist itself is encrypted before being shared.</p>
     </div>
   </section>
 
@@ -47,8 +47,8 @@
 
     <button id="notifyBanner" class="notify-banner hidden">
       <span class="notify-icon">🔔</span>
-      <span><strong>Get told when she eats</strong><small id="notifyBannerText">Turn on alerts on this phone</small></span>
-      <b>Enable</b>
+      <span><strong>Get alerts even when this app is closed</strong><small>Set up your private notification channel</small></span>
+      <b>Set up</b>
     </button>
 
     <section class="date-card">
@@ -62,7 +62,7 @@
       <div>
         <p class="eyebrow">Today's gentle progress</p>
         <h2 id="progressTitle">0 of 4 checked</h2>
-        <p id="progressSub">She can write what she had, then tap the check button.</p>
+        <p id="progressSub">Stinky can simply tap each big button after eating.</p>
       </div>
       <div id="ring" class="ring"><span id="percent">0%</span></div>
     </section>
@@ -80,11 +80,13 @@
         <label for="listEmoji">Little icon</label>
         <select id="listEmoji" class="field"><option>🐶</option><option>🐻</option><option>🐱</option><option>🍓</option><option>🌼</option><option>💛</option><option>⭐</option><option>🙂</option></select>
         <label for="myName">Your name on this phone</label>
-        <input id="myName" class="field" maxlength="40" placeholder="e.g. Charlie">
+        <input id="myName" class="field" maxlength="40" placeholder="e.g. Stinky or Charlie">
         <button class="button primary large settings-save">Save</button>
       </form>
-      <button id="notificationsBtn" class="settings-row"><span class="ico">🔔</span><span><strong id="notificationsTitle">Enable notifications</strong><small id="notificationsSub">Get an alert when another phone checks a meal</small></span></button>
-      <button id="shareBtn" class="settings-row"><span class="ico">🔗</span><span><strong>Share with her phone</strong><small>Send one private invite link</small></span></button>
+      <button id="installBtn" class="settings-row"><span class="ico">📲</span><span><strong>Install this app</strong><small>Add a proper icon on the Redmi or iPhone</small></span></button>
+      <button id="reliableAlertsBtn" class="settings-row"><span class="ico">🔔</span><span><strong id="reliableAlertsTitle">Set up reliable alerts</strong><small id="reliableAlertsSub">Receive checks even when this checklist is closed</small></span></button>
+      <button id="notificationsBtn" class="settings-row"><span class="ico">📳</span><span><strong id="notificationsTitle">Enable in-app notifications</strong><small id="notificationsSub">Optional extra alerts while the app is active</small></span></button>
+      <button id="shareBtn" class="settings-row"><span class="ico">🔗</span><span><strong>Share with her phone</strong><small>Send one private checklist link</small></span></button>
       <button id="resetBtn" class="settings-row"><span class="ico">↺</span><span><strong>Reset this day</strong><small>Clear the answers and untick all four</small></span></button>
     </section>
   </div>
@@ -92,19 +94,30 @@
   <div id="notifySheet" class="sheet-backdrop hidden">
     <section class="sheet compact-sheet">
       <div class="handle"></div>
-      <div class="sheet-head"><div><p class="eyebrow">Phone alerts</p><h2>Add it to your Home Screen</h2></div><button class="close" data-close="notifySheet">×</button></div>
-      <div class="install-steps">
-        <div><b>1</b><span>In Safari, tap the <strong>Share</strong> button.</span></div>
-        <div><b>2</b><span>Tap <strong>Add to Home Screen</strong>.</span></div>
-        <div><b>3</b><span>Open Stinky's Checklist from its new icon, then tap <strong>Enable notifications</strong>.</span></div>
+      <div class="sheet-head"><div><p class="eyebrow">Proper app icon</p><h2 id="installTitle">Install Stinky's Checklist</h2></div><button class="close" data-close="notifySheet">×</button></div>
+      <p id="installCopy" class="sheet-copy">Add it to the Home Screen so it opens like a normal app.</p>
+      <div id="installSteps" class="install-steps"></div>
+      <button id="nativeInstallBtn" class="button primary large">Install now</button>
+    </section>
+  </div>
+
+  <div id="reliableSheet" class="sheet-backdrop hidden">
+    <section class="sheet compact-sheet">
+      <div class="handle"></div>
+      <div class="sheet-head"><div><p class="eyebrow">Reliable notifications</p><h2>Get Stinky's check-ins while closed</h2></div><button class="close" data-close="reliableSheet">×</button></div>
+      <p class="sheet-copy">Open this private alert channel on Charlie's phone and subscribe. The alert only says which meal was checked — it does not send what she typed.</p>
+      <div class="topic-box"><small>Private alert code</small><code id="alertTopic"></code></div>
+      <div class="two-actions">
+        <button id="copyAlertBtn" class="button secondary" type="button">Copy code</button>
+        <button id="openAlertBtn" class="button primary" type="button">Open alert channel</button>
       </div>
-      <button id="shareInstallBtn" class="button primary large">Open Share menu</button>
+      <p class="fine-print">For the most reliable background alerts, install the free ntfy app on Charlie's phone and subscribe using this code.</p>
     </section>
   </div>
 
   <div id="toast" class="toast"></div>
   <div id="confetti" class="confetti"></div>
   <script src="https://unpkg.com/nostr-tools@2.24.1/lib/nostr.bundle.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

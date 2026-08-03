@@ -3,124 +3,60 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#fff7ed">
+  <meta name="theme-color" content="#eefbf2">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Stinky's List">
-  <link rel="manifest" href="manifest.webmanifest?v=6">
+  <link rel="manifest" href="manifest.webmanifest?v=7">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <title>Stinky's Checklist</title>
-  <link rel="stylesheet" href="styles.css?v=6">
-  <link rel="stylesheet" href="v4.css?v=6">
-  <link rel="stylesheet" href="fix-v6.css?v=6">
+  <link rel="stylesheet" href="v7.css?v=7">
 </head>
 <body>
   <section id="welcome" class="welcome">
     <div class="welcome-card">
       <div class="mascot">🐶</div>
-      <p class="eyebrow">A shared little helper</p>
       <h1>Stinky's Checklist</h1>
-      <p>Stinky taps one big button after breakfast, lunch, dinner or snacks, and Charlie is told.</p>
-      <button id="createBtn" class="button primary large">Create Stinky's checklist</button>
-      <div class="divider">or join using the code</div>
-      <form id="joinForm" class="join-row">
-        <input id="joinCode" class="field" autocomplete="off" autocapitalize="characters" placeholder="ABCD-EFGH-JKLM" maxlength="20">
-        <button class="button secondary">Join</button>
-      </form>
-      <button id="recentBtn" class="recent hidden"></button>
-      <p class="privacy">🔒 The checklist itself is encrypted before being shared.</p>
+      <p>Tap a meal once. It turns green immediately and updates on the other phone.</p>
+      <button id="create" class="primary">Create shared checklist</button>
+      <button id="recent" class="recent hidden"></button>
     </div>
   </section>
 
   <main id="app" class="shell hidden">
     <header class="topbar">
-      <button id="leaveBtn" class="round" aria-label="Leave">←</button>
-      <div class="identity">
-        <div id="emoji" class="identity-emoji">🐶</div>
-        <div class="identity-copy">
-          <h1 id="title">Stinky's Checklist</h1>
-          <button id="codeBtn" class="code"></button>
-        </div>
-      </div>
-      <button id="settingsBtn" class="round" aria-label="Settings">•••</button>
+      <div class="logo">🐶</div>
+      <div class="topcopy"><h1>Stinky's Checklist</h1><small id="roomLabel"></small></div>
+      <button id="settings" class="icon-btn" aria-label="Settings">•••</button>
     </header>
+    <div class="status"><span id="syncDot" class="dot"></span><span id="syncText">Connecting live sync…</span></div>
 
-    <div class="livebar"><span id="dot" class="dot"></span><span id="status">Connecting securely…</span><span>•</span><span id="phones">1 phone</span></div>
-
-    <button id="notifyBanner" class="notify-banner hidden">
-      <span class="notify-icon">🔔</span>
-      <span><strong>Get alerts even when this app is closed</strong><small>Set up your private notification channel</small></span>
-      <b>Set up</b>
-    </button>
-
-    <section class="date-card">
-      <button id="prev" aria-label="Previous day">‹</button>
-      <button id="dateMain" class="date-main"><strong id="dateLabel">Today</strong><span id="dateFull"></span></button>
-      <button id="next" aria-label="Next day">›</button>
-    </section>
-    <input id="datePicker" type="date" class="hidden">
-
-    <section class="progress-card">
-      <div>
-        <p class="eyebrow">Today's gentle progress</p>
-        <h2 id="progressTitle">0 of 4 checked</h2>
-        <p id="progressSub">Stinky can simply tap each big button after eating.</p>
+    <section class="progress">
+      <div class="progress-top">
+        <div><p class="eyebrow">Today's progress</p><h2 id="progressTitle">0 of 4 checked</h2><p id="progressText">Tap a meal when it has been eaten.</p></div>
+        <div id="ring" class="ring"><span id="percent">0%</span></div>
       </div>
-      <div id="ring" class="ring"><span id="percent">0%</span></div>
+      <div id="steps" class="steps"></div>
     </section>
 
-    <section id="meals" class="meal-grid"></section>
+    <section id="mealGrid" class="meal-grid"></section>
   </main>
 
-  <div id="settingsSheet" class="sheet-backdrop hidden">
+  <div id="settingsSheet" class="sheet-bg hidden">
     <section class="sheet">
       <div class="handle"></div>
-      <div class="sheet-head"><div><p class="eyebrow">Shared settings</p><h2>Stinky's checklist</h2></div><button class="close" data-close="settingsSheet">×</button></div>
-      <form id="settingsForm">
-        <label for="listName">Checklist name</label>
-        <input id="listName" class="field" maxlength="40">
-        <label for="listEmoji">Little icon</label>
-        <select id="listEmoji" class="field"><option>🐶</option><option>🐻</option><option>🐱</option><option>🍓</option><option>🌼</option><option>💛</option><option>⭐</option><option>🙂</option></select>
-        <label for="myName">Your name on this phone</label>
-        <input id="myName" class="field" maxlength="40" placeholder="e.g. Stinky or Charlie">
-        <button class="button primary large settings-save">Save</button>
-      </form>
-      <button id="installBtn" class="settings-row"><span class="ico">📲</span><span><strong>Install this app</strong><small>Add a proper icon on the Redmi or iPhone</small></span></button>
-      <button id="reliableAlertsBtn" class="settings-row"><span class="ico">🔔</span><span><strong id="reliableAlertsTitle">Set up reliable alerts</strong><small id="reliableAlertsSub">Receive checks even when this checklist is closed</small></span></button>
-      <button id="notificationsBtn" class="settings-row"><span class="ico">📳</span><span><strong id="notificationsTitle">Enable in-app notifications</strong><small id="notificationsSub">Optional extra alerts while the app is active</small></span></button>
-      <button id="shareBtn" class="settings-row"><span class="ico">🔗</span><span><strong>Share with her phone</strong><small>Send one private checklist link</small></span></button>
-      <button id="resetBtn" class="settings-row"><span class="ico">↺</span><span><strong>Reset this day</strong><small>Clear the answers and untick all four</small></span></button>
+      <div class="sheet-head"><div><p class="eyebrow">Settings</p><h2>Shared checklist</h2></div><button id="closeSettings" class="close">×</button></div>
+      <label for="viewerName">Name on this phone</label>
+      <input id="viewerName" class="field" maxlength="30" placeholder="Stinky or Charlie">
+      <button id="saveName" class="save">Save name</button>
+      <button id="share" class="setting"><i>🔗</i><span><strong>Share with the other phone</strong><small>Send the private checklist link</small></span></button>
+      <button id="copyNtfy" class="setting"><i>🔔</i><span><strong>Copy iPhone notification code</strong><small>Paste this into the ntfy app</small></span></button>
+      <div id="topic" class="topic hidden"></div>
+      <button id="reset" class="setting"><i>↺</i><span><strong>Reset today</strong><small>Untick all four meals</small></span></button>
     </section>
   </div>
-
-  <div id="notifySheet" class="sheet-backdrop hidden">
-    <section class="sheet compact-sheet">
-      <div class="handle"></div>
-      <div class="sheet-head"><div><p class="eyebrow">Proper app icon</p><h2 id="installTitle">Install Stinky's Checklist</h2></div><button class="close" data-close="notifySheet">×</button></div>
-      <p id="installCopy" class="sheet-copy">Add it to the Home Screen so it opens like a normal app.</p>
-      <div id="installSteps" class="install-steps"></div>
-      <button id="nativeInstallBtn" class="button primary large">Install now</button>
-    </section>
-  </div>
-
-  <div id="reliableSheet" class="sheet-backdrop hidden">
-    <section class="sheet compact-sheet">
-      <div class="handle"></div>
-      <div class="sheet-head"><div><p class="eyebrow">Reliable notifications</p><h2>Get Stinky's check-ins while closed</h2></div><button class="close" data-close="reliableSheet">×</button></div>
-      <p class="sheet-copy">Open this private alert channel on Charlie's phone and subscribe. The alert only says which meal was checked — it does not send what she typed.</p>
-      <div class="topic-box"><small>Private alert code</small><code id="alertTopic"></code></div>
-      <div class="two-actions">
-        <button id="copyAlertBtn" class="button secondary" type="button">Copy code</button>
-        <button id="openAlertBtn" class="button primary" type="button">Open alert channel</button>
-      </div>
-      <p class="fine-print">For the most reliable background alerts, install the free ntfy app on Charlie's phone and subscribe using this code.</p>
-    </section>
-  </div>
-
   <div id="toast" class="toast"></div>
-  <div id="confetti" class="confetti"></div>
-  <script src="https://unpkg.com/nostr-tools@2.24.1/lib/nostr.bundle.js"></script>
-  <script src="app.js?v=6"></script>
-  <script src="fix-v6.js?v=6"></script>
+
+  <script src="v7.js?v=7"></script>
 </body>
 </html>

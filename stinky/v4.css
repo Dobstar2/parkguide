@@ -10,4 +10,19 @@
 .topic-box code{display:block;overflow-wrap:anywhere;font-size:12px;color:var(--ink);background:#fff;padding:10px;border-radius:12px;border:1px dashed #ddcfc5}
 .two-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
 .fine-print{font-size:12px;color:var(--muted);line-height:1.45;margin:13px 2px 0}
-@media(max-width:420px){.meal-check{min-height:78px}.two-actions{grid-template-columns:1fr}.meal-status{font-size:10px}.meal-title small{font-size:11px}}
+
+/* A completed meal is clearly crossed off on both phones. */
+.meal-card{position:relative;isolation:isolate}
+.meal-card.meal-done{border:2px solid #72b98a;background:linear-gradient(145deg,#f4fff7,#e8f7ed);box-shadow:0 14px 38px rgba(60,139,88,.17)}
+.meal-card.meal-done::after{content:"✓";position:absolute;inset:0;z-index:5;display:grid;place-items:center;pointer-events:none;font-size:clamp(104px,32vw,165px);line-height:1;font-weight:1000;color:rgba(42,139,79,.18);text-shadow:0 5px 0 rgba(255,255,255,.5);transform:rotate(-9deg);animation:checkedStamp .24s cubic-bezier(.2,.9,.3,1.25)}
+.meal-card.meal-done .meal-head,.meal-card.meal-done .meal-body{position:relative;z-index:2}
+.meal-card.meal-done .meal-icon{box-shadow:0 0 0 3px rgba(64,153,96,.18)}
+.meal-card.meal-done .meal-title h3{color:#276f43}
+.meal-card.meal-done .meal-title h3::after{content:"  ✓";color:#3c9a5e;font-weight:1000}
+.meal-card.meal-done .meal-input{opacity:.68;text-decoration:line-through}
+.meal-card.meal-done .meal-check{position:relative;z-index:6;background:#4d9f6a;color:#fff;box-shadow:0 8px 20px rgba(65,145,92,.24)}
+.meal-card.meal-done .meal-check .check-square{background:#fff;color:#368654;border-color:#fff}
+.meal-card.meal-done .meal-status{background:#3f925d;color:#fff}
+@keyframes checkedStamp{from{opacity:0;transform:scale(.35) rotate(-18deg)}to{opacity:1;transform:scale(1) rotate(-9deg)}}
+
+@media(max-width:420px){.meal-check{min-height:78px}.two-actions{grid-template-columns:1fr}.meal-status{font-size:10px}.meal-title small{font-size:11px}.meal-card.meal-done::after{font-size:116px}}

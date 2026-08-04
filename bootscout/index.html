@@ -3,248 +3,206 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#0b1510">
+  <meta name="theme-color" content="#07110c">
   <meta name="color-scheme" content="dark">
-  <meta name="description" content="Snap an item, identify useful details, check eBay sold listings and calculate a safe car boot resale price in seconds.">
+  <meta name="description" content="Snap an item, identify it with AI and jump straight to exact eBay sold listings.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BootScout">
-  <title>BootScout – Car Boot Valuer</title>
+  <title>BootScout AI – Snap, identify, value</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-v2.css?v=2">
 </head>
 <body>
-  <div class="ambient ambient-a"></div>
-  <div class="ambient ambient-b"></div>
+  <div class="backdrop" aria-hidden="true"></div>
 
   <header class="topbar">
-    <a class="brand" href="./" aria-label="BootScout home">
-      <span class="brand-mark" aria-hidden="true">£</span>
-      <span><strong>BootScout</strong><small>car boot valuer</small></span>
-    </a>
+    <button class="brand" type="button" data-view="scan" aria-label="BootScout home">
+      <span class="brand-icon">£</span>
+      <span><strong>BootScout</strong><small>AI car boot valuer</small></span>
+    </button>
     <div class="top-actions">
-      <span id="networkPill" class="network-pill"><i></i><span>Online</span></span>
-      <button id="installButton" class="icon-button" type="button" aria-label="Install BootScout" title="Install app">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 17v3h14v-3"/></svg>
+      <span id="onlinePill" class="online-pill"><i></i><span>Online</span></span>
+      <button id="settingsButton" class="round-button" type="button" aria-label="Settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="m19.4 15 .1.1 1.6 1.2-2 3.4-2-.8-.2.1a8 8 0 0 1-2 .9l-.2.1-.3 2.5h-4l-.3-2.5-.2-.1a8 8 0 0 1-2-.9l-.2-.1-2 .8-2-3.4 1.6-1.2.1-.1a8 8 0 0 1 0-2.3v-.2L3 11.8l2-3.4 2 .8.2-.1a8 8 0 0 1 2-.9l.2-.1.3-2.5h4l.3 2.5.2.1a8 8 0 0 1 2 .9l.2.1 2-.8 2 3.4-1.6 1.2-.1.1a8 8 0 0 1 0 2.3Z"/></svg>
       </button>
     </div>
   </header>
 
   <main>
-    <section id="homeView" class="view active" aria-labelledby="homeTitle">
-      <div class="hero-card">
-        <div class="eyebrow"><span></span> Built for quick decisions</div>
-        <h1 id="homeTitle">Snap it. Check sold. <em>Know your limit.</em></h1>
-        <p>Photograph a label, model number or barcode, then jump straight to genuine sold comparisons and work out the profit.</p>
-        <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
-        <button id="cameraButton" class="camera-button" type="button">
-          <span class="camera-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5h3l1.4-2h7.2l1.4 2h3v10H4z"/><circle cx="12" cy="13.5" r="3.25"/></svg>
+    <section id="scanView" class="view active">
+      <section class="hero" aria-labelledby="heroTitle">
+        <div class="hero-copy">
+          <span class="eyebrow"><i></i> Fast visual recognition</span>
+          <h1 id="heroTitle">Snap it. <em>Know what it is.</em> Check sold.</h1>
+          <p>Point the camera at the whole item or its label. BootScout reads the brand, model, variant and visible condition, then builds the tightest eBay sold search.</p>
+        </div>
+
+        <input id="cameraInput" type="file" accept="image/*" capture="environment" hidden>
+        <button id="snapButton" class="snap-button" type="button">
+          <span class="snap-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.4-2h7.2L17 8h3v11H4V8Z"/><circle cx="12" cy="13.5" r="3.5"/></svg>
           </span>
-          <span><strong>Take item photo</strong><small>Use the rear camera</small></span>
-          <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+          <span><strong>Snap and identify</strong><small>Rear camera · about a few seconds</small></span>
+          <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
         </button>
-        <div class="privacy-note">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3m-11 0h12v10H6z"/></svg>
-          Photos stay on your phone unless you choose to share them.
-        </div>
-      </div>
 
-      <form id="quickSearchForm" class="quick-search">
-        <label for="quickQuery">Already know what it is?</label>
-        <div class="search-row">
-          <input id="quickQuery" type="search" autocomplete="off" enterkeyhint="search" placeholder="e.g. Nintendo DSi XL red">
-          <button class="primary compact" type="submit">Sold prices</button>
-        </div>
-      </form>
-
-      <section id="scanWorkspace" class="workspace hidden" aria-labelledby="workspaceTitle">
-        <div class="section-heading">
-          <div><span class="kicker">Current item</span><h2 id="workspaceTitle">Build the best search</h2></div>
-          <button id="resetScanButton" class="text-button" type="button">Start over</button>
-        </div>
-
-        <div class="photo-panel">
-          <img id="itemPreview" alt="Photo of the item being valued">
-          <div class="photo-overlay"><span id="analysisStatus">Photo ready</span></div>
-        </div>
-
-        <div class="analysis-grid">
-          <button id="barcodeButton" class="analysis-button" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5v14m3-14v14m3-14v14m4-14v14m2-14v14m4-14v14"/></svg>
-            <span><strong>Barcode</strong><small>Fastest exact match</small></span>
-          </button>
-          <button id="ocrButton" class="analysis-button" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8V5h3m8 0h3v3m0 8v3h-3m-8 0H5v-3M8 12h8M9 9h6m-5 6h4"/></svg>
-            <span><strong>Read label</strong><small>Brand and model text</small></span>
-          </button>
-          <button id="visualButton" class="analysis-button" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 9.8 8.8 4 11l5.8 2.2L12 19l2.2-5.8L20 11l-5.8-2.2z"/></svg>
-            <span><strong>Visual hint</strong><small>On-device object guess</small></span>
-          </button>
-        </div>
-
-        <div id="suggestionChips" class="chips" aria-live="polite"></div>
-
-        <label class="field-label" for="itemQuery">Search wording</label>
-        <div class="query-box">
-          <input id="itemQuery" type="search" autocomplete="off" enterkeyhint="search" placeholder="Brand + model + useful details">
-          <button id="clearQueryButton" type="button" aria-label="Clear search">×</button>
-        </div>
-        <p class="field-help">Keep only details that affect value. Avoid words such as “rare” unless the exact model proves it.</p>
-
-        <div class="condition-row" role="group" aria-label="Item condition">
-          <button type="button" data-condition="New">New</button>
-          <button type="button" data-condition="Excellent">Excellent</button>
-          <button type="button" data-condition="Good" class="selected">Good</button>
-          <button type="button" data-condition="Fair">Fair</button>
-          <button type="button" data-condition="Parts">Parts</button>
-        </div>
-
-        <button id="ebaySoldButton" class="primary jumbo" type="button">
-          <span>Open eBay sold results</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
-        </button>
-        <div class="official-note">Uses eBay’s official completed-and-sold search. Check condition and postage before recording a comparison.</div>
-
-        <details class="market-drawer">
-          <summary>Compare other marketplaces <span>asking prices</span></summary>
-          <div id="marketButtons" class="market-grid"></div>
-        </details>
-
-        <section class="comp-card" aria-labelledby="compTitle">
-          <div class="section-heading small">
-            <div><span class="kicker">Evidence</span><h3 id="compTitle">Sold comparison pad</h3></div>
-            <span id="compCount" class="counter">0 comps</span>
-          </div>
-          <p>Type the closest sold prices you see on eBay. BootScout uses the median so one strange result does not ruin the estimate.</p>
-          <form id="compForm" class="money-entry">
-            <span>£</span><input id="compPrice" inputmode="decimal" type="number" min="0" step="0.01" placeholder="Sold price"><button type="submit">Add</button>
-          </form>
-          <div id="compList" class="comp-list"></div>
-          <div id="compStats" class="stats-grid empty">
-            <div><small>Low</small><strong>—</strong></div>
-            <div class="featured"><small>Median</small><strong>—</strong></div>
-            <div><small>High</small><strong>—</strong></div>
-          </div>
-        </section>
-
-        <section class="calculator-card" aria-labelledby="calculatorTitle">
-          <div class="section-heading small">
-            <div><span class="kicker">Decision</span><h3 id="calculatorTitle">Profit calculator</h3></div>
-            <span id="decisionBadge" class="decision-badge neutral">Add prices</span>
-          </div>
-          <div class="calculator-grid">
-            <label>Seller wants<div class="money-input"><span>£</span><input id="buyPrice" inputmode="decimal" type="number" min="0" step="0.01" value="0"></div></label>
-            <label>Likely sale<div class="money-input"><span>£</span><input id="salePrice" inputmode="decimal" type="number" min="0" step="0.01" value="0"></div></label>
-            <label>Postage + packing<div class="money-input"><span>£</span><input id="postagePrice" inputmode="decimal" type="number" min="0" step="0.01" value="0"></div></label>
-            <label>Selling fee<div class="money-input suffix"><input id="feePercent" inputmode="decimal" type="number" min="0" max="100" step="0.1" value="0"><span>%</span></div></label>
-            <label>Other costs<div class="money-input"><span>£</span><input id="otherCosts" inputmode="decimal" type="number" min="0" step="0.01" value="0"></div></label>
-            <label>Target profit<div class="money-input"><span>£</span><input id="targetProfit" inputmode="decimal" type="number" min="0" step="1" value="15"></div></label>
-          </div>
-          <div class="result-panel">
-            <div><small>Expected profit</small><strong id="profitResult">£0.00</strong><span id="roiResult">0% ROI</span></div>
-            <div><small>Maximum sensible buy</small><strong id="maxBuyResult">£0.00</strong><span>for your target profit</span></div>
-          </div>
-          <div id="riskNote" class="risk-note">Add the seller’s price and a realistic resale value.</div>
-        </section>
-
-        <label class="field-label" for="itemNotes">Quick notes</label>
-        <textarea id="itemNotes" rows="3" placeholder="Tested? Missing charger? Damage? Seller details?"></textarea>
-
-        <div class="workspace-actions">
-          <button id="saveFindButton" class="primary" type="button">Save this find</button>
-          <button id="shareFindButton" class="secondary" type="button">Share summary</button>
+        <div class="capture-tips">
+          <span><b>1</b> Fill the frame</span>
+          <span><b>2</b> Include labels</span>
+          <span><b>3</b> Avoid glare</span>
         </div>
       </section>
 
-      <section class="recent-section" aria-labelledby="recentTitle">
-        <div class="section-heading">
-          <div><span class="kicker">Today</span><h2 id="recentTitle">Recent finds</h2></div>
-          <button class="text-button" type="button" data-go="finds">View all</button>
+      <section id="scanPanel" class="scan-panel hidden" aria-live="polite">
+        <div class="photo-stage">
+          <img id="photoPreview" alt="Item being identified">
+          <div id="scanOverlay" class="scan-overlay">
+            <div class="scanner-line"></div>
+            <div class="scan-message">
+              <span class="spinner"></span>
+              <strong id="scanStatus">Preparing photo…</strong>
+              <small id="scanSubstatus">Reading visible details</small>
+            </div>
+          </div>
+          <button id="retakeButton" class="photo-action" type="button">Retake</button>
         </div>
-        <div id="recentFinds" class="find-list compact-list"></div>
+
+        <article id="resultCard" class="result-card hidden">
+          <header class="result-header">
+            <div>
+              <span class="eyebrow"><i></i> Visual match</span>
+              <h2 id="itemName">Item identified</h2>
+            </div>
+            <span id="confidenceBadge" class="confidence">—</span>
+          </header>
+
+          <div id="identityGrid" class="identity-grid"></div>
+          <p id="descriptionText" class="description"></p>
+          <div id="warningBox" class="warning-box hidden"></div>
+
+          <label class="search-label" for="searchQuery">Best sold-search wording</label>
+          <div class="query-row">
+            <input id="searchQuery" type="search" autocomplete="off" enterkeyhint="search">
+            <button id="copyQueryButton" type="button" aria-label="Copy search wording">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 8h10v12H9zM5 4h10v4M5 4v12h4"/></svg>
+            </button>
+          </div>
+
+          <button id="soldButton" class="sold-button" type="button">
+            <span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v12H4zM7 7V5h10v2M8 12h8m-8 3h5"/></svg>
+              <span><strong>Open exact eBay sold listings</strong><small>Completed + sold · UK results</small></span>
+            </span>
+            <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+          </button>
+
+          <div id="alternativeQueries" class="alternative-queries"></div>
+
+          <details class="evidence-panel">
+            <summary>Record sold prices and calculate profit</summary>
+            <div class="evidence-body">
+              <form id="compForm" class="comp-form">
+                <label for="compPrice">Add a matching sold price</label>
+                <div><span>£</span><input id="compPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="35.00"><button type="submit">Add</button></div>
+              </form>
+              <div id="compChips" class="comp-chips"></div>
+              <div class="price-stats">
+                <div><small>Low</small><strong id="lowPrice">—</strong></div>
+                <div class="featured"><small>Median</small><strong id="medianPrice">—</strong></div>
+                <div><small>High</small><strong id="highPrice">—</strong></div>
+              </div>
+
+              <div class="calculator-grid">
+                <label>Seller wants<span class="money-input"><b>£</b><input id="buyPrice" type="number" min="0" step="0.01" inputmode="decimal" value="0"></span></label>
+                <label>Likely sale<span class="money-input"><b>£</b><input id="salePrice" type="number" min="0" step="0.01" inputmode="decimal" value="0"></span></label>
+                <label>Postage/costs<span class="money-input"><b>£</b><input id="costsPrice" type="number" min="0" step="0.01" inputmode="decimal" value="0"></span></label>
+                <label>Selling fee<span class="money-input suffix"><input id="feePercent" type="number" min="0" max="100" step="0.1" inputmode="decimal" value="0"><b>%</b></span></label>
+              </div>
+
+              <div class="profit-result">
+                <div><small>Expected profit</small><strong id="profitValue">£0.00</strong><span id="roiValue">0% ROI</span></div>
+                <div><small>Maximum buy for £15 profit</small><strong id="maxBuyValue">£0.00</strong></div>
+              </div>
+            </div>
+          </details>
+
+          <div class="result-actions">
+            <button id="saveButton" class="secondary-button" type="button">Save find</button>
+            <button id="newScanButton" class="ghost-button" type="button">Scan another</button>
+          </div>
+        </article>
+      </section>
+
+      <section class="manual-card">
+        <div>
+          <span class="eyebrow">Manual fallback</span>
+          <h2>Already know the item?</h2>
+        </div>
+        <form id="manualForm">
+          <input id="manualQuery" type="search" autocomplete="off" placeholder="e.g. Sony Walkman WM-EX194">
+          <button type="submit">Sold listings</button>
+        </form>
+      </section>
+
+      <section class="recent-section">
+        <header>
+          <div><span class="eyebrow">Saved locally</span><h2>Recent finds</h2></div>
+          <button type="button" data-view="finds">View all</button>
+        </header>
+        <div id="recentFinds" class="find-list"></div>
       </section>
     </section>
 
-    <section id="findsView" class="view" aria-labelledby="findsTitle">
-      <div class="page-heading">
-        <span class="kicker">Saved locally</span>
-        <h1 id="findsTitle">Your finds</h1>
-        <p>Keep the evidence and decision together while you walk around the sale.</p>
-      </div>
-      <div class="find-toolbar">
-        <input id="findSearch" type="search" placeholder="Search saved finds">
-        <button id="exportButton" class="secondary compact" type="button">Export</button>
-      </div>
-      <div id="allFinds" class="find-list"></div>
+    <section id="findsView" class="view">
+      <div class="page-title"><span class="eyebrow">On this device</span><h1>Your finds</h1><p>Photos, visual matches and calculations stay stored locally.</p></div>
+      <div id="allFinds" class="find-list full"></div>
     </section>
 
-    <section id="toolkitView" class="view" aria-labelledby="toolkitTitle">
-      <div class="page-heading">
-        <span class="kicker">Before you pay</span>
-        <h1 id="toolkitTitle">Quick checks</h1>
-        <p>A sixty-second check can save you buying a fake, broken or incomplete item.</p>
+    <section id="helpView" class="view">
+      <div class="page-title"><span class="eyebrow">Get better matches</span><h1>Fast scanning guide</h1><p>The recognition is strongest when the camera can see distinctive details.</p></div>
+      <div class="help-grid">
+        <article><b>1</b><h2>Photograph the front</h2><p>Fill most of the frame with the item. Include logos, buttons, shape and colour.</p></article>
+        <article><b>2</b><h2>Use the label when needed</h2><p>For electronics, tools and appliances, photograph the model sticker for an exact search.</p></article>
+        <article><b>3</b><h2>Check the result</h2><p>AI can be wrong. Confirm the model, edition, size and included accessories against sold listings.</p></article>
+        <article><b>4</b><h2>Match sold condition</h2><p>Do not compare a damaged loose item with a boxed tested example.</p></article>
       </div>
-
-      <section class="tool-card">
-        <label class="field-label" for="categorySelect">Item type</label>
-        <select id="categorySelect">
-          <option value="general">General item</option>
-          <option value="electronics">Electronics</option>
-          <option value="games">Games and consoles</option>
-          <option value="toys">Toys and collectables</option>
-          <option value="clothing">Clothing and trainers</option>
-          <option value="media">Books, vinyl and media</option>
-          <option value="tools">Tools and equipment</option>
-        </select>
-        <div id="checklist" class="checklist"></div>
-      </section>
-
-      <section class="tool-card warning-card">
-        <h2>Fast red flags</h2>
-        <ul>
-          <li>The sold result is a different model, size, edition or quantity.</li>
-          <li>The “sold” price includes expensive postage or a best offer whose accepted amount is hidden.</li>
-          <li>No charger, battery cover, remote, inserts or proprietary cable.</li>
-          <li>Serial label removed, spelling errors, wrong logo spacing or unusually light materials.</li>
-          <li>Profit only works if you achieve the single highest sold price.</li>
-        </ul>
-      </section>
-
-      <section class="tool-card settings-card">
-        <h2>App settings</h2>
-        <label>Default selling fee (%)<input id="defaultFee" type="number" min="0" max="100" step="0.1"></label>
-        <label>Default target profit (£)<input id="defaultTarget" type="number" min="0" step="1"></label>
-        <button id="saveSettingsButton" class="secondary" type="button">Save defaults</button>
-        <p class="microcopy">UK private eBay selling is free in most categories, but business accounts, optional upgrades, international sales and other marketplaces can charge fees. Set the percentage that matches how you sell.</p>
-      </section>
     </section>
   </main>
 
   <nav class="bottom-nav" aria-label="Main navigation">
-    <button type="button" class="active" data-view="home"><svg viewBox="0 0 24 24"><path d="m4 11 8-7 8 7v9h-6v-6h-4v6H4z"/></svg><span>Value</span></button>
+    <button class="active" type="button" data-view="scan"><svg viewBox="0 0 24 24"><path d="M4 8h3l1.5-2h7L17 8h3v11H4zM9 13.5a3 3 0 1 0 6 0 3 3 0 0 0-6 0Z"/></svg><span>Scan</span></button>
     <button type="button" data-view="finds"><svg viewBox="0 0 24 24"><path d="M5 4h14v16l-7-4-7 4z"/></svg><span>Finds</span></button>
-    <button type="button" data-view="toolkit"><svg viewBox="0 0 24 24"><path d="M9 4h6l1 3h3v13H5V7h3zM9 12l2 2 4-5"/></svg><span>Checks</span></button>
+    <button type="button" data-view="help"><svg viewBox="0 0 24 24"><path d="M12 18h.01M9.8 9a2.4 2.4 0 1 1 3.2 2.26c-.7.3-1 1-1 1.74v1"/><circle cx="12" cy="12" r="9"/></svg><span>Help</span></button>
   </nav>
 
-  <dialog id="installDialog" class="modal">
-    <div class="modal-handle"></div>
-    <button class="modal-close" type="button" aria-label="Close">×</button>
-    <div class="install-icon">£</div>
-    <h2>Add BootScout to Home Screen</h2>
-    <div id="installSteps"></div>
+  <dialog id="setupDialog" class="sheet">
+    <form method="dialog" class="sheet-card" id="setupForm">
+      <div class="sheet-handle"></div>
+      <span class="eyebrow"><i></i> One-time AI setup</span>
+      <h2>Connect visual recognition</h2>
+      <p>BootScout uses Google’s fast Gemini vision model to recognise products properly. Create a free API key, paste it once, and it stays only in this browser on your phone.</p>
+      <a class="key-link" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Get a free Google AI key <span>↗</span></a>
+      <label for="apiKeyInput">Gemini API key</label>
+      <div class="secret-input"><input id="apiKeyInput" type="password" autocomplete="off" placeholder="Paste key here"><button id="toggleKeyButton" type="button">Show</button></div>
+      <label class="toggle-row"><input id="autoScanToggle" type="checkbox" checked><span><strong>Identify automatically after taking a photo</strong><small>Recommended for car boot speed</small></span></label>
+      <p class="privacy-copy">The photo is sent to Google only when recognition runs. The API key is never committed to GitHub or included in saved finds.</p>
+      <div class="sheet-actions"><button id="cancelSetupButton" class="ghost-button" type="button">Not now</button><button class="primary-button" type="submit">Save and test</button></div>
+      <button id="removeKeyButton" class="danger-link hidden" type="button">Remove saved key</button>
+    </form>
   </dialog>
 
-  <dialog id="findDialog" class="modal find-modal">
-    <div class="modal-handle"></div>
-    <button class="modal-close" type="button" aria-label="Close">×</button>
-    <div id="findDialogContent"></div>
+  <dialog id="findDialog" class="sheet">
+    <div class="sheet-card">
+      <div class="sheet-handle"></div>
+      <button id="closeFindDialog" class="close-button" type="button" aria-label="Close">×</button>
+      <div id="findDetail"></div>
+    </div>
   </dialog>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="app.js" defer></script>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app-v2.js?v=2" defer></script>
 </body>
 </html>

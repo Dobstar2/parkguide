@@ -1,21 +1,21 @@
 {
-  "name": "BootScout – Car Boot Valuer",
+  "name": "BootScout AI – Car Boot Valuer",
   "short_name": "BootScout",
-  "description": "Snap an item, identify useful details, check eBay sold listings and calculate a safe resale price in seconds.",
+  "description": "Snap an item, identify it visually and jump straight to exact eBay UK sold listings.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
-  "background_color": "#08110c",
-  "theme_color": "#0b1510",
+  "background_color": "#07110c",
+  "theme_color": "#07110c",
   "orientation": "portrait-primary",
   "categories": ["shopping", "utilities", "productivity"],
   "icons": [
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ],
   "shortcuts": [
-    { "name": "Value a new item", "short_name": "New scan", "url": "./?scan=1", "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }] },
+    { "name": "Scan and identify an item", "short_name": "New scan", "url": "./?scan=1", "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }] },
     { "name": "Saved finds", "short_name": "Finds", "url": "./?tab=finds", "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }] }
   ]
 }

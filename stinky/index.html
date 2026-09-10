@@ -12,14 +12,18 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/dog-face-180.png">
   <title>Dinky's little checklist</title>
   <link rel="stylesheet" href="v7.css?v=8">
-  <link rel="stylesheet" href="dinky.css?v=9">
+  <link rel="stylesheet" href="dinky.css?v=11">
+<style>
+body{background:#faf7f4}.shell{max-width:900px;padding-top:32px}.topbar{padding-bottom:15px;border-bottom:1px solid #eadfe0;margin-bottom:12px}.list-mark,.welcome-mark{display:grid;place-items:center;background:#f1dce3;color:#96546b;border-radius:16px;width:46px;height:46px;font-size:23px}.welcome-mark{margin:0 auto 24px;width:64px;height:64px;border-radius:22px;font-size:30px}.status{margin-bottom:30px}.day-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 22px}.day-heading .eyebrow{color:#9c7380;font-size:9px;letter-spacing:.16em;margin-bottom:8px}.day-heading h2{font:400 34px/1.1 Georgia,serif;letter-spacing:-1px;margin:0}.day-heading .date-chip{font-size:11px;color:#826a73;background:#fff;border:1px solid #e9dfe1;padding:10px 13px;white-space:nowrap}.progress{background:#fff;border:1px solid #e8dfe0;border-radius:22px;margin-bottom:30px;padding:23px}.ring:after{background:#fff}.step b{border-color:#fff}.meal{box-shadow:0 4px 18px #61444d04;border-radius:20px}.meal-head{padding-top:20px}.meal-title h3{font-size:23px}.meal textarea{background:#faf8f6}.check-btn{background:#f6e8ed;border-color:#ecd7df}.section-heading{margin-bottom:16px}.section-heading h2{font-size:23px}.welcome-card{padding:38px 30px;background:#fff;border-radius:26px;box-shadow:0 12px 45px #6747520a}.welcome h1{font-size:36px}.welcome p{max-width:320px;margin:18px auto}.welcome .primary{margin-top:15px}footer{padding-top:25px;font-size:12px}footer span{display:inline;margin-left:5px;font-size:16px}
+@media(max-width:649px){.shell{padding-top:20px}.topcopy h1{font-size:20px}.day-heading{align-items:flex-start;flex-direction:column;gap:13px;margin-bottom:19px}.day-heading h2{font-size:32px}.day-heading .date-chip{padding:0;background:none;border:0;font-size:12px}.status{margin-bottom:26px}.progress{padding:20px}.meal-grid{gap:16px}.welcome-card{padding:30px 24px}.section-heading>span{font-size:10px}}
+</style>
 </head>
 <body>
   <section id="welcome" class="welcome">
     <div class="welcome-card">
-      <p class="eyebrow">A little love, every day</p><img class="welcome-art" src="assets/dinky-puppy.webp" alt="A cuddly puppy holding a pink heart, with daisies and breakfast" width="768" height="768">
+      <div class="welcome-mark" aria-hidden="true">✓</div><p class="eyebrow">Our daily check-in</p>
       <h1>Dinky's little checklist</h1>
-      <p>For my baby Daisy. A cosy little place to check in, one meal at a time. <span class="welcome-signature">Made with love, by Charlie ♡</span></p>
+      <p>A little space for meals, notes and checking in together. <span class="welcome-signature">Made with love, by Charlie ♡</span></p>
       <button id="create" class="primary">Start our checklist ♡</button>
       <button id="recent" class="recent hidden"></button>
     </div>
@@ -27,17 +31,13 @@
 
   <main id="app" class="shell hidden">
     <header class="topbar">
-      <img class="logo" src="assets/dog-face-192.png" alt="" width="49" height="49">
+      <div class="list-mark" aria-hidden="true">✓</div>
       <div class="topcopy"><p class="brand-kicker">DAISY & CHARLIE</p><h1>Dinky's little checklist</h1><small id="roomLabel" class="hidden"></small></div>
       <button id="settings" class="icon-btn" aria-label="Settings">•••</button>
     </header>
     <div class="status"><span id="syncDot" class="dot"></span><span id="syncText">Connecting live sync…</span></div>
 
-    <section class="love-hero">
-      <div class="hero-copy"><span id="todayDate" class="date-chip"></span><h2>Hello, my<br><em>baby Daisy.</em></h2><p>A little food, a little love.<br>I'm always in your corner.</p><span class="signature">Love you lots, Charlie ♡</span></div>
-      <img src="assets/dinky-puppy.webp" alt="Your little puppy sending you a hug" width="768" height="768">
-      <span class="hero-heart" aria-hidden="true">♡</span>
-    </section>
+<section class="day-heading"><div><p class="eyebrow">A fresh little day</p><h2>Today’s checklist</h2></div><span id="todayDate" class="date-chip"></span></section>
     <section class="progress" aria-label="Today's meal progress">
       <div class="progress-top">
         <div><p class="eyebrow">Today's progress</p><h2 id="progressTitle">0 of 4 checked</h2><p id="progressText">Tap a meal when it has been eaten.</p></div>
@@ -46,7 +46,7 @@
       <div id="steps" class="steps"></div>
     </section>
 
-    <div class="section-heading"><h2>Your little menu</h2><span>One tap after eating ♡</span></div><section id="mealGrid" class="meal-grid" aria-label="Meals"></section><footer>For my favourite person. Always. <span>♡</span></footer>
+    <div class="section-heading"><h2>Your meals</h2><span>One tap after eating ♡</span></div><section id="mealGrid" class="meal-grid" aria-label="Meals"></section><footer>For my favourite person. Always. <span>♡</span></footer>
   </main>
 
   <div id="settingsSheet" class="sheet-bg hidden">
